@@ -18,11 +18,19 @@ script/check-zh-hant-ui-strings
 - `crates/dev_container`
 - `crates/toolchain_selector`
 - `crates/repl`
+- `crates/picker`
+- `crates/debugger_ui`
+- `crates/recent_projects`
+- `crates/title_bar`
+- `crates/workspace/src/welcome.rs`
+- `crates/agent_ui/src/threads_archive_view.rs`
 - `crates/zed/src/zed/quick_action_bar.rs`
 - `crates/zed/src/zed/quick_action_bar/repl_menu.rs`
 - `crates/zed/src/zed/open_url_modal.rs`
 - `crates/zed/src/zed/migrate.rs`
 - `crates/zed/src/zed/telemetry_log.rs`
+
+M12 GUI smoke 發現的高風險回流點已納入預設掃描，特別是 generic picker、Debugger panel/modal、Recent Projects、Title Bar fallback、Welcome 與 Agent threads archive。
 
 如果要盤點整個 repo 的剩餘 backlog，可執行：
 
@@ -66,6 +74,19 @@ target/debug/zed --user-data-dir /private/tmp/zed-zh-hant-guardrail --system-spe
 git diff --check
 git status --short
 ```
+
+## GUI Smoke 建議
+
+本機 smoke 時要確認目前開的是 fork debug build，不是 `/Applications/Zed.app` stable 版。若正式 bundle script 暫時失敗，可用臨時 `.app` bundle 指向 `target/debug/zed` 做畫面驗證。
+
+最少確認：
+
+- Onboarding/Welcome：主要標題、設定說明、Vim/trust/telemetry 文案。
+- Command Palette：placeholder/footer 繁中；action id 的英文殘留列入 backlog。
+- Settings：搜尋框、分類、主要 action link；enum value 另行評估。
+- Search/Project Panel/Recent Projects：標題、placeholder、footer buttons。
+- Debugger：`中斷點`、`尚未設定中斷點`、`新增工作階段`、launch modal 的 `執行`、`偵錯`、`附加`、`啟動`。
+- Agent/Provider/Copilot/Git：主要固定 UI 與品牌 token 保留規則。
 
 ## Allowlist 規則
 

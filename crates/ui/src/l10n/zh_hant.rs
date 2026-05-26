@@ -226,6 +226,42 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Diagnostics" => "診斷",
         "Debugger" => "偵錯工具",
         "Breakpoint" => "中斷點",
+        "Breakpoints" => "中斷點",
+        "No Breakpoints Set" => "尚未設定中斷點",
+        "Start Debug Session" => "開始偵錯工作階段",
+        "New Session" => "新增工作階段",
+        "Edit debug.json" => "編輯 debug.json",
+        "Edit in debug.json" => "在 debug.json 中編輯",
+        "Debugger Docs" => "偵錯工具文件",
+        "Debugger Extensions" => "偵錯工具延伸模組",
+        "Open Debug Adapter Logs" => "開啟偵錯配接器記錄",
+        "Close Panel" => "關閉面板",
+        "Launch a new process with a debugger" => "使用偵錯工具啟動新程序",
+        "Run predefined task" => "執行預先定義的工作",
+        "Start a predefined debug scenario" => "開始預先定義的偵錯情境",
+        "Attach the debugger to a running process" => "將偵錯工具附加到執行中的程序",
+        "Find a debug task, or debug a command" => "尋找偵錯工作，或偵錯命令",
+        "Select Debugger" => "選取偵錯工具",
+        "No matches" => "沒有相符項目",
+        "Start" => "開始",
+        "Debug" => "偵錯",
+        "Attach" => "附加",
+        "Launch" => "啟動",
+        "Pause Program" => "暫停程式",
+        "Continue Program" => "繼續程式",
+        "Step In" => "逐步進入",
+        "Rerun Session" => "重新執行工作階段",
+        "Terminate Thread" => "終止執行緒",
+        "Terminate All Threads" => "終止所有執行緒",
+        "Detach" => "中斷連結",
+        "Debugger:" => "偵錯工具：",
+        "Stop on Entry" => "進入時停止",
+        "Launch Custom" => "啟動自訂設定",
+        "Evaluate an expression" => "評估運算式",
+        "Evaluate" => "評估",
+        "Write to Selected Memory Range" => "寫入選取的記憶體範圍",
+        "Go to Memory Address / Expression" => "前往記憶體位址 / 運算式",
+        "Restart Stack Frame" => "重新啟動堆疊框架",
         "Task" => "工作",
         "Agent" => "代理",
         "Assistant" => "助理",
@@ -2317,17 +2353,28 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Delete from Recent Projects" => "從最近專案移除",
         "Remove Folder from Project" => "從專案移除資料夾",
         "Remove Project from Window" => "從視窗移除專案",
+        "Add a nickname for this server" => "為此伺服器新增暱稱",
         "As a multi-root folder" => "作為多根資料夾",
         "Add Folder to this Project" => "將資料夾新增至此專案",
         "Get Started" => "開始使用",
         "Open Project" => "開啟專案",
+        "Open Recent Project" => "開啟最近專案",
         "Clone Repository" => "複製儲存庫",
         "Open Command Palette" => "開啟命令選擇區",
         "Customize Keymaps" => "自訂按鍵對應",
         "Explore Extensions" => "探索延伸模組",
+        "Search projects…" => "搜尋專案…",
         "Recent Projects" => "最近專案",
         "Welcome back to Zed" => "歡迎回到 Zed",
         "Welcome to Zed" => "歡迎使用 Zed",
+        "WSL:" => "WSL：",
+        "Dev Containers" => "Dev Containers",
+        "Creating Dev Container" => "正在建立 Dev Container",
+        "Remove Distro" => "移除發行版",
+        "Copy Server Address" => "複製伺服器位址",
+        "Remove Server" => "移除伺服器",
+        "Add WSL Distro" => "新增 WSL 發行版",
+        "Custom" => "自訂",
         "The editor for what's next" => "面向下一步的編輯器",
         "Return to Onboarding" => "返回新手導覽",
         "Create a Skill" => "建立技能",
@@ -2441,6 +2488,9 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Modal Editing" => "模式編輯",
         "Vim Mode" => "Vim 模式",
         "Enable Vim mode and key bindings." => "啟用 Vim 模式與鍵盤快速鍵。",
+        "Coming from Neovim? Use our first-class implementation of Vim Mode" => {
+            "從 Neovim 轉來？使用我們第一流的 Vim 模式實作"
+        }
         "Which-key Menu" => "Which-key 選單",
         "Show Which-key Menu" => "顯示 Which-key 選單",
         "Search settings…" => "搜尋設定…",
@@ -2649,6 +2699,12 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "CLI Default Open Behavior" => "CLI 預設開啟行為",
         "Security" => "安全性",
         "Trust All Projects By Default" => "預設信任所有專案",
+        "Automatically mark all new projects as trusted to unlock all Zed's features" => {
+            "自動將所有新專案標記為受信任，以解鎖 Zed 的所有功能"
+        }
+        "Zed can only allow services like language servers, project settings, and MCP servers to run after you mark a new project as trusted." => {
+            "只有在你將新專案標記為受信任後，Zed 才能允許語言伺服器、專案設定與 MCP 伺服器等服務執行。"
+        }
         "Failed to load your settings. Some values may be incorrect and changes may be lost." => {
             "無法載入你的設定。部分值可能不正確，變更也可能遺失。"
         }
@@ -2884,6 +2940,10 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Agent Setup" => "代理設定",
         "Import Settings" => "匯入設定",
         "Automatically pull your settings from other editors" => "自動從其他編輯器匯入你的設定",
+        "Help improve Zed by sending anonymous usage data" => "傳送匿名使用資料以協助改進 Zed",
+        "Help fix Zed by sending crash reports so we can fix critical issues fast" => {
+            "傳送當機報告以協助 Zed 快速修正重大問題"
+        }
         "Signing In…" => "正在登入…",
         "Install your favorite agents and start your first thread." => {
             "安裝你偏好的代理，並開始第一個對話串。"
@@ -3039,6 +3099,8 @@ mod tests {
         assert_eq!(text("Include Ignored Files"), "包含已忽略檔案");
         assert_eq!(text("Channel Notes"), "頻道筆記");
         assert_eq!(text("Search recent projects…"), "搜尋最近專案…");
+        assert_eq!(text("Search projects…"), "搜尋專案…");
+        assert_eq!(text("Open Recent Project"), "開啟最近專案");
         assert_eq!(text("Start New Agent Thread"), "開始新的代理對話串");
         assert_eq!(text("Open Project in New Window"), "在新視窗開啟專案");
         assert_eq!(text("Focus Project"), "聚焦專案");
@@ -3053,6 +3115,10 @@ mod tests {
         assert_eq!(text("Show Thread History"), "顯示對話串歷程");
         assert_eq!(text("Hide Thread History"), "隱藏對話串歷程");
         assert_eq!(text("Unrecognized Project"), "無法識別的專案");
+        assert_eq!(text("Add a nickname for this server"), "為此伺服器新增暱稱");
+        assert_eq!(text("Creating Dev Container"), "正在建立 Dev Container");
+        assert_eq!(text("Copy Server Address"), "複製伺服器位址");
+        assert_eq!(text("Add WSL Distro"), "新增 WSL 發行版");
         assert_eq!(text("Hide Button"), "隱藏按鈕");
         assert_eq!(text("Read-Only File"), "唯讀檔案");
         assert_eq!(text("Pin Tab"), "釘選索引標籤");
@@ -3330,6 +3396,22 @@ mod tests {
         assert_eq!(text("Select Kernel"), "選取 Kernel");
         assert_eq!(text("Finish Setup"), "完成設定");
         assert_eq!(text("Agent Setup"), "代理設定");
+        assert_eq!(
+            text("Coming from Neovim? Use our first-class implementation of Vim Mode"),
+            "從 Neovim 轉來？使用我們第一流的 Vim 模式實作"
+        );
+        assert_eq!(
+            text("Automatically mark all new projects as trusted to unlock all Zed's features"),
+            "自動將所有新專案標記為受信任，以解鎖 Zed 的所有功能"
+        );
+        assert_eq!(
+            text("Help improve Zed by sending anonymous usage data"),
+            "傳送匿名使用資料以協助改進 Zed"
+        );
+        assert_eq!(
+            text("Help fix Zed by sending crash reports so we can fix critical issues fast"),
+            "傳送當機報告以協助 Zed 快速修正重大問題"
+        );
         assert_eq!(text("Select Feature"), "選取功能");
         assert_eq!(text("Confirm Selections"), "確認選取項目");
         assert_eq!(text("Select Toolchain Path"), "選取工具鏈路徑");
@@ -3349,5 +3431,62 @@ mod tests {
             text("MCP Server integrations from installing"),
             "安裝 MCP 伺服器整合"
         );
+    }
+
+    #[test]
+    fn milestone_twelve_debugger_surface_terms_are_guarded() {
+        assert_eq!(text("Breakpoints"), "中斷點");
+        assert_eq!(text("No Breakpoints Set"), "尚未設定中斷點");
+        assert_eq!(text("Start Debug Session"), "開始偵錯工作階段");
+        assert_eq!(text("New Session"), "新增工作階段");
+        assert_eq!(text("Edit debug.json"), "編輯 debug.json");
+        assert_eq!(text("Edit in debug.json"), "在 debug.json 中編輯");
+        assert_eq!(text("Debugger Docs"), "偵錯工具文件");
+        assert_eq!(text("Debugger Extensions"), "偵錯工具延伸模組");
+        assert_eq!(text("Open Debug Adapter Logs"), "開啟偵錯配接器記錄");
+        assert_eq!(
+            text("Launch a new process with a debugger"),
+            "使用偵錯工具啟動新程序"
+        );
+        assert_eq!(text("Run predefined task"), "執行預先定義的工作");
+        assert_eq!(
+            text("Start a predefined debug scenario"),
+            "開始預先定義的偵錯情境"
+        );
+        assert_eq!(
+            text("Attach the debugger to a running process"),
+            "將偵錯工具附加到執行中的程序"
+        );
+        assert_eq!(
+            text("Find a debug task, or debug a command"),
+            "尋找偵錯工作，或偵錯命令"
+        );
+        assert_eq!(text("Select Debugger"), "選取偵錯工具");
+        assert_eq!(text("No matches"), "沒有相符項目");
+        assert_eq!(text("Debug"), "偵錯");
+        assert_eq!(text("Attach"), "附加");
+        assert_eq!(text("Launch"), "啟動");
+        assert_eq!(text("Close Panel"), "關閉面板");
+        assert_eq!(text("Pause Program"), "暫停程式");
+        assert_eq!(text("Continue Program"), "繼續程式");
+        assert_eq!(text("Step In"), "逐步進入");
+        assert_eq!(text("Rerun Session"), "重新執行工作階段");
+        assert_eq!(text("Terminate Thread"), "終止執行緒");
+        assert_eq!(text("Terminate All Threads"), "終止所有執行緒");
+        assert_eq!(text("Detach"), "中斷連結");
+        assert_eq!(text("Debugger:"), "偵錯工具：");
+        assert_eq!(text("Stop on Entry"), "進入時停止");
+        assert_eq!(text("Launch Custom"), "啟動自訂設定");
+        assert_eq!(text("Evaluate an expression"), "評估運算式");
+        assert_eq!(text("Evaluate"), "評估");
+        assert_eq!(
+            text("Write to Selected Memory Range"),
+            "寫入選取的記憶體範圍"
+        );
+        assert_eq!(
+            text("Go to Memory Address / Expression"),
+            "前往記憶體位址 / 運算式"
+        );
+        assert_eq!(text("Restart Stack Frame"), "重新啟動堆疊框架");
     }
 }

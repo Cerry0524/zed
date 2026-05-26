@@ -270,6 +270,8 @@
 git status --short --branch
 env TOOLCHAINS=com.apple.dt.toolchain.Metal.32023.883 /Users/cerry/.codex-accounts/personal-home/.cargo/bin/cargo fmt --check
 git diff --check
+python3 script/test-check-zh-hant-ui-strings
+script/check-zh-hant-ui-strings
 env TOOLCHAINS=com.apple.dt.toolchain.Metal.32023.883 /Users/cerry/.codex-accounts/personal-home/.cargo/bin/cargo test -p ui l10n --lib
 env TOOLCHAINS=com.apple.dt.toolchain.Metal.32023.883 /Users/cerry/.codex-accounts/personal-home/.cargo/bin/cargo build -p zed
 target/debug/zed --user-data-dir /private/tmp/zed-zh-hant-final --system-specs
@@ -295,6 +297,14 @@ target/debug/zed --user-data-dir /private/tmp/zed-zh-hant-final --system-specs
 - release notes 說明完成範圍、驗證命令、已知保留英文。
 - branch clean and pushed。
 - commit：`docs: summarize Traditional Chinese UI localization`
+
+### M12 執行摘要
+
+- 新增 `docs/zh-Hant/release-notes.md`，整理完成範圍、驗證命令、GUI smoke 結果與刻意保留英文。
+- GUI smoke 使用暫時 `.app` bundle 驗證最新 `target/debug/zed`，已覆蓋 Onboarding、Welcome、Command Palette、Project Panel、Search、Recent Projects、Settings、Debugger panel/modal。
+- Agent Panel、Provider/Copilot、Theme selector、Git/Diff/Commit 未在本輪全部逐項完成 GUI smoke；以 guardrail/static verification 覆蓋，並在 release notes 標為正式安裝前建議人工確認。
+- Smoke 發現並補齊 Onboarding、Debugger modal、generic picker、Recent Projects/title bar fallback 的漏翻點。
+- `script/check-zh-hant-ui-strings` 預設掃描範圍新增 `crates/picker`、`crates/debugger_ui`、Recent Projects、Title Bar、Welcome 與 Agent threads archive。
 
 ## Goal 呼叫對照
 

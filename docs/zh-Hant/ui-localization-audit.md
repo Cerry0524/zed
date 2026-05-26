@@ -1,5 +1,7 @@
 # Zed 繁體中文 UI 剩餘盤點
 
+> 本文件主體是 Milestone 4 的歷史盤點。M5-M12 的後續執行結果以各段「執行摘要」與 `docs/zh-Hant/release-notes.md` 為準。
+
 本文件是 Milestone 4 的只讀盤點結果，用來規劃後續 Zed 個人 fork 的全面繁體中文化。此階段不修改 production UI，只建立可執行的覆蓋地圖。
 
 ## 盤點來源
@@ -24,6 +26,15 @@ rg -n 'Label::new\("|Button::new\([^\n]*"[A-Za-z]|Tooltip::text\("[A-Za-z]|Conte
 ```
 
 `crates/ui/src/l10n.rs` 目前已有約 527 個翻譯 match 項目，包含第一至第三階段已接線的 Command Palette、搜尋、Git、Agent 高頻入口、設定描述、sidebar/title bar 等字串。
+
+## M12 最終驗證更新
+
+- GUI smoke 使用本機 `target/debug/zed` 暫時打包成 `/private/tmp/zed-zh-hant-smoke-app.K0Of1k/ZedZhHantSmoke.app`，避免誤驗證 `/Applications/Zed.app` stable 版。
+- 已確認繁中畫面：menu bar、Onboarding、Welcome、Command Palette、Project Panel、Search、Recent Projects、Settings、Debugger panel 與 Debugger launch modal。
+- Agent Panel、Provider/Copilot、Theme selector、Git/Diff/Commit 未在本輪全部逐項完成 GUI smoke；正式安裝前仍建議依 checklist 人工確認。
+- Smoke 過程中新增補齊：Recent Projects/title bar fallback、Welcome 標題、Onboarding Vim/trust/telemetry 文案、Debugger panel/modal、generic picker `No matches`。
+- `script/check-zh-hant-ui-strings` 預設掃描範圍已擴充到 `crates/picker`、`crates/debugger_ui`、`crates/recent_projects`、`crates/title_bar`、`crates/workspace/src/welcome.rs`、`crates/agent_ui/src/threads_archive_view.rs`。
+- 刻意保留英文：品牌/協定/檔名、theme 名稱、第三方 editor/keymap 名稱、部分 command action id 與設定 enum value。
 
 ## 分類定義
 

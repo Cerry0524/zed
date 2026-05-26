@@ -17,6 +17,7 @@
 | `crates/.*/snapshots/.*` | `.*` | telemetry/log/test |
 | `crates/.*/test_data/.*` | `.*` | telemetry/log/test |
 | `crates/zed/src/zed/open_url_modal\.rs` | `^zed://\.\.\.$` | brand/protocol |
+| `crates/recent_projects/src/remote_servers\.rs` | `^ssh user@example -p 2222$` | code identifier |
 | `crates/zed/src/visual_test_runner\.rs` | `.*` | visual fixture/sample |
 | `crates/ui/src/components/.*` | `.*` | visual fixture/sample |
 | `crates/workspace/src/theme_preview\.rs` | `.*` | visual fixture/sample |

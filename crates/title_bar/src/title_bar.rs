@@ -729,7 +729,7 @@ impl TitleBar {
         let display_name = if let Some(ref name) = name {
             util::truncate_and_trailoff(name, MAX_PROJECT_NAME_LENGTH)
         } else {
-            "Open Recent Project".to_string()
+            l10n::text("Open Recent Project").to_string()
         };
 
         let is_sidebar_open = self
@@ -1103,7 +1103,7 @@ impl TitleBar {
                 div()
                     .id("disconnected")
                     .child(Icon::new(IconName::Disconnected).size(IconSize::Small))
-                    .tooltip(Tooltip::text("Disconnected"))
+                    .tooltip(Tooltip::text(l10n::text("Disconnected")))
                     .into_any_element(),
             ),
             client::Status::UpgradeRequired => {
@@ -1383,7 +1383,7 @@ impl TitleBar {
                                 })
                                 .when(is_custom, |menu| {
                                     menu.item(
-                                        ContextMenuEntry::new("Custom")
+                                        ContextMenuEntry::new(l10n::text("Custom"))
                                             .toggleable(IconPosition::Start, true)
                                             .disabled(true),
                                     )

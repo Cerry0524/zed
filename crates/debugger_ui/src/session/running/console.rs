@@ -28,7 +28,7 @@ use std::fmt::Write;
 use std::{ops::Range, rc::Rc, usize};
 use theme::Theme;
 use theme_settings::ThemeSettings;
-use ui::{ContextMenu, Divider, PopoverMenu, SplitButton, Tooltip, prelude::*};
+use ui::{ContextMenu, Divider, PopoverMenu, SplitButton, Tooltip, l10n, prelude::*};
 use util::ResultExt;
 
 actions!(
@@ -94,7 +94,7 @@ impl Console {
         let this = cx.weak_entity();
         let query_bar = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Evaluate an expression", window, cx);
+            editor.set_placeholder_text(l10n::text("Evaluate an expression"), window, cx);
             editor.set_use_autoclose(false);
             editor.set_show_gutter(false, cx);
             editor.set_show_wrap_guides(false, cx);
@@ -494,13 +494,13 @@ impl Render for Console {
                             })
                             .layer(ui::ElevationIndex::ModalSurface)
                             .size(ui::ButtonSize::Compact)
-                            .child(Label::new("Evaluate"))
+                            .child(Label::new(l10n::text("Evaluate")))
                             .tooltip({
                                 let query_focus_handle = query_focus_handle.clone();
 
                                 move |_window, cx| {
                                     Tooltip::for_action_in(
-                                        "Evaluate",
+                                        l10n::text("Evaluate"),
                                         &Confirm,
                                         &query_focus_handle,
                                         cx,

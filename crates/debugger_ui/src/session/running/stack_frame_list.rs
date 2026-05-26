@@ -20,7 +20,7 @@ use language::PointUtf16;
 use project::debugger::breakpoint_store::ActiveStackFrame;
 use project::debugger::session::{Session, SessionEvent, StackFrame, ThreadStatus};
 use project::{ProjectItem, ProjectPath};
-use ui::{Tooltip, WithScrollbar, prelude::*};
+use ui::{Tooltip, WithScrollbar, l10n, prelude::*};
 use workspace::{Workspace, WorkspaceId};
 
 use super::RunningState;
@@ -655,7 +655,7 @@ impl StackFrameList {
                                     }
                                 }))
                                 .tooltip(move |window, cx| {
-                                    Tooltip::text("Restart Stack Frame")(window, cx)
+                                    Tooltip::text(l10n::text("Restart Stack Frame"))(window, cx)
                                 }),
                             ),
                     )
