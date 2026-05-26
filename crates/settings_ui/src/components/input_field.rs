@@ -4,7 +4,7 @@ use editor::Editor;
 use gpui::{AnyElement, ElementId, Focusable, TextStyleRefinement};
 use settings::Settings as _;
 use theme_settings::ThemeSettings;
-use ui::{Tooltip, prelude::*, rems};
+use ui::{Tooltip, l10n, prelude::*, rems};
 
 #[derive(IntoElement)]
 pub struct SettingsInputField {
@@ -141,7 +141,7 @@ impl RenderOnce for SettingsInputField {
                     }
 
                     if let Some(placeholder) = placeholder {
-                        editor.set_placeholder_text(placeholder, window, cx);
+                        editor.set_placeholder_text(l10n::text(placeholder), window, cx);
                     }
                     editor.set_text_style_refinement(styles);
                     editor
@@ -177,7 +177,7 @@ impl RenderOnce for SettingsInputField {
                     }
 
                     if let Some(placeholder) = placeholder {
-                        editor.set_placeholder_text(placeholder, window, cx);
+                        editor.set_placeholder_text(l10n::text(placeholder), window, cx);
                     }
                     editor.set_text_style_refinement(styles);
                     editor
@@ -254,7 +254,7 @@ impl RenderOnce for SettingsInputField {
                                 IconButton::new("clear-button", IconName::Close)
                                     .icon_size(IconSize::Small)
                                     .icon_color(Color::Muted)
-                                    .tooltip(Tooltip::text("Clear"))
+                                    .tooltip(Tooltip::text(l10n::text("Clear")))
                                     .on_click(move |_, window, cx| {
                                         let Some(editor) = weak_editor_for_clear.upgrade() else {
                                             return;
@@ -273,7 +273,7 @@ impl RenderOnce for SettingsInputField {
                                 IconButton::new("confirm-button", IconName::Check)
                                     .icon_size(IconSize::Small)
                                     .icon_color(Color::Success)
-                                    .tooltip(Tooltip::text("Enter to Confirm"))
+                                    .tooltip(Tooltip::text(l10n::text("Enter to Confirm")))
                                     .on_click(move |_, window, cx| {
                                         let Some(confirm) = confirm_for_button.as_ref() else {
                                             return;

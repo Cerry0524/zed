@@ -47,7 +47,7 @@ use theme_settings::ThemeSettings;
 use ui::{
     ContextMenu, ContextMenuEntry, ContextMenuItem, DecoratedIcon, IconButtonShape, IconDecoration,
     IconDecorationKind, Indicator, PopoverMenu, PopoverMenuHandle, Tab, TabBar, TabPosition,
-    Tooltip, prelude::*, right_click_menu,
+    Tooltip, l10n, prelude::*, right_click_menu,
 };
 use util::{
     ResultExt, debug_panic, maybe, paths::PathStyle, serde::default_true, truncate_and_remove_front,
@@ -4213,21 +4213,33 @@ fn default_render_tab_bar_buttons(
             PopoverMenu::new("pane-tab-bar-popover-menu")
                 .trigger_with_tooltip(
                     IconButton::new("plus", IconName::Plus).icon_size(IconSize::Small),
-                    Tooltip::text("New..."),
+                    Tooltip::text(l10n::text("New...")),
                 )
                 .anchor(Anchor::TopRight)
                 .with_handle(pane.new_item_context_menu_handle.clone())
                 .menu(move |window, cx| {
                     Some(ContextMenu::build(window, cx, |menu, _, _| {
-                        menu.action("New File", NewFile.boxed_clone())
-                            .action("Open File", ToggleFileFinder::default().boxed_clone())
-                            .separator()
-                            .action("Search Project", DeploySearch::default().boxed_clone())
-                            .action("Search Symbols", ToggleProjectSymbols.boxed_clone())
-                            .separator()
-                            .action("New Terminal", NewTerminal::default().boxed_clone())
+                        menu.action(l10n::text("New File"), NewFile.boxed_clone())
                             .action(
-                                "New Center Terminal",
+                                l10n::text("Open File"),
+                                ToggleFileFinder::default().boxed_clone(),
+                            )
+                            .separator()
+                            .action(
+                                l10n::text("Search Project"),
+                                DeploySearch::default().boxed_clone(),
+                            )
+                            .action(
+                                l10n::text("Search Symbols"),
+                                ToggleProjectSymbols.boxed_clone(),
+                            )
+                            .separator()
+                            .action(
+                                l10n::text("New Terminal"),
+                                NewTerminal::default().boxed_clone(),
+                            )
+                            .action(
+                                l10n::text("New Center Terminal"),
                                 NewCenterTerminal::default().boxed_clone(),
                             )
                     }))
@@ -4239,7 +4251,7 @@ fn default_render_tab_bar_buttons(
                     IconButton::new("split", IconName::Split)
                         .icon_size(IconSize::Small)
                         .disabled(!can_clone && !can_split_move),
-                    Tooltip::text("Split Pane"),
+                    Tooltip::text(l10n::text("Split Pane")),
                 )
                 .anchor(Anchor::TopRight)
                 .with_handle(pane.split_item_context_menu_handle.clone())
@@ -4247,15 +4259,21 @@ fn default_render_tab_bar_buttons(
                     ContextMenu::build(window, cx, |menu, _, _| {
                         let mode = SplitMode::MovePane;
                         if can_split_move {
-                            menu.action("Split Right", SplitRight { mode }.boxed_clone())
-                                .action("Split Left", SplitLeft { mode }.boxed_clone())
-                                .action("Split Up", SplitUp { mode }.boxed_clone())
-                                .action("Split Down", SplitDown { mode }.boxed_clone())
+                            menu.action(
+                                l10n::text("Split Right"),
+                                SplitRight { mode }.boxed_clone(),
+                            )
+                            .action(l10n::text("Split Left"), SplitLeft { mode }.boxed_clone())
+                            .action(l10n::text("Split Up"), SplitUp { mode }.boxed_clone())
+                            .action(l10n::text("Split Down"), SplitDown { mode }.boxed_clone())
                         } else {
-                            menu.action("Split Right", SplitRight::default().boxed_clone())
-                                .action("Split Left", SplitLeft::default().boxed_clone())
-                                .action("Split Up", SplitUp::default().boxed_clone())
-                                .action("Split Down", SplitDown::default().boxed_clone())
+                            menu.action(
+                                l10n::text("Split Right"),
+                                SplitRight::default().boxed_clone(),
+                            )
+                            .action(l10n::text("Split Left"), SplitLeft::default().boxed_clone())
+                            .action(l10n::text("Split Up"), SplitUp::default().boxed_clone())
+                            .action(l10n::text("Split Down"), SplitDown::default().boxed_clone())
                         }
                     })
                     .into()
@@ -4272,7 +4290,11 @@ fn default_render_tab_bar_buttons(
                 }))
                 .tooltip(move |_window, cx| {
                     Tooltip::for_action(
-                        if zoomed { "Zoom Out" } else { "Zoom In" },
+                        if zoomed {
+                            l10n::text("Zoom Out")
+                        } else {
+                            l10n::text("Zoom In")
+                        },
                         &ToggleZoom,
                         cx,
                     )

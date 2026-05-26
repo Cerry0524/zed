@@ -987,14 +987,20 @@ impl SettingsPageItem {
                                 .relative()
                                 .w_full()
                                 .max_w_1_2()
-                                .child(Label::new(sub_page_link.title.clone()))
+                                .child(Label::new(
+                                    l10n::text_or_original(sub_page_link.title.as_ref())
+                                        .into_owned(),
+                                ))
                                 .when_some(
                                     sub_page_link.description.as_ref(),
                                     |this, description| {
                                         this.child(
-                                            Label::new(description.clone())
-                                                .size(LabelSize::Small)
-                                                .color(Color::Muted),
+                                            Label::new(
+                                                l10n::text_or_original(description.as_ref())
+                                                    .into_owned(),
+                                            )
+                                            .size(LabelSize::Small)
+                                            .color(Color::Muted),
                                         )
                                     },
                                 ),
@@ -1122,14 +1128,19 @@ impl SettingsPageItem {
                                 .relative()
                                 .w_full()
                                 .max_w_1_2()
-                                .child(Label::new(action_link.title.clone()))
+                                .child(Label::new(
+                                    l10n::text_or_original(action_link.title.as_ref()).into_owned(),
+                                ))
                                 .when_some(
                                     action_link.description.as_ref(),
                                     |this, description| {
                                         this.child(
-                                            Label::new(description.clone())
-                                                .size(LabelSize::Small)
-                                                .color(Color::Muted),
+                                            Label::new(
+                                                l10n::text_or_original(description.as_ref())
+                                                    .into_owned(),
+                                            )
+                                            .size(LabelSize::Small)
+                                            .color(Color::Muted),
                                         )
                                     },
                                 ),
@@ -1137,7 +1148,8 @@ impl SettingsPageItem {
                         .child(
                             Button::new(
                                 ("action-link".into(), action_link.title.clone()),
-                                action_link.button_text.clone(),
+                                l10n::text_or_original(action_link.button_text.as_ref())
+                                    .into_owned(),
                             )
                             .tab_index(0_isize)
                             .end_icon(
@@ -1214,7 +1226,8 @@ fn render_settings_item(
                             |this, file_set_in| {
                                 this.child(
                                     Label::new(format!(
-                                        "—  Modified in {}",
+                                        "—  {} {}",
+                                        l10n::text("Modified in"),
                                         settings_window
                                             .display_name(&file_set_in)
                                             .expect("File name should exist")
@@ -1226,7 +1239,7 @@ fn render_settings_item(
                         ),
                 )
                 .child(
-                    Label::new(SharedString::new_static(setting_item.description))
+                    Label::new(l10n::text(setting_item.description))
                         .size(LabelSize::Small)
                         .color(Color::Muted)
                         .render_code_spans(),

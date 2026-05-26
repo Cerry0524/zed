@@ -1,7 +1,17 @@
+use std::borrow::Cow;
+
 pub const PERSONAL_FORK_LOCALE: &str = "zh-Hant";
 
 pub fn text(english: &'static str) -> &'static str {
     text_for_locale(PERSONAL_FORK_LOCALE, english)
+}
+
+pub fn text_or_original(english: &str) -> Cow<'_, str> {
+    if is_traditional_chinese_locale(PERSONAL_FORK_LOCALE) {
+        zh_hant_text(english).map_or(Cow::Borrowed(english), Cow::Borrowed)
+    } else {
+        Cow::Borrowed(english)
+    }
 }
 
 pub fn text_for_locale(locale: &str, english: &'static str) -> &'static str {
@@ -23,6 +33,31 @@ pub fn is_traditional_chinese_locale(locale: &str) -> bool {
 fn zh_hant_text(english: &str) -> Option<&'static str> {
     Some(match english {
         "Command Palette" => "命令選擇區",
+        "Execute a command..." => "執行命令...",
+        "workspace: open" => "工作區：開啟",
+        "workspace: save" => "工作區：儲存",
+        "workspace: save all" => "工作區：全部儲存",
+        "workspace: save as" => "工作區：另存新檔",
+        "workspace: close window" => "工作區：關閉視窗",
+        "workspace: new window" => "工作區：新增視窗",
+        "workspace: reload" => "工作區：重新載入",
+        "file finder: toggle" => "檔案尋找器：切換",
+        "command palette: toggle" => "命令選擇區：切換",
+        "terminal panel: toggle" => "終端機面板：切換",
+        "project panel: toggle focus" => "專案面板：切換焦點",
+        "outline: toggle" => "大綱：切換",
+        "search: focus search" => "搜尋：聚焦搜尋",
+        "search: toggle replace" => "搜尋：切換取代",
+        "search: select next match" => "搜尋：選取下一個相符項目",
+        "search: select previous match" => "搜尋：選取上一個相符項目",
+        "editor: go to definition" => "編輯器：移至定義",
+        "editor: go to type definition" => "編輯器：移至型別定義",
+        "editor: find all references" => "編輯器：尋找所有參考",
+        "editor: format" => "編輯器：格式化",
+        "editor: rename" => "編輯器：重新命名",
+        "editor: backspace" => "編輯器：退格",
+        "zed: extensions" => "Zed：延伸模組",
+        "zed: install dev extension" => "Zed：安裝開發用延伸模組",
         "Settings" => "設定",
         "Settings Editor" => "設定編輯器",
         "Settings File" => "設定檔",
@@ -49,6 +84,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Pane" => "窗格",
         "Window" => "視窗",
         "Search" => "搜尋",
+        "Search Project" => "搜尋專案",
+        "Search Symbols" => "搜尋符號",
         "Replace" => "取代",
         "Search…" => "搜尋…",
         "Replace with…" => "取代為…",
@@ -98,6 +135,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "click to change min width" => "按一下以變更最小寬度",
         "Open" => "開啟",
         "Open…" => "開啟…",
+        "Open File" => "開啟檔案",
         "Open File..." => "開啟檔案...",
         "Open Folder..." => "開啟資料夾...",
         "Open Recent..." => "開啟最近使用...",
@@ -120,6 +158,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Save As…" => "另存新檔…",
         "Save All" => "全部儲存",
         "New" => "新增",
+        "New File" => "新增檔案",
         "New Window" => "新增視窗",
         "Delete" => "刪除",
         "Remove" => "移除",
@@ -155,6 +194,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Assistant" => "助理",
         "Model" => "模型",
         "Thread" => "對話串",
+        "Image" => "影像",
+        "Apply" => "套用",
         "Ok" | "OK" => "確定",
         "Cancel" => "取消",
         "About Zed" => "關於 Zed",
@@ -242,6 +283,110 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Change Keybinding…" => "變更鍵盤快速鍵…",
         "Add Keybinding…" => "新增鍵盤快速鍵…",
         "Run" => "執行",
+        "Open Agent Panel" => "開啟代理面板",
+        "Title generation failed. Retry" => "標題產生失敗。請重試",
+        "Collaborate with Agents" => "與代理協作",
+        "Run multiple threads at once, mix and match any ACP-compatible agent, and keep work conflict-free with worktrees." => {
+            "一次執行多個對話串，混用任何 ACP 相容代理，並透過工作樹避免工作衝突。"
+        }
+        "New Thread" => "新增對話串",
+        "Start New Thread" => "開始新對話串",
+        "New Chat" => "新增聊天",
+        "Chat" => "聊天",
+        "Prompt" => "提示",
+        "Add a prompt…" => "新增提示…",
+        "Subagents Awaiting Permission:" => "等待權限的子代理：",
+        "Scroll to Subagent" => "捲動至子代理",
+        "Awaiting Confirmation" => "等待確認",
+        "Scroll" => "捲動",
+        "Clear All" => "全部清除",
+        "Current:" => "目前：",
+        "All Done" => "全部完成",
+        "Plan" => "計畫",
+        "Clear Plan" => "清除計畫",
+        "Completed Plan" => "已完成計畫",
+        "Edits" => "編輯",
+        "Review Changes" => "檢閱變更",
+        "Queue and Send" => "加入佇列並傳送",
+        "Send Immediately" => "立即傳送",
+        "Add Context" => "新增內容",
+        "Context" => "內容",
+        "Cost" => "費用",
+        "Rules" => "規則",
+        "Files & Directories" => "檔案與目錄",
+        "Threads" => "對話串",
+        "Branch Diff" => "分支差異",
+        "Open Thread as Markdown" => "以 Markdown 開啟對話串",
+        "Scroll To Most Recent User Prompt" => "捲動至最近的使用者提示",
+        "Scroll To Top" => "捲動至頂端",
+        "Sync with source thread" => "與來源對話串同步",
+        "Share Thread" => "分享對話串",
+        "Loading Added Context…" => "正在載入新增內容…",
+        "Type to Send" => "輸入後傳送",
+        "Send Message" => "傳送訊息",
+        "Restore Checkpoint" => "還原檢查點",
+        "Stop Subagent" => "停止子代理",
+        "Minimize Subagent" => "最小化子代理",
+        "Make Subagent Full Screen" => "讓子代理全螢幕",
+        "Subagent Output" => "子代理輸出",
+        "Run Command" => "執行命令",
+        "Retry Generation" => "重試產生",
+        "Request Refused" => "要求遭拒",
+        "Authentication Required" => "需要驗證",
+        "Free Usage Exceeded" => "免費用量已超出",
+        "Context Too Large" => "內容太大",
+        "Copy Error Message" => "複製錯誤訊息",
+        "Resumed Session" => "已繼續工作階段",
+        "Codex on Windows" => "Windows 上的 Codex",
+        "Open in WSL" => "在 WSL 中開啟",
+        "Dismiss Warning" => "關閉警告",
+        "Authenticate" => "驗證",
+        "Provider" => "提供者",
+        "Add Provider" => "新增提供者",
+        "LLM Providers" => "LLM 提供者",
+        "Add at least one provider to use AI-powered features with Zed's native agent." => {
+            "至少新增一個提供者，才能在 Zed 原生代理中使用 AI 功能。"
+        }
+        "Add Server" => "新增伺服器",
+        "No MCP servers added yet." => "尚未新增 MCP 伺服器。",
+        "Search agents..." => "搜尋代理...",
+        "Unavailable" => "無法使用",
+        "ACP Registry" => "ACP 登錄檔",
+        "Learn More" => "了解更多",
+        "Configure Providers" => "設定提供者",
+        "API Keys" => "API 金鑰",
+        "Add your own keys to use AI without signing in." => {
+            "新增你自己的金鑰，不登入也能使用 AI。"
+        }
+        "Reinstall Copilot and Sign In" => "重新安裝 Copilot 並登入",
+        "Copilot Enabled!" => "Copilot 已啟用！",
+        "You're all set to use GitHub Copilot." => "你已可開始使用 GitHub Copilot。",
+        "Done" => "完成",
+        "You must have an active GitHub Copilot subscription." => {
+            "你必須有有效的 GitHub Copilot 訂閱。"
+        }
+        "Enable Copilot by connecting your existing license once you have subscribed or renewed your subscription." => {
+            "訂閱或續訂後，連接既有授權即可啟用 Copilot。"
+        }
+        "Subscribe on GitHub" => "在 GitHub 上訂閱",
+        "An Error Happened" => "發生錯誤",
+        "Copilot had issues starting. You can try reinstalling it and signing in again." => {
+            "Copilot 啟動時發生問題。你可以嘗試重新安裝並再次登入。"
+        }
+        "Sign Out" => "登出",
+        "Authorized" => "已授權",
+        "Sign In" => "登入",
+        "Signing in…" => "正在登入…",
+        "Approve" => "核准",
+        "Reject" => "拒絕",
+        "Reject All" => "全部拒絕",
+        "Keep All" => "全部保留",
+        "Continue Iterating" => "繼續迭代",
+        "No changes to review" => "沒有可檢閱的變更",
+        "Generating Changes…" => "正在產生變更…",
+        "Allow" => "允許",
+        "Deny" => "拒絕",
+        "Ask" => "詢問",
         "View Diff" => "檢視差異",
         "View Branch Diff" => "檢視分支差異",
         "Stage" => "暫存",
@@ -279,6 +424,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Close Terminal Tab" => "關閉終端機索引標籤",
         "Paste Text" => "貼上文字",
         "Clear" => "清除",
+        "Enter to Confirm" => "按 Enter 確認",
         "Inline Assist" => "行內輔助",
         "Add to Agent Thread" => "新增至代理對話串",
         "Failed to spawn terminal" => "無法產生終端機",
@@ -321,6 +467,98 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Show Stage/Restore Buttons" => "顯示暫存/還原按鈕",
         "Reset to Default" => "重設為預設值",
         "Copy Link" => "複製連結",
+        "Modified in" => "已修改於",
+        "What to do when using the 'close active item' action with no tabs." => {
+            "沒有索引標籤時，使用「關閉作用中項目」動作要執行的行為。"
+        }
+        "What to do when the last window is closed." => "最後一個視窗關閉時要執行的行為。",
+        "Use native OS dialogs for 'Open' and 'Save As'." => {
+            "針對「開啟」與「另存新檔」使用作業系統原生對話框。"
+        }
+        "Use native OS dialogs for confirmations." => "確認時使用作業系統原生對話框。",
+        "Hide the values of variables in private files." => "隱藏私人檔案中的變數值。",
+        "Font family for editor text." => "編輯器文字的字型系列。",
+        "Font size for editor text." => "編輯器文字的字型大小。",
+        "Font weight for editor text (100-900)." => "編輯器文字的字重 (100-900)。",
+        "Font family for UI elements." => "UI 元素的字型系列。",
+        "Font size for UI elements." => "UI 元素的字型大小。",
+        "Font weight for UI elements (100-900)." => "UI 元素的字重 (100-900)。",
+        "Line height for editor text." => "編輯器文字的行高。",
+        "Font size for agent response text in the agent panel. Falls back to the regular UI font size." => {
+            "代理面板中代理回覆文字的字型大小。未設定時會使用一般 UI 字型大小。"
+        }
+        "Font size for user messages text in the agent panel." => {
+            "代理面板中使用者訊息文字的字型大小。"
+        }
+        "Restricted Mode" => "受限模式",
+        "You're in Restricted Mode" => "你正處於受限模式",
+        "Mark this project as trusted and unlock all features" => {
+            "將此專案標記為信任並解鎖所有功能"
+        }
+        "Restricted Mode prevents:" => "受限模式會防止：",
+        "Review .zed/settings.json for any extensions or commands configured by this project." => {
+            "請檢查 .zed/settings.json 中此專案設定的任何延伸模組或命令。"
+        }
+        "Project settings from being applied" => "套用專案設定",
+        "Language servers from running" => "執行語言伺服器",
+        "MCP Server integrations from installing" => "安裝 MCP Server 整合",
+        "Stay in Restricted Mode" => "保持受限模式",
+        "Trust and Continue" => "信任並繼續",
+        "Disconnected" => "已中斷連線",
+        "Create Branch" => "建立分支",
+        "Branch & Stash" => "分支與貯藏",
+        "Restart to update Zed" => "重新啟動以更新 Zed",
+        "Open Application Menu" => "開啟應用程式選單",
+        "New..." => "新增...",
+        "Leave Call" => "離開通話",
+        "Unmute Microphone" => "取消麥克風靜音",
+        "Mute Microphone" => "麥克風靜音",
+        "Audio will be unmuted" => "音訊將取消靜音",
+        "Share" => "分享",
+        "Unshare" => "停止分享",
+        "Stop sharing project with call participants" => "停止與通話參與者分享專案",
+        "Share project with call participants" => "與通話參與者分享專案",
+        "This project may not be shared in a public channel." => "此專案不可在公開頻道中分享。",
+        "Search threads…" => "搜尋對話串…",
+        "Search all threads…" => "搜尋所有對話串…",
+        "Cancel Restore" => "取消還原",
+        "Import Threads" => "匯入對話串",
+        "Choose from Local Folders" => "從本機資料夾選擇",
+        "Select" => "選取",
+        "No threads yet" => "尚無對話串",
+        "Archive Thread" => "封存對話串",
+        "Remote Project" => "遠端專案",
+        "Close Worktree" => "關閉工作樹",
+        "Stop Generation" => "停止產生",
+        "Discard Draft" => "捨棄草稿",
+        "Clear Search" => "清除搜尋",
+        "Toggle Sidebar" => "切換側邊欄",
+        "Focus Sidebar" => "聚焦側邊欄",
+        "View Theme Docs" => "檢視佈景主題文件",
+        "Install Themes" => "安裝佈景主題",
+        "View Icon Theme Docs" => "檢視圖示佈景主題文件",
+        "Install Icon Themes" => "安裝圖示佈景主題",
+        "Reconnect" => "重新連線",
+        "Add Local Folders" => "新增本機資料夾",
+        "Add Remote Folder" => "新增遠端資料夾",
+        "Open Local Folders" => "開啟本機資料夾",
+        "Open Remote Folder" => "開啟遠端資料夾",
+        "Actions" => "動作",
+        "Activate" => "啟用",
+        "Remove Folder" => "移除資料夾",
+        "Remove from Window" => "從視窗移除",
+        "Delete from Recent Projects" => "從最近專案中刪除",
+        "Get Started" => "開始使用",
+        "Open Project" => "開啟專案",
+        "Clone Repository" => "複製儲存庫",
+        "Open Command Palette" => "開啟命令選擇區",
+        "Customize Keymaps" => "自訂按鍵對應",
+        "Explore Extensions" => "探索延伸模組",
+        "Recent Projects" => "最近專案",
+        "Welcome back to Zed" => "歡迎回到 Zed",
+        "Welcome to Zed" => "歡迎使用 Zed",
+        "The editor for what's next" => "面向下一步的編輯器",
+        "Return to Onboarding" => "返回新手導覽",
         "Create a Skill" => "建立技能",
         "Delete Skill" => "刪除技能",
         "Clear Filter" => "清除篩選",
@@ -440,5 +678,39 @@ mod tests {
         assert_eq!(text("Not Installed"), "未安裝");
         assert_eq!(text("Search & Files"), "搜尋與檔案");
         assert_eq!(text("Version Control"), "版本控制");
+    }
+
+    #[test]
+    fn third_slice_translates_command_settings_agent_and_chrome_surfaces() {
+        assert_eq!(text("Execute a command..."), "執行命令...");
+        assert_eq!(text("workspace: open"), "工作區：開啟");
+        assert_eq!(text("editor: go to definition"), "編輯器：移至定義");
+        assert_eq!(text("Open Agent Panel"), "開啟代理面板");
+        assert_eq!(text("New Thread"), "新增對話串");
+        assert_eq!(text("Awaiting Confirmation"), "等待確認");
+        assert_eq!(text("Queue and Send"), "加入佇列並傳送");
+        assert_eq!(text("Open Thread as Markdown"), "以 Markdown 開啟對話串");
+        assert_eq!(text("Configure Providers"), "設定提供者");
+        assert_eq!(text("Restricted Mode"), "受限模式");
+        assert_eq!(text("Create Branch"), "建立分支");
+        assert_eq!(text("Sign In"), "登入");
+        assert_eq!(text("Search threads…"), "搜尋對話串…");
+        assert_eq!(text("No threads yet"), "尚無對話串");
+        assert_eq!(text("View Theme Docs"), "檢視佈景主題文件");
+        assert_eq!(text("Open Local Folders"), "開啟本機資料夾");
+        assert_eq!(text("Welcome to Zed"), "歡迎使用 Zed");
+        assert_eq!(
+            text("What to do when using the 'close active item' action with no tabs."),
+            "沒有索引標籤時，使用「關閉作用中項目」動作要執行的行為。"
+        );
+        assert_eq!(
+            text("Use native OS dialogs for 'Open' and 'Save As'."),
+            "針對「開啟」與「另存新檔」使用作業系統原生對話框。"
+        );
+        assert_eq!(
+            text("Font family for editor text."),
+            "編輯器文字的字型系列。"
+        );
+        assert_eq!(text("Font size for UI elements."), "UI 元素的字型大小。");
     }
 }

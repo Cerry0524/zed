@@ -10,7 +10,7 @@ use gpui::{
 };
 use project::project_settings::ProjectSettings;
 use settings::Settings as _;
-use ui::{ButtonLike, CommonAnimationExt, ConfiguredApiCard, Vector, VectorName, prelude::*};
+use ui::{ButtonLike, CommonAnimationExt, ConfiguredApiCard, Vector, VectorName, l10n, prelude::*};
 use util::ResultExt as _;
 use workspace::{AppState, Toast, Workspace, notifications::NotificationId};
 
@@ -317,7 +317,7 @@ impl CopilotCodeVerification {
                             }),
                     )
                     .child(
-                        Button::new("copilot-enable-cancel-button", "Cancel")
+                        Button::new("copilot-enable-cancel-button", l10n::text("Cancel"))
                             .full_width()
                             .size(ButtonSize::Medium)
                             .on_click(cx.listener(|_, _, _, cx| {
@@ -332,10 +332,12 @@ impl CopilotCodeVerification {
             .gap_2()
             .text_center()
             .justify_center()
-            .child(Headline::new("Copilot Enabled!").size(HeadlineSize::Large))
-            .child(Label::new("You're all set to use GitHub Copilot.").color(Color::Muted))
+            .child(Headline::new(l10n::text("Copilot Enabled!")).size(HeadlineSize::Large))
             .child(
-                Button::new("copilot-enabled-done-button", "Done")
+                Label::new(l10n::text("You're all set to use GitHub Copilot.")).color(Color::Muted),
+            )
+            .child(
+                Button::new("copilot-enabled-done-button", l10n::text("Done"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .size(ButtonSize::Medium)
@@ -349,26 +351,33 @@ impl CopilotCodeVerification {
             .as_deref()
             .unwrap_or(COPILOT_SIGN_UP_URL)
             .to_owned();
-        let description = "Enable Copilot by connecting your existing license once you have subscribed or renewed your subscription.";
+        let description = l10n::text(
+            "Enable Copilot by connecting your existing license once you have subscribed or renewed your subscription.",
+        );
 
         v_flex()
             .gap_2()
             .text_center()
             .justify_center()
             .child(
-                Headline::new("You must have an active GitHub Copilot subscription.")
-                    .size(HeadlineSize::Large),
+                Headline::new(l10n::text(
+                    "You must have an active GitHub Copilot subscription.",
+                ))
+                .size(HeadlineSize::Large),
             )
             .child(Label::new(description).color(Color::Warning))
             .child(
-                Button::new("copilot-subscribe-button", "Subscribe on GitHub")
-                    .full_width()
-                    .style(ButtonStyle::Outlined)
-                    .size(ButtonSize::Medium)
-                    .on_click(move |_, _, cx| cx.open_url(&sign_up_url)),
+                Button::new(
+                    "copilot-subscribe-button",
+                    l10n::text("Subscribe on GitHub"),
+                )
+                .full_width()
+                .style(ButtonStyle::Outlined)
+                .size(ButtonSize::Medium)
+                .on_click(move |_, _, cx| cx.open_url(&sign_up_url)),
             )
             .child(
-                Button::new("copilot-subscribe-cancel-button", "Cancel")
+                Button::new("copilot-subscribe-cancel-button", l10n::text("Cancel"))
                     .full_width()
                     .size(ButtonSize::Medium)
                     .on_click(cx.listener(|_, _, _, cx| cx.emit(DismissEvent))),
@@ -380,21 +389,22 @@ impl CopilotCodeVerification {
             .gap_2()
             .text_center()
             .justify_center()
-            .child(Headline::new("An Error Happened").size(HeadlineSize::Large))
-            .child(Label::new(ERROR_LABEL).color(Color::Muted))
+            .child(Headline::new(l10n::text("An Error Happened")).size(HeadlineSize::Large))
+            .child(Label::new(l10n::text(ERROR_LABEL)).color(Color::Muted))
             .child(
-                Button::new("copilot-subscribe-button", "Reinstall Copilot and Sign In")
-                    .full_width()
-                    .style(ButtonStyle::Outlined)
-                    .size(ButtonSize::Medium)
-                    .start_icon(
-                        Icon::new(IconName::Download)
-                            .size(IconSize::Small)
-                            .color(Color::Muted),
-                    )
-                    .on_click(move |_, window, cx| {
-                        reinstall_and_sign_in(copilot.clone(), window, cx)
-                    }),
+                Button::new(
+                    "copilot-subscribe-button",
+                    l10n::text("Reinstall Copilot and Sign In"),
+                )
+                .full_width()
+                .style(ButtonStyle::Outlined)
+                .size(ButtonSize::Medium)
+                .start_icon(
+                    Icon::new(IconName::Download)
+                        .size(IconSize::Small)
+                        .color(Color::Muted),
+                )
+                .on_click(move |_, window, cx| reinstall_and_sign_in(copilot.clone(), window, cx)),
             )
     }
 
@@ -689,8 +699,8 @@ impl Render for ConfigurationView {
         let is_authenticated = &self.is_authenticated;
 
         if is_authenticated(cx) {
-            return ConfiguredApiCard::new("Authorized")
-                .button_label("Sign Out")
+            return ConfiguredApiCard::new(l10n::text("Authorized"))
+                .button_label(l10n::text("Sign Out"))
                 .on_click(|_, window, cx| {
                     if let Some(auth) = GlobalCopilotAuth::try_global(cx) {
                         initiate_sign_out(auth.0.clone(), window, cx);

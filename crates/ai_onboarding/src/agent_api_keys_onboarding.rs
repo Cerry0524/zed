@@ -1,6 +1,6 @@
 use gpui::{Action, IntoElement, ParentElement, RenderOnce, point};
 use language_model::{IconOrSvg, LanguageModelRegistry, ZED_CLOUD_PROVIDER_ID};
-use ui::{Divider, List, ListBulletItem, prelude::*};
+use ui::{Divider, List, ListBulletItem, l10n, prelude::*};
 
 pub struct ApiKeysWithProviders {
     configured_providers: Vec<(IconOrSvg, SharedString)>,
@@ -127,18 +127,18 @@ impl RenderOnce for ApiKeysWithoutProviders {
                 h_flex()
                     .gap_2()
                     .child(
-                        Label::new("API Keys")
+                        Label::new(l10n::text("API Keys"))
                             .size(LabelSize::Small)
                             .color(Color::Muted)
                             .buffer_font(cx),
                     )
                     .child(Divider::horizontal()),
             )
-            .child(List::new().child(ListBulletItem::new(
+            .child(List::new().child(ListBulletItem::new(l10n::text(
                 "Add your own keys to use AI without signing in.",
-            )))
+            ))))
             .child(
-                Button::new("configure-providers", "Configure Providers")
+                Button::new("configure-providers", l10n::text("Configure Providers"))
                     .full_width()
                     .style(ButtonStyle::Outlined)
                     .on_click(move |_, window, cx| {

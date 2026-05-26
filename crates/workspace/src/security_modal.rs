@@ -18,7 +18,7 @@ use smallvec::SmallVec;
 use theme::ActiveTheme;
 use ui::{
     AlertModal, Checkbox, FluentBuilder, KeyBinding, ListBulletItem, ToggleState, WithScrollbar,
-    prelude::*,
+    l10n, prelude::*,
 };
 
 use crate::{DismissDecision, ModalView, ToggleWorktreeSecurity};
@@ -179,18 +179,27 @@ impl Render for SecurityModal {
                                 .color(Color::Muted),
                             )
                             .child(
-                                Label::new(
+                                Label::new(l10n::text(
                                     "Review .zed/settings.json for any extensions or commands configured by this project.",
-                                )
+                                ))
                                 .color(Color::Muted),
                             ),
                     )
                     .child(
                         v_flex()
-                            .child(Label::new("Restricted Mode prevents:").color(Color::Muted))
-                            .child(ListBulletItem::new("Project settings from being applied"))
-                            .child(ListBulletItem::new("Language servers from running"))
-                            .child(ListBulletItem::new("MCP Server integrations from installing")),
+                            .child(
+                                Label::new(l10n::text("Restricted Mode prevents:"))
+                                    .color(Color::Muted),
+                            )
+                            .child(ListBulletItem::new(l10n::text(
+                                "Project settings from being applied",
+                            )))
+                            .child(ListBulletItem::new(l10n::text(
+                                "Language servers from running",
+                            )))
+                            .child(ListBulletItem::new(l10n::text(
+                                "MCP Server integrations from installing",
+                            ))),
                     )
                     .map(|this| match trust_label {
                         Some(trust_label) => this.child(
@@ -214,7 +223,7 @@ impl Render for SecurityModal {
                     .gap_1()
                     .justify_end()
                     .child(
-                        Button::new("rm", "Stay in Restricted Mode")
+                        Button::new("rm", l10n::text("Stay in Restricted Mode"))
                             .key_binding(
                                 KeyBinding::for_action(
                                     &ToggleWorktreeSecurity,
@@ -229,7 +238,7 @@ impl Render for SecurityModal {
                             })),
                     )
                     .child(
-                        Button::new("tc", "Trust and Continue")
+                        Button::new("tc", l10n::text("Trust and Continue"))
                             .style(ButtonStyle::Filled)
                             .layer(ui::ElevationIndex::ModalSurface)
                             .key_binding(

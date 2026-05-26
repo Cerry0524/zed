@@ -45,7 +45,7 @@ use std::{
 use ui::{
     CommonAnimationExt, IconButtonShape, KeyBinding, List, ListItem, ListSeparator, Modal,
     ModalFooter, ModalHeader, Navigable, NavigableEntry, ScrollAxes, Scrollbars, Section, Tooltip,
-    WithScrollbar, prelude::*,
+    WithScrollbar, l10n, prelude::*,
 };
 use util::{
     ResultExt,
@@ -2847,16 +2847,16 @@ impl RemoteServerProjects {
                     h_flex()
                         .gap_1()
                         .child(
-                            Button::new("open_new_window", "New Window")
+                            Button::new("open_new_window", l10n::text("New Window"))
                                 .key_binding(KeyBinding::for_action(&menu::SecondaryConfirm, cx))
                                 .on_click(|_, window, cx| {
                                     window.dispatch_action(menu::SecondaryConfirm.boxed_clone(), cx)
                                 }),
                         )
-                        .child(confirm_button("Open".into()))
+                        .child(confirm_button(l10n::text("Open").into()))
                         .into_any_element()
                 } else {
-                    confirm_button("Select".into()).into_any_element()
+                    confirm_button(l10n::text("Select").into()).into_any_element()
                 }
             }))
             .into_any_element()

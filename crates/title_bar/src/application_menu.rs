@@ -5,7 +5,7 @@ use schemars::JsonSchema;
 use serde::Deserialize;
 
 use smallvec::SmallVec;
-use ui::{ContextMenu, PopoverMenu, PopoverMenuHandle, Tooltip, prelude::*};
+use ui::{ContextMenu, PopoverMenu, PopoverMenuHandle, Tooltip, l10n, prelude::*};
 
 use crate::title_bar_settings::TitleBarSettings;
 
@@ -168,7 +168,7 @@ impl ApplicationMenu {
                         )
                         .style(ButtonStyle::Subtle)
                         .icon_size(IconSize::Small),
-                        Tooltip::text("Open Application Menu"),
+                        Tooltip::text(l10n::text("Open Application Menu")),
                     )
                     .with_handle(handle),
             )

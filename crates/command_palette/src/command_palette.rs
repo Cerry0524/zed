@@ -111,7 +111,7 @@ impl CommandPalette {
                 }
 
                 Some(Command {
-                    name: humanize_action_name(action.name()),
+                    name: l10n::text_or_original(&humanize_action_name(action.name())).into_owned(),
                     action,
                 })
             })
@@ -316,13 +316,19 @@ impl CommandPaletteDelegate {
             {
                 matches.remove(idx);
             }
+            let localized_string = l10n::text_or_original(&string);
+            let positions = if localized_string.as_ref() == string {
+                positions
+            } else {
+                Vec::new()
+            };
             commands.push(Command {
-                name: string.clone(),
+                name: localized_string.into_owned(),
                 action,
             });
             new_matches.push(StringMatch {
                 candidate_id: commands.len() - 1,
-                string: string.into(),
+                string: commands.last().unwrap().name.clone().into(),
                 positions,
                 score: 0.0,
             })
@@ -377,7 +383,7 @@ impl PickerDelegate for CommandPaletteDelegate {
     type ListItem = ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Execute a command...".into()
+        l10n::text("Execute a command...").into()
     }
 
     fn select_history(

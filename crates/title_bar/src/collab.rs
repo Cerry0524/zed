@@ -18,7 +18,7 @@ use settings::{Settings as _, SettingsLocation};
 use theme::ActiveTheme;
 use ui::{
     Avatar, AvatarAudioStatusIndicator, ContextMenu, ContextMenuItem, Divider, DividerColor,
-    Facepile, PopoverMenu, SplitButton, SplitButtonStyle, TintColor, Tooltip, prelude::*,
+    Facepile, PopoverMenu, SplitButton, SplitButtonStyle, TintColor, Tooltip, l10n, prelude::*,
 };
 use util::rel_path::RelPath;
 use workspace::{ParticipantLocation, notifications::DetachAndPromptErr};
@@ -392,7 +392,7 @@ impl TitleBar {
                 .child(
                     IconButton::new("leave-call", IconName::Exit)
                         .style(ButtonStyle::Subtle)
-                        .tooltip(Tooltip::text("Leave Call"))
+                        .tooltip(Tooltip::text(l10n::text("Leave Call")))
                         .icon_size(IconSize::Small)
                         .on_click(move |_, _window, cx| {
                             ActiveCall::global(cx)
@@ -451,21 +451,25 @@ impl TitleBar {
             children.push(
                 Button::new(
                     "toggle_sharing",
-                    if is_shared { "Unshare" } else { "Share" },
+                    if is_shared {
+                        l10n::text("Unshare")
+                    } else {
+                        l10n::text("Share")
+                    },
                 )
                 .tooltip(Tooltip::text(if is_shared {
-                    "Stop sharing project with call participants"
+                    l10n::text("Stop sharing project with call participants")
                 } else {
-                    "Share project with call participants"
+                    l10n::text("Share project with call participants")
                 }))
                 .style(ButtonStyle::Subtle)
                 .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                 .toggle_state(is_shared)
                 .label_size(LabelSize::Small)
                 .when(is_sharing_disabled, |parent| {
-                    parent.disabled(true).tooltip(Tooltip::text(
+                    parent.disabled(true).tooltip(Tooltip::text(l10n::text(
                         "This project may not be shared in a public channel.",
-                    ))
+                    )))
                 })
                 .on_click(cx.listener(move |this, _, window, cx| {
                     if is_shared {
@@ -492,16 +496,16 @@ impl TitleBar {
                     if is_muted {
                         if is_deafened {
                             Tooltip::with_meta(
-                                "Unmute Microphone",
+                                l10n::text("Unmute Microphone"),
                                 None,
-                                "Audio will be unmuted",
+                                l10n::text("Audio will be unmuted"),
                                 cx,
                             )
                         } else {
-                            Tooltip::simple("Unmute Microphone", cx)
+                            Tooltip::simple(l10n::text("Unmute Microphone"), cx)
                         }
                     } else {
-                        Tooltip::simple("Mute Microphone", cx)
+                        Tooltip::simple(l10n::text("Mute Microphone"), cx)
                     }
                 })
                 .style(ButtonStyle::Subtle)

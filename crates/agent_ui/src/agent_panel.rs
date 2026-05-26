@@ -80,7 +80,7 @@ use terminal_view::{TerminalView, terminal_panel::TerminalPanel};
 use theme_settings::ThemeSettings;
 use ui::{
     Button, ContextMenu, ContextMenuEntry, GradientFade, IconButton, KeyBinding, PopoverMenu,
-    PopoverMenuHandle, ProjectEmptyState, Tab, Tooltip, prelude::*, utils::WithRemSize,
+    PopoverMenuHandle, ProjectEmptyState, Tab, Tooltip, l10n, prelude::*, utils::WithRemSize,
 };
 use util::ResultExt as _;
 use workspace::{
@@ -4654,7 +4654,9 @@ impl AgentPanel {
                                     IconButton::new("retry-thread-title", IconName::XCircle)
                                         .icon_color(Color::Error)
                                         .icon_size(IconSize::Small)
-                                        .tooltip(Tooltip::text("Title generation failed. Retry"))
+                                        .tooltip(Tooltip::text(l10n::text(
+                                            "Title generation failed. Retry",
+                                        )))
                                         .on_click({
                                             let conversation_view = conversation_view.clone();
                                             move |_event, _window, cx| {
@@ -4715,13 +4717,15 @@ impl AgentPanel {
                             .into_any_element()
                     }
                 } else {
-                    Label::new("Terminal").into_any_element()
+                    Label::new(l10n::text("Terminal")).into_any_element()
                 }
             }
-            VisibleSurface::Configuration(_) => {
-                Label::new("Settings").truncate().into_any_element()
-            }
-            VisibleSurface::Uninitialized => Label::new("Agent").truncate().into_any_element(),
+            VisibleSurface::Configuration(_) => Label::new(l10n::text("Settings"))
+                .truncate()
+                .into_any_element(),
+            VisibleSurface::Uninitialized => Label::new(l10n::text("Agent"))
+                .truncate()
+                .into_any_element(),
         };
 
         let toolbar_bg = cx.theme().colors().tab_bar_background;

@@ -16,7 +16,7 @@ use menu::{SelectNext, SelectPrevious};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use settings::Settings;
-use ui::{ButtonLike, Divider, DividerColor, KeyBinding, Vector, VectorName, prelude::*};
+use ui::{ButtonLike, Divider, DividerColor, KeyBinding, Vector, VectorName, l10n, prelude::*};
 use util::ResultExt;
 use zed_actions::{
     Extensions, OpenKeymap, OpenOnboarding, OpenSettings, assistant::ToggleFocus, command_palette,
@@ -150,7 +150,7 @@ impl SectionEntry {
     fn render(&self, button_index: usize, focus: &FocusHandle) -> Option<impl IntoElement> {
         self.visibility_guard.is_visible().then(|| {
             SectionButton::new(
-                self.title,
+                l10n::text(self.title),
                 self.icon,
                 self.action,
                 button_index,
@@ -227,7 +227,7 @@ impl<const COLS: usize> Section<COLS> {
     fn render(self, index_offset: usize, focus: &FocusHandle) -> impl IntoElement {
         v_flex()
             .min_w_full()
-            .child(SectionHeader::new(self.title))
+            .child(SectionHeader::new(l10n::text(self.title)))
             .children(
                 self.entries
                     .iter()
@@ -326,7 +326,9 @@ impl WelcomePage {
         let focus = self.focus_handle.clone();
         let color = cx.theme().colors();
 
-        let description = "Run multiple threads at once, mix and match any ACP-compatible agent, and keep work conflict-free with worktrees.";
+        let description = l10n::text(
+            "Run multiple threads at once, mix and match any ACP-compatible agent, and keep work conflict-free with worktrees.",
+        );
 
         v_flex()
             .w_full()
@@ -347,7 +349,7 @@ impl WelcomePage {
                             .color(Color::Muted)
                             .size(IconSize::Small),
                     )
-                    .child(Label::new("Collaborate with Agents")),
+                    .child(Label::new(l10n::text("Collaborate with Agents"))),
             )
             .child(
                 Label::new(description)
@@ -356,7 +358,7 @@ impl WelcomePage {
                     .mb_2(),
             )
             .child(
-                Button::new("open-agent", "Open Agent Panel")
+                Button::new("open-agent", l10n::text("Open Agent Panel"))
                     .full_width()
                     .tab_index(tab_index as isize)
                     .style(ButtonStyle::Outlined)
@@ -377,7 +379,7 @@ impl WelcomePage {
     ) -> impl IntoElement {
         v_flex()
             .w_full()
-            .child(SectionHeader::new("Recent Projects"))
+            .child(SectionHeader::new(l10n::text("Recent Projects")))
             .children(recent_projects)
     }
 
@@ -475,12 +477,14 @@ impl Render for WelcomePage {
                             .gap_4()
                             .child(Vector::square(VectorName::ZedLogo, rems_from_px(45.)))
                             .child(
-                                v_flex().child(Headline::new(welcome_label)).child(
-                                    Label::new("The editor for what's next")
-                                        .size(LabelSize::Small)
-                                        .color(Color::Muted)
-                                        .italic(),
-                                ),
+                                v_flex()
+                                    .child(Headline::new(l10n::text(welcome_label)))
+                                    .child(
+                                        Label::new(l10n::text("The editor for what's next"))
+                                            .size(LabelSize::Small)
+                                            .color(Color::Muted)
+                                            .italic(),
+                                    ),
                             ),
                     )
                     .child(first_section.render(Default::default(), &self.focus_handle))
@@ -493,7 +497,7 @@ impl Render for WelcomePage {
                     .when(!self.fallback_to_recent_projects, |this| {
                         this.child(
                             v_flex().gap_4().child(Divider::horizontal()).child(
-                                Button::new("welcome-exit", "Return to Onboarding")
+                                Button::new("welcome-exit", l10n::text("Return to Onboarding"))
                                     .tab_index(next_tab_index as isize)
                                     .full_width()
                                     .label_size(LabelSize::XSmall)

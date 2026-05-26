@@ -13,7 +13,7 @@ use theme::{Appearance, SystemAppearance, Theme, ThemeMeta, ThemeRegistry};
 use theme_settings::{
     ThemeAppearanceMode, ThemeName, ThemeSelection, ThemeSettings, appearance_to_mode,
 };
-use ui::{ListItem, ListItemSpacing, prelude::*, v_flex};
+use ui::{ListItem, ListItemSpacing, l10n, prelude::*, v_flex};
 use util::ResultExt;
 use workspace::{ModalView, Workspace, ui::HighlightedLabel, with_active_or_new_workspace};
 use zed_actions::{ExtensionCategoryFilter, Extensions};
@@ -514,7 +514,7 @@ impl PickerDelegate for ThemeSelectorDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("docs", "View Theme Docs")
+                    Button::new("docs", l10n::text("View Theme Docs"))
                         .end_icon(
                             Icon::new(IconName::ArrowUpRight)
                                 .size(IconSize::Small)
@@ -525,17 +525,19 @@ impl PickerDelegate for ThemeSelectorDelegate {
                         })),
                 )
                 .child(
-                    Button::new("more-themes", "Install Themes").on_click(cx.listener({
-                        move |_, _, window, cx| {
-                            window.dispatch_action(
-                                Box::new(Extensions {
-                                    category_filter: Some(ExtensionCategoryFilter::Themes),
-                                    id: None,
-                                }),
-                                cx,
-                            );
-                        }
-                    })),
+                    Button::new("more-themes", l10n::text("Install Themes")).on_click(cx.listener(
+                        {
+                            move |_, _, window, cx| {
+                                window.dispatch_action(
+                                    Box::new(Extensions {
+                                        category_filter: Some(ExtensionCategoryFilter::Themes),
+                                        id: None,
+                                    }),
+                                    cx,
+                                );
+                            }
+                        },
+                    )),
                 )
                 .into_any_element(),
         )

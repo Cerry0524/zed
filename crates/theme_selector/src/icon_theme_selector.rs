@@ -9,7 +9,7 @@ use settings::{Settings as _, SettingsStore, update_settings_file};
 use std::sync::Arc;
 use theme::{Appearance, SystemAppearance, ThemeMeta, ThemeRegistry};
 use theme_settings::{IconThemeName, IconThemeSelection, ThemeSettings};
-use ui::{ListItem, ListItemSpacing, prelude::*, v_flex};
+use ui::{ListItem, ListItemSpacing, l10n, prelude::*, v_flex};
 use util::ResultExt;
 use workspace::{ModalView, ui::HighlightedLabel};
 use zed_actions::{ExtensionCategoryFilter, Extensions};
@@ -326,7 +326,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("docs", "View Icon Theme Docs")
+                    Button::new("docs", l10n::text("View Icon Theme Docs"))
                         .end_icon(
                             Icon::new(IconName::ArrowUpRight)
                                 .size(IconSize::Small)
@@ -337,7 +337,7 @@ impl PickerDelegate for IconThemeSelectorDelegate {
                         }),
                 )
                 .child(
-                    Button::new("more-icon-themes", "Install Icon Themes").on_click(
+                    Button::new("more-icon-themes", l10n::text("Install Icon Themes")).on_click(
                         move |_event, window, cx| {
                             window.dispatch_action(
                                 Box::new(Extensions {
