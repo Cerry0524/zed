@@ -229,6 +229,14 @@ rg -n 'Label::new\("|Button::new\([^\n]*"[A-Za-z]|Tooltip::text\("[A-Za-z]|Conte
 | Toolchain selector | `crates/toolchain_selector/src/toolchain_selector.rs` | `Select Toolchain Path`, `Scope`, `Select` | M10 |
 | Open URL / migrate / telemetry | `crates/zed/src/zed/open_url_modal.rs`, `migrate.rs`, `telemetry_log.rs` | `Paste a URL to open.`, `Backup and Update`, `Clear Events`, `Open Raw Log File` | 低頻 visible |
 
+### M10 執行更新
+
+- 已補上 Quick Action Bar、REPL menu、Telemetry log、Migration banner 的固定 UI 文案。
+- 已補上 Collab panel、channel modal、contact finder、incoming/project shared notification、call diagnostics 的主要可見文案。
+- 已補上 Onboarding、Multibuffer hint、Language tools、Dev Container、Toolchain selector、REPL outputs/sessions/notebook 的剩餘固定文案。
+- 已建立 `docs/zh-Hant/allowlist.md`，將品牌/協定、程式識別字、動態外部內容、telemetry/log/test、掃描假陽性分開管理。
+- M10 掃描後仍可接受的典型殘留：`IconButton::new("...")` element id、動態 label、`zed://...` 協定範例、測試/fixture/log 內容。
+
 ### `log-test`
 
 - `*_tests.rs`

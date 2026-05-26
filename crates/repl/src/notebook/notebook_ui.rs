@@ -18,7 +18,7 @@ use language::{Language, LanguageRegistry};
 use log;
 use project::{Project, ProjectEntryId, ProjectPath};
 use settings::Settings as _;
-use ui::{CommonAnimationExt, Tooltip, prelude::*};
+use ui::{CommonAnimationExt, Tooltip, l10n, prelude::*};
 use workspace::item::{ItemEvent, SaveOptions, TabContentParams};
 use workspace::searchable::SearchableItemHandle;
 use workspace::{Item, ItemHandle, Pane, ProjectItem, ToolbarItemLocation};
@@ -1098,7 +1098,9 @@ impl NotebookEditor {
                     .items_center()
                     .child(
                         Self::render_notebook_control("more-menu", IconName::Ellipsis, window, cx)
-                            .tooltip(move |window, cx| (Tooltip::text("More options"))(window, cx)),
+                            .tooltip(move |window, cx| {
+                                (Tooltip::text(l10n::text("More options")))(window, cx)
+                            }),
                     )
                     .child(Self::button_group(window, cx).child({
                         let kernel_status = self.kernel.status();

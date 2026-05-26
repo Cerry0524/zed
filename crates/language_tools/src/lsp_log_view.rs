@@ -19,7 +19,7 @@ use project::{
 use proto::toggle_lsp_logs::LogType;
 use settings::SeedQuerySetting;
 use std::{any::TypeId, borrow::Cow, sync::Arc};
-use ui::{Checkbox, ContextMenu, PopoverMenu, ToggleState, prelude::*};
+use ui::{Checkbox, ContextMenu, PopoverMenu, ToggleState, l10n, prelude::*};
 use util::ResultExt as _;
 use workspace::{
     SplitDirection, ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView, Workspace, WorkspaceId,
@@ -1272,7 +1272,7 @@ impl Render for LspLogToolbarItemView {
                     ),
             )
             .child(
-                Button::new("clear_log_button", "Clear").on_click(cx.listener(
+                Button::new("clear_log_button", l10n::text("Clear")).on_click(cx.listener(
                     |this, _, window, cx| {
                         if let Some(log_view) = this.log_view.as_ref() {
                             log_view.update(cx, |log_view, cx| {

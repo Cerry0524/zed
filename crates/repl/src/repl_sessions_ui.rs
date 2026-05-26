@@ -5,7 +5,7 @@ use gpui::{
 };
 use language::{Buffer, BufferEvent};
 use project::{Project, ProjectItem as _};
-use ui::{ButtonLike, ElevationIndex, KeyBinding, prelude::*};
+use ui::{ButtonLike, ElevationIndex, KeyBinding, l10n, prelude::*};
 use util::ResultExt as _;
 use workspace::item::ItemEvent;
 use workspace::{Workspace, item::Item};
@@ -242,9 +242,11 @@ impl Render for ReplSessionsPage {
         // install kernels. It can be assumed they don't have a running kernel if we have no
         // specifications.
         if kernel_specifications.is_empty() {
-            let instructions = "To start interactively running code in your editor, you need to install and configure Jupyter kernels.";
+            let instructions = l10n::text(
+                "To start interactively running code in your editor, you need to install and configure Jupyter kernels.",
+            );
 
-            return ReplSessionsContainer::new("No Jupyter Kernels Available")
+            return ReplSessionsContainer::new(l10n::text("No Jupyter Kernels Available"))
                 .child(Label::new(instructions))
                 .child(
                     h_flex().w_full().p_4().justify_center().gap_2().child(
@@ -252,7 +254,7 @@ impl Render for ReplSessionsPage {
                             .style(ButtonStyle::Filled)
                             .size(ButtonSize::Large)
                             .layer(ElevationIndex::ModalSurface)
-                            .child(Label::new("Install Kernels"))
+                            .child(Label::new(l10n::text("Install Kernels")))
                             .on_click(move |_, _, cx| {
                                 cx.open_url(
                                     "https://zed.dev/docs/repl#language-specific-instructions",

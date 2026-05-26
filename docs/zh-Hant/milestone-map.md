@@ -217,6 +217,12 @@
 - 不翻 telemetry、tests、debug-only sample、外部資料。
 - commit：`ui: polish Traditional Chinese localization coverage`
 
+### M10 執行摘要
+
+- 補齊 Quick Action Bar、REPL、Telemetry、Migration、Collab、Onboarding、Language tools、Dev Container、Toolchain selector 的靜態 UI 詞條。
+- 建立 `docs/zh-Hant/allowlist.md` 作為 M11 guardrail 腳本的分類來源。
+- M10 掃描中仍保留英文的項目以品牌/協定、程式識別字、動態外部內容、log/test/fixture、掃描假陽性為主。
+
 ## M11：Guardrails
 
 ### 主要檔案

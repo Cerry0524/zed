@@ -6,7 +6,9 @@ use gpui::{AnyView, DismissEvent, FontWeight, SharedString, Task};
 use picker::{Picker, PickerDelegate};
 use project::WorktreeId;
 use std::sync::Arc;
-use ui::{ListItem, ListItemSpacing, PopoverMenu, PopoverMenuHandle, PopoverTrigger, prelude::*};
+use ui::{
+    ListItem, ListItemSpacing, PopoverMenu, PopoverMenuHandle, PopoverTrigger, l10n, prelude::*,
+};
 
 type OnSelect = Box<dyn Fn(KernelSpecification, &mut Window, &mut App)>;
 
@@ -381,16 +383,18 @@ impl PickerDelegate for KernelPickerDelegate {
                                                 )
                                                 .when(*is_recommended, |flex| {
                                                     flex.child(
-                                                        Label::new("Recommended")
+                                                        Label::new(l10n::text("Recommended"))
                                                             .size(LabelSize::XSmall)
                                                             .color(Color::Accent),
                                                     )
                                                 })
                                                 .when(!has_ipykernel, |flex| {
                                                     flex.child(
-                                                        Label::new("ipykernel not installed")
-                                                            .size(LabelSize::XSmall)
-                                                            .color(Color::Warning),
+                                                        Label::new(l10n::text(
+                                                            "ipykernel not installed",
+                                                        ))
+                                                        .size(LabelSize::XSmall)
+                                                        .color(Color::Warning),
                                                     )
                                                 }),
                                         )
@@ -430,7 +434,7 @@ impl PickerDelegate for KernelPickerDelegate {
                 .p_1()
                 .gap_4()
                 .child(
-                    Button::new("kernel-docs", "Kernel Docs")
+                    Button::new("kernel-docs", l10n::text("Kernel Docs"))
                         .end_icon(
                             Icon::new(IconName::ArrowUpRight)
                                 .size(IconSize::Small)

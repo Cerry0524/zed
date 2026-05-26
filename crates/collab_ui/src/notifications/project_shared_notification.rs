@@ -5,7 +5,7 @@ use collections::HashMap;
 use gpui::{App, Size, TaskExt};
 use std::sync::{Arc, Weak};
 
-use ui::{CollabNotification, prelude::*};
+use ui::{CollabNotification, l10n, prelude::*};
 use util::ResultExt;
 use workspace::AppState;
 
@@ -124,19 +124,19 @@ impl Render for ProjectSharedNotification {
         let no_worktree_root_names = self.worktree_root_names.is_empty();
 
         let punctuation = if no_worktree_root_names { "" } else { ":" };
-        let main_label = format!(
-            "{} is sharing a project with you{}",
-            self.owner.github_login.clone(),
-            punctuation
-        );
+        let main_label = l10n::text("{user} is sharing a project with you{punctuation}")
+            .replace("{user}", self.owner.github_login.as_ref())
+            .replace("{punctuation}", punctuation);
 
         div().size_full().font(ui_font).child(
             CollabNotification::new(
                 self.owner.avatar_uri.clone(),
-                Button::new("open", "Open").on_click(cx.listener(move |this, _event, _, cx| {
-                    this.join(cx);
-                })),
-                Button::new("dismiss", "Dismiss").on_click(cx.listener(
+                Button::new("open", l10n::text("Open")).on_click(cx.listener(
+                    move |this, _event, _, cx| {
+                        this.join(cx);
+                    },
+                )),
+                Button::new("dismiss", l10n::text("Dismiss")).on_click(cx.listener(
                     move |this, _event, _, cx| {
                         this.dismiss(cx);
                     },

@@ -11,7 +11,7 @@ use gpui::{
 };
 use picker::{Picker, PickerDelegate};
 use std::sync::Arc;
-use ui::{Avatar, Checkbox, ContextMenu, ListItem, ListItemSpacing, prelude::*};
+use ui::{Avatar, Checkbox, ContextMenu, ListItem, ListItemSpacing, l10n, prelude::*};
 use util::TryFutureExt;
 use workspace::{ModalView, notifications::DetachAndPromptErr};
 
@@ -175,12 +175,12 @@ impl Render for ChannelModal {
                                         ui::ToggleState::Unselected
                                     },
                                 )
-                                .label("Public")
+                                .label(l10n::text("Public"))
                                 .on_click(cx.listener(Self::set_channel_visibility)),
                             )
                             .children(
                                 Some(
-                                    Button::new("copy-link", "Copy Link")
+                                    Button::new("copy-link", l10n::text("Copy Link"))
                                         .label_size(LabelSize::Small)
                                         .on_click(cx.listener(move |this, _, _, cx| {
                                             if let Some(channel) = this
@@ -209,7 +209,7 @@ impl Render for ChannelModal {
                                     .when(mode == Mode::ManageMembers, |this| {
                                         this.border_color(cx.theme().colors().border)
                                     })
-                                    .child(Label::new("Manage Members"))
+                                    .child(Label::new(l10n::text("Manage Members")))
                                     .on_click(cx.listener(|this, _, window, cx| {
                                         this.set_mode(Mode::ManageMembers, window, cx);
                                     })),
@@ -224,7 +224,7 @@ impl Render for ChannelModal {
                                     .when(mode == Mode::InviteMembers, |this| {
                                         this.border_color(cx.theme().colors().border)
                                     })
-                                    .child(Label::new("Invite Members"))
+                                    .child(Label::new(l10n::text("Invite Members")))
                                     .on_click(cx.listener(|this, _, window, cx| {
                                         this.set_mode(Mode::InviteMembers, window, cx);
                                     })),
@@ -425,20 +425,22 @@ impl PickerDelegate for ChannelModalDelegate {
                         Mode::ManageMembers => slot
                             .children(
                                 if request_status == Some(proto::channel_member::Kind::Invitee) {
-                                    Some(Label::new("Invited"))
+                                    Some(Label::new(l10n::text("Invited")))
                                 } else {
                                     None
                                 },
                             )
                             .children(match membership.map(|m| m.role) {
-                                Some(ChannelRole::Admin) => Some(Label::new("Admin")),
-                                Some(ChannelRole::Guest) => Some(Label::new("Guest")),
+                                Some(ChannelRole::Admin) => Some(Label::new(l10n::text("Admin"))),
+                                Some(ChannelRole::Guest) => Some(Label::new(l10n::text("Guest"))),
                                 _ => None,
                             })
                             .when(!is_me, |el| {
                                 el.child(IconButton::new("ellipsis", IconName::Ellipsis))
                             })
-                            .when(is_me, |el| el.child(Label::new("You").color(Color::Muted)))
+                            .when(is_me, |el| {
+                                el.child(Label::new(l10n::text("You")).color(Color::Muted))
+                            })
                             .children(
                                 if let (Some((menu, _)), true) = (&self.context_menu, selected) {
                                     Some(
@@ -455,10 +457,10 @@ impl PickerDelegate for ChannelModalDelegate {
                             ),
                         Mode::InviteMembers => match request_status {
                             Some(proto::channel_member::Kind::Invitee) => {
-                                slot.children(Some(Label::new("Invited")))
+                                slot.children(Some(Label::new(l10n::text("Invited"))))
                             }
                             Some(proto::channel_member::Kind::Member) => {
-                                slot.children(Some(Label::new("Member")))
+                                slot.children(Some(Label::new(l10n::text("Member"))))
                             }
                             _ => slot,
                         },

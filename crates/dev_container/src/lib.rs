@@ -26,6 +26,7 @@ use ui::Switch;
 use ui::ToggleState;
 use ui::Tooltip;
 use ui::h_flex;
+use ui::l10n;
 use ui::rems_from_px;
 use ui::v_flex;
 use util::shell::Shell;
@@ -419,7 +420,7 @@ impl PickerDelegate for TemplatePickerDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("run-action", "Continue")
+                    Button::new("run-action", l10n::text("Continue"))
                         .key_binding(
                             KeyBinding::for_action(&menu::Confirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -612,7 +613,7 @@ impl PickerDelegate for FeaturePickerDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("run-action", "Select Feature")
+                    Button::new("run-action", l10n::text("Select Feature"))
                         .key_binding(
                             KeyBinding::for_action(&menu::Confirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -622,7 +623,7 @@ impl PickerDelegate for FeaturePickerDelegate {
                         }),
                 )
                 .child(
-                    Button::new("run-action-secondary", "Confirm Selections")
+                    Button::new("run-action-secondary", l10n::text("Confirm Selections"))
                         .key_binding(
                             KeyBinding::for_action(&menu::SecondaryConfirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -656,7 +657,8 @@ impl DevContainerModal {
                 .child(
                     div().track_focus(&self.focus_handle).child(
                         ModalHeader::new().child(
-                            Headline::new("Create Dev Container").size(HeadlineSize::XSmall),
+                            Headline::new(l10n::text("Create Dev Container"))
+                                .size(HeadlineSize::XSmall),
                         ),
                     ),
                 )
@@ -685,7 +687,9 @@ impl DevContainerModal {
                                     );
                                     cx.notify();
                                 }))
-                                .child(Label::new("Search for Dev Container Templates")),
+                                .child(Label::new(l10n::text(
+                                    "Search for Dev Container Templates",
+                                ))),
                         ),
                 )
                 .into_any_element(),
@@ -831,7 +835,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(l10n::text("Go Back"))),
                         ),
                 )
                 .into_any_element(),
@@ -909,7 +913,7 @@ impl DevContainerModal {
                                     );
                                     cx.notify();
                                 }))
-                                .child(Label::new("Overwrite")),
+                                .child(Label::new(l10n::text("Overwrite"))),
                         ),
                 )
                 .child(
@@ -930,7 +934,7 @@ impl DevContainerModal {
                                     this.dismiss(&menu::Cancel, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Cancel")),
+                                .child(Label::new(l10n::text("Cancel"))),
                         ),
                 )
                 .into_any_element(),
@@ -947,7 +951,8 @@ impl DevContainerModal {
                 .child(
                     div().track_focus(&self.focus_handle).child(
                         ModalHeader::new().child(
-                            Headline::new("Create Dev Container").size(HeadlineSize::XSmall),
+                            Headline::new(l10n::text("Create Dev Container"))
+                                .size(HeadlineSize::XSmall),
                         ),
                     ),
                 )
@@ -962,7 +967,7 @@ impl DevContainerModal {
                                     .color(Color::Muted)
                                     .with_rotate_animation(2),
                             )
-                            .child(Label::new("Querying template registry...")),
+                            .child(Label::new(l10n::text("Querying template registry..."))),
                     ),
                 )
                 .child(ListSeparator)
@@ -984,7 +989,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(l10n::text("Go Back"))),
                         ),
                 )
                 .into_any_element(),
@@ -999,7 +1004,8 @@ impl DevContainerModal {
                 .child(
                     div().track_focus(&self.focus_handle).child(
                         ModalHeader::new().child(
-                            Headline::new("Create Dev Container").size(HeadlineSize::XSmall),
+                            Headline::new(l10n::text("Create Dev Container"))
+                                .size(HeadlineSize::XSmall),
                         ),
                     ),
                 )
@@ -1014,7 +1020,7 @@ impl DevContainerModal {
                                     .color(Color::Muted)
                                     .with_rotate_animation(2),
                             )
-                            .child(Label::new("Querying features...")),
+                            .child(Label::new(l10n::text("Querying features..."))),
                     ),
                 )
                 .child(ListSeparator)
@@ -1036,7 +1042,7 @@ impl DevContainerModal {
                                     this.accept_message(DevContainerMessage::GoBack, window, cx);
                                     cx.notify();
                                 }))
-                                .child(Label::new("Go Back")),
+                                .child(Label::new(l10n::text("Go Back"))),
                         ),
                 )
                 .into_any_element(),

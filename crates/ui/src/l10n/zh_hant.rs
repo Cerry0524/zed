@@ -301,9 +301,9 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Edit tasks.json..." => "編輯 tasks.json...",
         "Edit debug.json..." => "編輯 debug.json...",
         "Continue" => "繼續",
-        "Step Over" => "逐程序",
-        "Step Into" => "逐步執行",
-        "Step Out" => "跳出",
+        "Step Over" => "逐步跳過",
+        "Step Into" => "逐步進入",
+        "Step Out" => "逐步跳出",
         "Toggle Breakpoint" => "切換中斷點",
         "Edit Breakpoint" => "編輯中斷點",
         "Clear All Breakpoints" => "清除所有中斷點",
@@ -330,8 +330,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         }
         "New Thread" => "新增對話串",
         "Start New Thread" => "開始新對話串",
-        "New Chat" => "新增聊天",
-        "Chat" => "聊天",
+        "New Chat" => "新增對話",
+        "Chat" => "對話",
         "Prompt" => "提示",
         "Add a prompt…" => "新增提示…",
         "Subagents Awaiting Permission:" => "等待權限的子代理：",
@@ -382,12 +382,12 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         }
         "Import Threads from Other Channels" => "從其他頻道匯入對話串",
         "Loading Added Context…" => "正在載入新增內容…",
-        "Type to Send" => "輸入後傳送",
+        "Type to Send" => "輸入即可傳送",
         "Send Message" => "傳送訊息",
         "Restore Checkpoint" => "還原檢查點",
         "Stop Subagent" => "停止子代理",
         "Minimize Subagent" => "最小化子代理",
-        "Make Subagent Full Screen" => "讓子代理全螢幕",
+        "Make Subagent Full Screen" => "以全螢幕顯示子代理",
         "Subagent Output" => "子代理輸出",
         "Run Command" => "執行命令",
         "Retry Generation" => "重試產生",
@@ -423,8 +423,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "View Tools" => "檢視工具",
         "Log Out" => "登出",
         "Authenticate to connect this server" => "驗證以連線此伺服器",
-        "Enter a client secret to connect this server" => "輸入 client secret 以連線此伺服器",
-        "Enter Client Secret" => "輸入 Client Secret",
+        "Enter a client secret to connect this server" => "輸入用戶端密鑰以連線此伺服器",
+        "Enter Client Secret" => "輸入用戶端密鑰",
         "Authenticating…" => "驗證中…",
         "1 tool" => "1 個工具",
         "{count} tools" => "{count} 個工具",
@@ -446,9 +446,9 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "API URL" => "API URL",
         "API Key" => "API 金鑰",
         "Model Name" => "模型名稱",
-        "Max Completion Tokens" => "最大 Completion Token 數",
-        "Max Output Tokens" => "最大 Output Token 數",
-        "Max Tokens" => "最大 Token 數",
+        "Max Completion Tokens" => "最大完成 token 數",
+        "Max Output Tokens" => "最大輸出 token 數",
+        "Max Tokens" => "最大 token 數",
         "Models" => "模型",
         "Add Model" => "新增模型",
         "Remove Model" => "移除模型",
@@ -461,9 +461,9 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "This provider will use an OpenAI compatible API." => "此提供者會使用 OpenAI 相容 API。",
         "Save Provider" => "儲存提供者",
         "Model Name cannot be empty" => "模型名稱不可空白",
-        "Max Completion Tokens must be a number" => "最大 Completion Token 數必須是數字",
-        "Max Output Tokens must be a number" => "最大 Output Token 數必須是數字",
-        "Max Tokens must be a number" => "最大 Token 數必須是數字",
+        "Max Completion Tokens must be a number" => "最大完成 token 數必須是數字",
+        "Max Output Tokens must be a number" => "最大輸出 token 數必須是數字",
+        "Max Tokens must be a number" => "最大 token 數必須是數字",
         "Provider Name cannot be empty" => "提供者名稱不可空白",
         "Provider Name is already taken by another provider" => "提供者名稱已被其他提供者使用",
         "API URL cannot be empty" => "API URL 不可空白",
@@ -494,12 +494,12 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         }
         "Local" => "本機",
         "Remote" => "遠端",
-        "Open Repository" => "開啟 Repository",
+        "Open Repository" => "開啟儲存庫",
         "Enter client secret (leave empty for public clients)" => {
-            "輸入 client secret（公開 client 可留空）"
+            "輸入用戶端密鑰（公開用戶端可留空）"
         }
         "Enter your OAuth client secret, or leave empty for public clients" => {
-            "輸入 OAuth client secret，公開 client 可留空"
+            "輸入 OAuth 用戶端密鑰，公開用戶端可留空"
         }
         "Submit" => "送出",
         "Connecting Server…" => "連線伺服器中…",
@@ -531,7 +531,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Controls whether edit predictions are shown immediately or manually." => {
             "控制編輯預測要立即顯示或手動顯示。"
         }
-        "Disable in Language Scopes" => "在語言 Scope 中停用",
+        "Disable in Language Scopes" => "在語言範圍中停用",
         "Controls whether edit predictions are shown in the given language scopes." => {
             "控制是否在指定語言 scope 中顯示編輯預測。"
         }
@@ -591,7 +591,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Patterns are matched against the URL being fetched." => {
             "Pattern 會對正在擷取的 URL 進行比對。"
         }
-        "Patterns are matched against the search query." => "Pattern 會對搜尋查詢進行比對。",
+        "Patterns are matched against the search query." => "會使用模式比對搜尋查詢。",
         "Patterns are matched against the absolute path to the skill's SKILL.md file." => {
             "Pattern 會對技能 SKILL.md 檔案的絕對路徑進行比對。"
         }
@@ -622,23 +622,23 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Controls the default behavior for all tool actions. Per-tool rules and patterns can override this." => {
             "控制所有工具動作的預設行為。各工具規則與 pattern 可覆寫此設定。"
         }
-        "Action to take when no patterns match." => "沒有 pattern 相符時要採取的動作。",
+        "Action to take when no patterns match." => "沒有模式相符時要採取的動作。",
         "Test Your Rules" => "測試你的規則",
-        "No regex matches, using the default action." => "沒有符合的 regex，使用預設動作。",
+        "No regex matches, using the default action." => "沒有符合的規則運算式，使用預設動作。",
         "Denied: {reason}" => "已拒絕：{reason}",
         "Pattern preview differs from engine — showing authoritative result." => {
             "Pattern 預覽與引擎不同，正在顯示權威結果。"
         }
         "Reason: {reason}" => "原因：{reason}",
         "Result:" => "結果：",
-        "Invalid Patterns" => "無效 Pattern",
+        "Invalid Patterns" => "無效模式",
         "These patterns failed to compile as regular expressions. The tool will be blocked until they are fixed or removed." => {
             "這些 pattern 無法編譯為 regular expression。修正或移除前，此工具會被封鎖。"
         }
-        "Delete Invalid Pattern" => "刪除無效 Pattern",
+        "Delete Invalid Pattern" => "刪除無效模式",
         "Error: {error}" => "錯誤：{error}",
         "No skills available for this context." => "此情境沒有可用技能。",
-        "No patterns configured" => "尚未設定 pattern",
+        "No patterns configured" => "尚未設定模式",
         "New Skill" => "新增技能",
         "Name" => "名稱",
         "Description" => "描述",
@@ -999,7 +999,6 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Project Settings" => "專案設定",
         "Window & Layout" => "視窗與版面配置",
         "Panels" => "面板",
-        "Network" => "網路",
         "Text Rendering Mode" => "文字算繪模式",
         "Unnecessary Code Fade" => "非必要程式碼淡出",
         "Minimum Contrast For Highlights" => "醒目提示最低對比",
@@ -1015,8 +1014,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Expand Excerpt Lines" => "展開 Excerpt 行",
         "Excerpt Context Lines" => "Excerpt 上下文行",
         "Expand Outlines With Depth" => "依深度展開 Outline",
-        "Diff View Style" => "Diff 檢視樣式",
-        "Minimum Split Diff Width" => "分割 Diff 最小寬度",
+        "Diff View Style" => "差異檢視樣式",
+        "Minimum Split Diff Width" => "分割差異檢視最小寬度",
         "Scrolling" => "捲動",
         "Scroll Beyond Last Line" => "捲動超過最後一行",
         "Vertical Scroll Margin" => "垂直捲動邊界",
@@ -1073,10 +1072,10 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Inline Git Blame" => "行內 Git Blame",
         "Git Blame View" => "Git Blame 檢視",
         "Branch Picker" => "分支選擇器",
-        "Git Hunks" => "Git Hunk",
+        "Git Hunks" => "Git 變更區塊",
         "Calls" => "通話",
         "Agent Configuration" => "代理設定",
-        "Context Servers" => "Context Server",
+        "Context Servers" => "內容伺服器",
         "Indent Guides" => "縮排參考線",
         "Autoclose" => "自動關閉",
         "Whitespace" => "空白字元",
@@ -1090,14 +1089,14 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Sticky" => "黏附",
         "Show" => "顯示",
         "Cursors" => "游標",
-        "Git Diff" => "Git Diff",
+        "Git Diff" => "Git 差異",
         "Selected Text" => "選取文字",
         "Selected Symbol" => "選取符號",
         "Horizontal Scrollbar" => "水平捲軸",
         "Vertical Scrollbar" => "垂直捲軸",
         "Display In" => "顯示於",
-        "Thumb" => "Thumb",
-        "Thumb Border" => "Thumb 邊框",
+        "Thumb" => "滑塊",
+        "Thumb Border" => "滑塊邊框",
         "Max Width Columns" => "最大寬度欄數",
         "Breadcrumbs" => "階層連結",
         "Quick Actions" => "快速動作",
@@ -1129,7 +1128,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Regex" => "Regex",
         "Search Wrap" => "搜尋循環",
         "File Icons" => "檔案圖示",
-        "Modal Max Width" => "Modal 最大寬度",
+        "Modal Max Width" => "視窗最大寬度",
         "Skip Focus For Active In Search" => "搜尋時略過目前作用中檔案焦點",
         "File Scan Exclusions" => "檔案掃描排除項目",
         "File Scan Inclusions" => "檔案掃描包含項目",
@@ -1360,15 +1359,15 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Input Audio Device" => "輸入音訊裝置",
         "Select output audio device" => "選取輸出音訊裝置",
         "Select input audio device" => "選取輸入音訊裝置",
-        "Proxy" => "Proxy",
-        "The proxy to use for network requests." => "網路要求要使用的 Proxy。",
+        "Proxy" => "代理伺服器",
+        "The proxy to use for network requests." => "網路要求要使用的代理伺服器。",
         "Server URL" => "伺服器 URL",
         "The URL of the Zed server to connect to." => "要連線的 Zed 伺服器 URL。",
         "Settings Profiles" => "設定檔組態",
         "Any number of settings profiles that are temporarily applied on top of your existing user settings." => {
             "可在既有使用者設定之上暫時套用任意數量的設定檔組態。"
         }
-        "Preview Channel" => "Preview Channel",
+        "Preview Channel" => "預覽版頻道",
         "Which settings should be activated only in Preview build of Zed." => {
             "哪些設定只應在 Zed Preview build 中啟用。"
         }
@@ -2244,9 +2243,9 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Trust all single files" => "信任所有單一檔案",
         "Trust all projects in the {folder} folder" => "信任 {folder} 資料夾中的所有專案",
         "Trust all projects in the parent folders" => "信任父資料夾中的所有專案",
-        "Project settings from being applied" => "專案設定被套用",
+        "Project settings from being applied" => "套用專案設定",
         "Language servers from running" => "語言伺服器執行",
-        "MCP Server integrations from installing" => "MCP Server 整合安裝",
+        "MCP Server integrations from installing" => "安裝 MCP 伺服器整合",
         "Stay in Restricted Mode" => "保持受限模式",
         "Trust and Continue" => "信任並繼續",
         "Disconnected" => "已中斷連線",
@@ -2526,14 +2525,14 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Close Other Tabs" => "關閉其他索引標籤",
         "Move Tab to New Window" => "將索引標籤移至新視窗",
         "Show All Tabs" => "顯示所有索引標籤",
-        "Keyboard Context" => "鍵盤內容條件",
+        "Keyboard Context" => "鍵盤情境",
         "This view lets you determine the current context stack for creating custom key bindings in Zed. When a keyboard shortcut is triggered, it also shows all the possible contexts it could have triggered in, and which one matched." => {
             "此檢視可協助判斷目前的內容條件堆疊，以便在 Zed 中建立自訂鍵盤快速鍵。觸發鍵盤快速鍵時，也會顯示所有可能觸發的內容條件，以及實際相符的項目。"
         }
         "Open Documentation" => "開啟文件",
         "View Default Keymap" => "檢視預設按鍵對應",
         "Edit Keymap File" => "編輯按鍵對應檔",
-        "Current Context Stack" => "目前內容條件堆疊",
+        "Current Context Stack" => "目前情境堆疊",
         "Last Keystroke" => "上一個按鍵",
         "Waiting for more input: {keys}" => "等待更多輸入：{keys}",
         "Typed: {keys}" => "已輸入：{keys}",
@@ -2554,7 +2553,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Next Hunk" => "下一個變更區塊",
         "Previous Hunk" => "上一個變更區塊",
         "Learn more" => "了解更多",
-        "You may need to configure git for Github." => "你可能需要設定 GitHub 的 Git。",
+        "You may need to configure git for Github." => "你可能需要設定 GitHub 的 Git 認證。",
         "Switch Branch" => "切換分支",
         "Commit message title exceeds {max_title_length}-character limit." => {
             "提交訊息標題超過 {max_title_length} 個字元限制。"
@@ -2606,7 +2605,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
             "你已達免費使用額度上限。升級至 Zed Pro 可取得更多提示額度。"
         }
         "This conversation is too long for the model's context window. Start a new thread or remove some attached files to continue." => {
-            "這個對話已超過模型的內容視窗。請開啟新的對話串，或移除部分附加檔案後再繼續。"
+            "這個對話串已超過模型的內容視窗。請開啟新的對話串，或移除部分附加檔案後再繼續。"
         }
         "This agent does not support viewing previous messages. However, your session will still continue from where you last left off." => {
             "此代理不支援檢視先前訊息。不過，你的工作階段仍會從上次離開的地方繼續。"
@@ -2710,6 +2709,187 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Formatting" => "格式化",
         "Completions" => "自動完成",
         "Inlay Hints" => "行內提示",
+        "Buffer Search" => "緩衝區搜尋",
+        "No Code Actions Available" => "沒有可用的程式碼動作",
+        "Selection Controls" => "選取範圍控制項",
+        "Go to Symbol" => "移至符號",
+        "Go to Line/Column" => "移至行/欄",
+        "Editor Controls" => "編輯器控制項",
+        "Inline Values" => "行內值",
+        "Semantic Highlights" => "語意醒目提示",
+        "You can't toggle edit predictions for this file as it is within the excluded files list." => {
+            "此檔案在排除檔案清單中，無法切換編輯預測。"
+        }
+        "Inline diagnostics are not available until regular diagnostics are enabled." => {
+            "必須先啟用一般診斷，才能使用行內診斷。"
+        }
+        "Line Numbers" => "行號",
+        "Selection Menu" => "選取範圍選單",
+        "Column Git Blame" => "欄位 Git Blame",
+        "Backup and Update" => "備份並更新",
+        "No telemetry events recorded yet" => "尚未記錄遙測事件",
+        "No events match the current filter" => "沒有符合目前篩選條件的事件",
+        "Filter events..." => "篩選事件...",
+        "Clear Events" => "清除事件",
+        "Open Raw Log File" => "開啟原始記錄檔",
+        "Interrupt" => "中斷",
+        "Clear Outputs" => "清除輸出",
+        "Shut Down Kernel" => "關閉 Kernel",
+        "Restart Kernel" => "重新啟動 Kernel",
+        "View Sessions" => "檢視工作階段",
+        "REPL Menu" => "REPL 選單",
+        "Select Kernel" => "選取 Kernel",
+        "Not attached to an editor" => "未附加至編輯器",
+        "No highlights found" => "找不到醒目提示",
+        "Focus an editor to show highlights" => "聚焦編輯器以顯示醒目提示",
+        "Highlights Settings" => "醒目提示設定",
+        "Project is in Restricted Mode" => "專案處於受限模式",
+        "Language Servers can't run until you trust this project." => {
+            "信任此專案後，語言伺服器才能執行。"
+        }
+        "Search channels…" => "搜尋頻道…",
+        "Follow {user}" => "跟隨 {user}",
+        "Calling" => "通話中",
+        "Guest" => "訪客",
+        "Mic only" => "僅麥克風",
+        "Click to Follow" => "按一下以跟隨",
+        "Open {project}" => "開啟 {project}",
+        "Screen" => "螢幕",
+        "Open Shared Screen" => "開啟分享畫面",
+        "notes" => "筆記",
+        "Open Channel Notes" => "開啟頻道筆記",
+        "Grant Mic Access" => "授予麥克風權限",
+        "Grant Write Access" => "授予寫入權限",
+        "Mute" => "靜音",
+        "Revoke Access" => "撤銷權限",
+        "Expand Subchannels" => "展開子頻道",
+        "Collapse Subchannels" => "摺疊子頻道",
+        "Open Notes" => "開啟筆記",
+        "Copy Channel Link" => "複製頻道連結",
+        "Copy Channel Notes Link" => "複製頻道筆記連結",
+        "Remove from Favorites" => "從我的最愛移除",
+        "Add to Favorites" => "加入我的最愛",
+        "New Subchannel" => "新增子頻道",
+        "Move '#{channel}' here" => "將「#{channel}」移到這裡",
+        "Manage Members" => "管理成員",
+        "Move this channel" => "移動此頻道",
+        "Make Channel Private" => "設為私人頻道",
+        "Make Channel Public" => "設為公開頻道",
+        "Leave Channel" => "離開頻道",
+        "Invite {user} to join" => "邀請 {user} 加入",
+        "Call {user}" => "呼叫 {user}",
+        "Remove Contact" => "移除聯絡人",
+        "Are you sure you want to leave \"#{channel}\"?" => "確定要離開「#{channel}」嗎？",
+        "Leave" => "離開",
+        "Are you sure you want to remove the channel \"{channel}\"?" => {
+            "確定要移除頻道「{channel}」嗎？"
+        }
+        "Are you sure you want to remove \"{user}\" from your contacts?" => {
+            "確定要從聯絡人中移除「{user}」嗎？"
+        }
+        "Connecting…" => "正在連線…",
+        "Connect" => "連線",
+        "Sign In with GitHub" => "使用 GitHub 登入",
+        "Copy public channel link." => "複製公開頻道連結。",
+        "Copy private channel link." => "複製私人頻道連結。",
+        "Current Call" => "目前通話",
+        "Requests" => "邀請",
+        "Contacts" => "聯絡人",
+        "Channels" => "頻道",
+        "Invites" => "邀請",
+        "Online" => "線上",
+        "Offline" => "離線",
+        "Stop Auto Watching Screens" => "停止自動觀看螢幕",
+        "Auto Watch Screens" => "自動觀看螢幕",
+        "Auto Watch Screens (paused while sharing)" => "自動觀看螢幕（分享時暫停）",
+        "Search for new contact" => "搜尋新聯絡人",
+        "Show All Channels" => "顯示所有頻道",
+        "Show Occupied Channels" => "顯示有人使用的頻道",
+        "Create Channel" => "建立頻道",
+        "{user} is offline" => "{user} 離線",
+        "{user} is on a call" => "{user} 通話中",
+        "Invite {user} to join call" => "邀請 {user} 加入通話",
+        "Decline invite" => "拒絕邀請",
+        "Accept invite" => "接受邀請",
+        "Cancel invite" => "取消邀請",
+        "Add a Contact" => "新增聯絡人",
+        "Join Channel" => "加入頻道",
+        "Accept" => "接受",
+        "Decline" => "拒絕",
+        "Public" => "公開",
+        "Invite Members" => "邀請成員",
+        "Invited" => "已邀請",
+        "Admin" => "管理員",
+        "You" => "你",
+        "Member" => "成員",
+        "Invite new contacts" => "邀請新聯絡人",
+        "is sharing a project in Zed" => "正在 Zed 中分享專案",
+        "{user} is sharing a project with you{punctuation}" => {
+            "{user} 正在與你分享專案{punctuation}"
+        }
+        "Call Diagnostics" => "通話診斷",
+        "Not in a call" => "不在通話中",
+        "Network" => "網路",
+        "Excellent" => "極佳",
+        "Good" => "良好",
+        "Poor" => "不佳",
+        "Lost" => "已中斷",
+        "Normal" => "正常",
+        "High" => "偏高",
+        "Latency" => "延遲",
+        "Time for data to travel to the server" => "資料傳送到伺服器所需時間",
+        "Jitter" => "抖動",
+        "Variance or fluctuation in latency" => "延遲的變異或波動",
+        "Packet loss" => "封包遺失",
+        "Amount of data lost during transfer" => "傳輸期間遺失的資料量",
+        "Input lag" => "輸入延遲",
+        "Delay from audio capture to WebRTC" => "從音訊擷取到 WebRTC 的延遲",
+        "Close output area" => "關閉輸出區域",
+        "Starting" => "正在啟動",
+        "Error:" => "錯誤：",
+        "Shutting Down" => "正在關閉",
+        "Shutdown" => "已關閉",
+        "Restarting" => "正在重新啟動",
+        "No Jupyter Kernels Available" => "沒有可用的 Jupyter Kernel",
+        "To start interactively running code in your editor, you need to install and configure Jupyter kernels." => {
+            "若要在編輯器中互動執行程式碼，你需要安裝並設定 Jupyter Kernel。"
+        }
+        "Install Kernels" => "安裝 Kernel",
+        "Copy Output" => "複製輸出",
+        "Open in Buffer" => "在緩衝區中開啟",
+        "Open Full Error in Buffer" => "在緩衝區中開啟完整錯誤",
+        "Type here and press Enter" => "在這裡輸入並按 Enter",
+        "Connecting to kernel..." => "正在連線至 Kernel...",
+        "Executing..." => "正在執行...",
+        "Unknown status" => "未知狀態",
+        "Kernel shutting down..." => "Kernel 正在關閉...",
+        "Kernel restarting..." => "Kernel 正在重新啟動...",
+        "Kernel shutdown" => "Kernel 已關閉",
+        "Queued..." => "已排入佇列...",
+        "Recommended" => "建議",
+        "ipykernel not installed" => "尚未安裝 ipykernel",
+        "Kernel Docs" => "Kernel 文件",
+        "More options" => "更多選項",
+        "Select Feature" => "選取功能",
+        "Confirm Selections" => "確認選取項目",
+        "Create Dev Container" => "建立 Dev Container",
+        "Search for Dev Container Templates" => "搜尋 Dev Container 範本",
+        "Querying template registry..." => "正在查詢範本登錄檔...",
+        "Querying features..." => "正在查詢功能...",
+        "Download" => "下載",
+        "Select Toolchain Path" => "選取工具鏈路徑",
+        "Finish Setup" => "完成設定",
+        "Agent Setup" => "代理設定",
+        "Import Settings" => "匯入設定",
+        "Automatically pull your settings from other editors" => "自動從其他編輯器匯入你的設定",
+        "Signing In…" => "正在登入…",
+        "Install your favorite agents and start your first thread." => {
+            "安裝你偏好的代理，並開始第一個對話串。"
+        }
+        "Edit and save files directly in the results multibuffer!" => {
+            "直接在結果 Multibuffer 中編輯並儲存檔案！"
+        }
+        "Dismiss Hint" => "關閉提示",
         "Miscellaneous" => "其他",
         _ => return None,
     })
@@ -2973,7 +3153,7 @@ mod tests {
         assert_eq!(text("Learn more"), "了解更多");
         assert_eq!(
             text("You may need to configure git for Github."),
-            "你可能需要設定 GitHub 的 Git。"
+            "你可能需要設定 GitHub 的 Git 認證。"
         );
         assert_eq!(text("Switch Branch"), "切換分支");
         assert_eq!(
@@ -3107,7 +3287,7 @@ mod tests {
         assert_eq!(text("Panels"), "面板");
         assert_eq!(text("Audio Settings"), "音訊設定");
         assert_eq!(text("Input Audio Device"), "輸入音訊裝置");
-        assert_eq!(text("Proxy"), "Proxy");
+        assert_eq!(text("Proxy"), "代理伺服器");
         assert_eq!(text("Settings Profiles"), "設定檔組態");
         assert_eq!(text("Edit Keybindings"), "編輯鍵盤快速鍵");
         assert_eq!(
@@ -3131,5 +3311,41 @@ mod tests {
         assert_eq!(text("Project"), "專案");
         assert_eq!(text("Server"), "伺服器");
         assert_eq!(text("Edit in settings.json"), "在 settings.json 中編輯");
+    }
+
+    #[test]
+    fn milestone_ten_global_leak_scan_and_polish_terms_are_guarded() {
+        assert_eq!(text("Keyboard Context"), "鍵盤情境");
+        assert_eq!(text("Current Context Stack"), "目前情境堆疊");
+        assert_eq!(text("Open Documentation"), "開啟文件");
+        assert_eq!(text("Backup and Update"), "備份並更新");
+        assert_eq!(text("Clear Events"), "清除事件");
+        assert_eq!(text("Open Raw Log File"), "開啟原始記錄檔");
+        assert_eq!(text("Selection Controls"), "選取範圍控制項");
+        assert_eq!(text("Editor Controls"), "編輯器控制項");
+        assert_eq!(text("Interrupt"), "中斷");
+        assert_eq!(text("Clear Outputs"), "清除輸出");
+        assert_eq!(text("Select Kernel"), "選取 Kernel");
+        assert_eq!(text("Finish Setup"), "完成設定");
+        assert_eq!(text("Agent Setup"), "代理設定");
+        assert_eq!(text("Select Feature"), "選取功能");
+        assert_eq!(text("Confirm Selections"), "確認選取項目");
+        assert_eq!(text("Select Toolchain Path"), "選取工具鏈路徑");
+        assert_eq!(text("Calling"), "通話中");
+        assert_eq!(text("Open Shared Screen"), "開啟分享畫面");
+        assert_eq!(text("Create Channel"), "建立頻道");
+        assert_eq!(text("Accept invite"), "接受邀請");
+        assert_eq!(text("Step Over"), "逐步跳過");
+        assert_eq!(text("New Chat"), "新增對話");
+        assert_eq!(text("Type to Send"), "輸入即可傳送");
+        assert_eq!(text("Open Repository"), "開啟儲存庫");
+        assert_eq!(text("Diff View Style"), "差異檢視樣式");
+        assert_eq!(text("Git Hunks"), "Git 變更區塊");
+        assert_eq!(text("Context Servers"), "內容伺服器");
+        assert_eq!(text("Project settings from being applied"), "套用專案設定");
+        assert_eq!(
+            text("MCP Server integrations from installing"),
+            "安裝 MCP 伺服器整合"
+        );
     }
 }

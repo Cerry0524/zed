@@ -4,7 +4,7 @@ use gpui::{
     Window,
 };
 use livekit_client::ConnectionQuality;
-use ui::prelude::*;
+use ui::{l10n, prelude::*};
 use workspace::{ModalView, Workspace};
 use zed_actions::ShowCallStats;
 
@@ -79,10 +79,10 @@ fn active_room(cx: &App) -> Option<Entity<Room>> {
 
 fn quality_label(quality: Option<ConnectionQuality>) -> (&'static str, Color) {
     match quality {
-        Some(ConnectionQuality::Excellent) => ("Excellent", Color::Success),
-        Some(ConnectionQuality::Good) => ("Good", Color::Success),
-        Some(ConnectionQuality::Poor) => ("Poor", Color::Warning),
-        Some(ConnectionQuality::Lost) => ("Lost", Color::Error),
+        Some(ConnectionQuality::Excellent) => (l10n::text("Excellent"), Color::Success),
+        Some(ConnectionQuality::Good) => (l10n::text("Good"), Color::Success),
+        Some(ConnectionQuality::Poor) => (l10n::text("Poor"), Color::Warning),
+        Some(ConnectionQuality::Lost) => (l10n::text("Lost"), Color::Error),
         None => ("—", Color::Muted),
     }
 }
@@ -91,43 +91,43 @@ fn metric_rating(label: &str, value_ms: f64) -> (&'static str, Color) {
     match label {
         "Latency" => {
             if value_ms < 100.0 {
-                ("Normal", Color::Success)
+                (l10n::text("Normal"), Color::Success)
             } else if value_ms < 300.0 {
-                ("High", Color::Warning)
+                (l10n::text("High"), Color::Warning)
             } else {
-                ("Poor", Color::Error)
+                (l10n::text("Poor"), Color::Error)
             }
         }
         "Jitter" => {
             if value_ms < 30.0 {
-                ("Normal", Color::Success)
+                (l10n::text("Normal"), Color::Success)
             } else if value_ms < 75.0 {
-                ("High", Color::Warning)
+                (l10n::text("High"), Color::Warning)
             } else {
-                ("Poor", Color::Error)
+                (l10n::text("Poor"), Color::Error)
             }
         }
-        _ => ("Normal", Color::Success),
+        _ => (l10n::text("Normal"), Color::Success),
     }
 }
 
 fn input_lag_rating(value_ms: f64) -> (&'static str, Color) {
     if value_ms < 20.0 {
-        ("Normal", Color::Success)
+        (l10n::text("Normal"), Color::Success)
     } else if value_ms < 50.0 {
-        ("High", Color::Warning)
+        (l10n::text("High"), Color::Warning)
     } else {
-        ("Poor", Color::Error)
+        (l10n::text("Poor"), Color::Error)
     }
 }
 
 fn packet_loss_rating(loss_pct: f64) -> (&'static str, Color) {
     if loss_pct < 1.0 {
-        ("Normal", Color::Success)
+        (l10n::text("Normal"), Color::Success)
     } else if loss_pct < 5.0 {
-        ("High", Color::Warning)
+        (l10n::text("High"), Color::Warning)
     } else {
-        ("Poor", Color::Error)
+        (l10n::text("Poor"), Color::Error)
     }
 }
 
@@ -164,7 +164,7 @@ impl Render for CallStatsModal {
             .child(
                 h_flex()
                     .justify_between()
-                    .child(Label::new("Call Diagnostics").size(LabelSize::Large))
+                    .child(Label::new(l10n::text("Call Diagnostics")).size(LabelSize::Large))
                     .child(
                         Label::new(quality_text)
                             .size(LabelSize::Large)
@@ -176,7 +176,7 @@ impl Render for CallStatsModal {
                     h_flex()
                         .justify_center()
                         .py_4()
-                        .child(Label::new("Not in a call").color(Color::Muted)),
+                        .child(Label::new(l10n::text("Not in a call")).color(Color::Muted)),
                 )
             })
             .when(is_connected, |this| {
@@ -184,34 +184,34 @@ impl Render for CallStatsModal {
                     v_flex()
                         .gap_1()
                         .child(
-                            h_flex()
-                                .gap_2()
-                                .child(Label::new("Network").weight(FontWeight::SEMIBOLD)),
+                            h_flex().gap_2().child(
+                                Label::new(l10n::text("Network")).weight(FontWeight::SEMIBOLD),
+                            ),
                         )
                         .child(self.render_metric_row(
-                            "Latency",
-                            "Time for data to travel to the server",
+                            l10n::text("Latency"),
+                            l10n::text("Time for data to travel to the server"),
                             stats.latency_ms,
                             |v| format!("{:.0}ms", v),
                             |v| metric_rating("Latency", v),
                         ))
                         .child(self.render_metric_row(
-                            "Jitter",
-                            "Variance or fluctuation in latency",
+                            l10n::text("Jitter"),
+                            l10n::text("Variance or fluctuation in latency"),
                             stats.jitter_ms,
                             |v| format!("{:.0}ms", v),
                             |v| metric_rating("Jitter", v),
                         ))
                         .child(self.render_metric_row(
-                            "Packet loss",
-                            "Amount of data lost during transfer",
+                            l10n::text("Packet loss"),
+                            l10n::text("Amount of data lost during transfer"),
                             stats.packet_loss_pct,
                             |v| format!("{:.1}%", v),
                             |v| packet_loss_rating(v),
                         ))
                         .child(self.render_metric_row(
-                            "Input lag",
-                            "Delay from audio capture to WebRTC",
+                            l10n::text("Input lag"),
+                            l10n::text("Delay from audio capture to WebRTC"),
                             stats.input_lag.map(|d| d.as_secs_f64() * 1000.0),
                             |v| format!("{:.1}ms", v),
                             |v| input_lag_rating(v),

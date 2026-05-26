@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicUsize, Ordering};
 
 use db::kvp::KeyValueStore;
 use gpui::{App, EntityId, EventEmitter, Subscription};
-use ui::{IconButtonShape, Tooltip, prelude::*};
+use ui::{IconButtonShape, Tooltip, l10n, prelude::*};
 use workspace::item::{ItemBufferKind, ItemEvent, ItemHandle};
 use workspace::{ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView};
 
@@ -154,12 +154,12 @@ impl Render for MultibufferHint {
                                     .size(IconSize::XSmall)
                                     .color(Color::Muted),
                             )
-                            .child(Label::new(
+                            .child(Label::new(l10n::text(
                                 "Edit and save files directly in the results multibuffer!",
-                            )),
+                            ))),
                     )
                     .child(
-                        Button::new("open_docs", "Learn More")
+                        Button::new("open_docs", l10n::text("Learn More"))
                             .end_icon(
                                 Icon::new(IconName::ArrowUpRight)
                                     .size(IconSize::Small)
@@ -180,7 +180,7 @@ impl Render for MultibufferHint {
                             ToolbarItemLocation::Hidden,
                         ))
                     }))
-                    .tooltip(Tooltip::text("Dismiss Hint")),
+                    .tooltip(Tooltip::text(l10n::text("Dismiss Hint"))),
             )
             .into_any_element()
     }

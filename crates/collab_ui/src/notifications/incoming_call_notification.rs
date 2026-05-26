@@ -4,7 +4,7 @@ use futures::StreamExt;
 use gpui::{App, TaskExt, WindowHandle, prelude::*};
 
 use std::sync::{Arc, Weak};
-use ui::{CollabNotification, prelude::*};
+use ui::{CollabNotification, l10n, prelude::*};
 use util::ResultExt;
 use workspace::AppState;
 
@@ -116,18 +116,19 @@ impl Render for IncomingCallNotification {
         div().size_full().font(ui_font).child(
             CollabNotification::new(
                 self.state.call.calling_user.avatar_uri.clone(),
-                Button::new("accept", "Accept").on_click({
+                Button::new("accept", l10n::text("Accept")).on_click({
                     let state = self.state.clone();
                     move |_, _, cx| state.respond(true, cx)
                 }),
-                Button::new("decline", "Decline").on_click({
+                Button::new("decline", l10n::text("Decline")).on_click({
                     let state = self.state.clone();
                     move |_, _, cx| state.respond(false, cx)
                 }),
             )
             .child(Label::new(format!(
-                "{} is sharing a project in Zed",
-                self.state.call.calling_user.github_login
+                "{} {}",
+                self.state.call.calling_user.github_login,
+                l10n::text("is sharing a project in Zed")
             ))),
         )
     }

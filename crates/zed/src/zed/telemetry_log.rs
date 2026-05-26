@@ -21,7 +21,7 @@ use settings::Settings;
 use telemetry_events::{Event, EventWrapper};
 use theme_settings::ThemeSettings;
 use ui::{
-    Icon, IconButton, IconName, IconSize, Label, TextSize, Tooltip, WithScrollbar, prelude::*,
+    Icon, IconButton, IconName, IconSize, Label, TextSize, Tooltip, WithScrollbar, l10n, prelude::*,
 };
 use workspace::{
     Item, ItemHandle, Toast, ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView, Workspace,
@@ -510,9 +510,9 @@ impl Render for TelemetryLogView {
                     .justify_center()
                     .items_center()
                     .child(if self.events.is_empty() {
-                        "No telemetry events recorded yet"
+                        l10n::text("No telemetry events recorded yet")
                     } else {
-                        "No events match the current filter"
+                        l10n::text("No events match the current filter")
                     })
                     .into_any()
             } else {
@@ -539,7 +539,7 @@ impl TelemetryLogToolbarItemView {
     pub fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
         let search_editor = cx.new(|cx| {
             let mut editor = editor::Editor::single_line(window, cx);
-            editor.set_placeholder_text("Filter events...", window, cx);
+            editor.set_placeholder_text(l10n::text("Filter events..."), window, cx);
             editor
         });
 
@@ -580,7 +580,7 @@ impl Render for TelemetryLogToolbarItemView {
             .child(
                 IconButton::new("clear_events", IconName::Trash)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Clear Events"))
+                    .tooltip(Tooltip::text(l10n::text("Clear Events")))
                     .disabled(!has_events)
                     .on_click(cx.listener(move |_this, _, _window, cx| {
                         telemetry_log_clone.update(cx, |log, cx| {
@@ -591,7 +591,7 @@ impl Render for TelemetryLogToolbarItemView {
             .child(
                 IconButton::new("open_log_file", IconName::File)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Open Raw Log File"))
+                    .tooltip(Tooltip::text(l10n::text("Open Raw Log File")))
                     .on_click(|_, _window, cx| {
                         let path = Telemetry::log_file_path();
                         cx.open_url(&format!("file://{}", path.display()));

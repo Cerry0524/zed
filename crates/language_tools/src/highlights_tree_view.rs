@@ -16,7 +16,7 @@ use theme::SyntaxTheme;
 use ui::{
     ButtonCommon, ButtonLike, ButtonStyle, Color, ContextMenu, FluentBuilder as _, IconButton,
     IconName, IconPosition, IconSize, Label, LabelCommon, LabelSize, PopoverMenu,
-    PopoverMenuHandle, StyledExt, Toggleable, Tooltip, WithScrollbar, h_flex, v_flex,
+    PopoverMenuHandle, StyledExt, Toggleable, Tooltip, WithScrollbar, h_flex, l10n, v_flex,
 };
 use workspace::{
     Event as WorkspaceEvent, SplitDirection, ToolbarItemEvent, ToolbarItemLocation,
@@ -847,24 +847,26 @@ impl Render for HighlightsTreeView {
                             if self.editor.is_some() {
                                 let has_any = !self.cached_entries.is_empty();
                                 if has_any {
-                                    this.child(Label::new("All highlights are filtered out"))
+                                    this.child(Label::new(l10n::text(
+                                        "All highlights are filtered out",
+                                    )))
                                         .child(
-                                            Label::new(
+                                            Label::new(l10n::text(
                                                 "Enable text, syntax, or semantic highlights in the toolbar",
-                                            )
+                                            ))
                                             .size(LabelSize::Small),
                                         )
                                 } else {
-                                    this.child(Label::new("No highlights found")).child(
-                                        Label::new(
+                                    this.child(Label::new(l10n::text("No highlights found"))).child(
+                                        Label::new(l10n::text(
                                             "The editor has no text, syntax, or semantic token highlights",
-                                        )
+                                        ))
                                         .size(LabelSize::Small),
                                     )
                                 }
                             } else {
-                                this.child(Label::new("Not attached to an editor")).child(
-                                    Label::new("Focus an editor to show highlights")
+                                this.child(Label::new(l10n::text("Not attached to an editor"))).child(
+                                    Label::new(l10n::text("Focus an editor to show highlights"))
                                         .size(LabelSize::Small),
                                 )
                             }
@@ -987,7 +989,7 @@ impl HighlightsTreeToolbarItemView {
                     .icon_size(IconSize::Small)
                     .style(ButtonStyle::Subtle)
                     .toggle_state(self.toggle_settings_handle.is_deployed()),
-                Tooltip::text("Highlights Settings"),
+                Tooltip::text(l10n::text("Highlights Settings")),
             )
             .anchor(gpui::Anchor::TopRight)
             .with_handle(self.toggle_settings_handle.clone())

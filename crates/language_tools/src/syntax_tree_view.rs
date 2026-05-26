@@ -15,7 +15,7 @@ use tree_sitter::{Node, TreeCursor};
 use ui::{
     ButtonCommon, ButtonLike, Clickable, Color, ContextMenu, FluentBuilder as _, IconButton,
     IconName, Label, LabelCommon, LabelSize, PopoverMenu, StyledExt, Tooltip, WithScrollbar,
-    h_flex, v_flex,
+    h_flex, l10n, v_flex,
 };
 use workspace::{
     Event as WorkspaceEvent, SplitDirection, ToolbarItemEvent, ToolbarItemLocation,
@@ -531,19 +531,24 @@ impl Render for SyntaxTreeView {
                         .max_w_3_5()
                         .map(|this| {
                             if editor_state.is_some_and(|state| !state.has_language()) {
-                                this.child(Label::new("Current editor has no associated language"))
+                                this.child(Label::new(l10n::text(
+                                    "Current editor has no associated language",
+                                )))
+                                .child(
+                                    Label::new(l10n::text(concat!(
+                                        "Try assigning a language or",
+                                        "switching to a different buffer"
+                                    )))
+                                    .size(LabelSize::Small),
+                                )
+                            } else {
+                                this.child(Label::new(l10n::text("Not attached to an editor")))
                                     .child(
-                                        Label::new(concat!(
-                                            "Try assigning a language or",
-                                            "switching to a different buffer"
+                                        Label::new(l10n::text(
+                                            "Focus an editor to show a new tree view",
                                         ))
                                         .size(LabelSize::Small),
                                     )
-                            } else {
-                                this.child(Label::new("Not attached to an editor")).child(
-                                    Label::new("Focus an editor to show a new tree view")
-                                        .size(LabelSize::Small),
-                                )
                             }
                         });
 

@@ -12,6 +12,7 @@ use std::sync::Arc;
 use gpui::{Entity, EventEmitter, Global, Task, TextStyle, TextStyleRefinement};
 use markdown::{Markdown, MarkdownElement, MarkdownStyle};
 use theme_settings::ThemeSettings;
+use ui::l10n;
 use ui::prelude::*;
 use workspace::item::ItemHandle;
 use workspace::{ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView, Workspace};
@@ -238,7 +239,7 @@ impl Render for MigrationBanner {
                     ),
             )
             .child(
-                Button::new("backup-and-migrate", "Backup and Update").on_click({
+                Button::new("backup-and-migrate", l10n::text("Backup and Update")).on_click({
                     let workspace = self.workspace.clone();
                     move |_, window, cx| {
                         let fs = <dyn Fs>::global(cx);

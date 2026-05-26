@@ -244,14 +244,16 @@ impl LanguageServerState {
                                         .size(IconSize::XSmall),
                                 )
                                 .child(
-                                    Label::new("Project is in Restricted Mode")
+                                    Label::new(l10n::text("Project is in Restricted Mode"))
                                         .size(LabelSize::Small),
                                 ),
                         )
                         .child(
-                            Label::new("Language Servers can't run until you trust this project.")
-                                .size(LabelSize::Small)
-                                .color(Color::Muted),
+                            Label::new(l10n::text(
+                                "Language Servers can't run until you trust this project.",
+                            ))
+                            .size(LabelSize::Small)
+                            .color(Color::Muted),
                         )
                         .into_any_element()
                 },

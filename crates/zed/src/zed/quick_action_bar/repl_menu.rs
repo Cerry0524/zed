@@ -10,7 +10,7 @@ use repl::{
 };
 use ui::{
     ButtonLike, CommonAnimationExt, ContextMenu, IconWithIndicator, Indicator, IntoElement,
-    PopoverMenu, PopoverMenuHandle, Tooltip, prelude::*,
+    PopoverMenu, PopoverMenuHandle, Tooltip, l10n, prelude::*,
 };
 use util::ResultExt;
 
@@ -134,11 +134,11 @@ impl QuickActionBar {
                     .separator()
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new(if has_nonempty_selection {
+                            Label::new(l10n::text(if has_nonempty_selection {
                                 "Run Selection"
                             } else {
                                 "Run Line"
-                            })
+                            }))
                             .into_any_element()
                         },
                         {
@@ -150,7 +150,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Interrupt")
+                            Label::new(l10n::text("Interrupt"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -164,7 +164,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Clear Outputs")
+                            Label::new(l10n::text("Clear Outputs"))
                                 .size(LabelSize::Small)
                                 .color(Color::Muted)
                                 .into_any_element()
@@ -179,7 +179,7 @@ impl QuickActionBar {
                     .separator()
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Shut Down Kernel")
+                            Label::new(l10n::text("Shut Down Kernel"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -193,7 +193,7 @@ impl QuickActionBar {
                     )
                     .custom_entry(
                         move |_window, _cx| {
-                            Label::new("Restart Kernel")
+                            Label::new(l10n::text("Restart Kernel"))
                                 .size(LabelSize::Small)
                                 .color(Color::Error)
                                 .into_any_element()
@@ -205,7 +205,7 @@ impl QuickActionBar {
                         },
                     )
                     .separator()
-                    .action("View Sessions", Box::new(repl::Sessions))
+                    .action(l10n::text("View Sessions"), Box::new(repl::Sessions))
                     // TODO: Add shut down all kernels action
                     // .action("Shut Down all Kernels", Box::new(gpui::NoAction))
                 })
@@ -220,7 +220,7 @@ impl QuickActionBar {
                     )
                     .width(rems(1.))
                     .disabled(menu_state.popover_disabled),
-                Tooltip::text("REPL Menu"),
+                Tooltip::text(l10n::text("REPL Menu")),
             );
 
         let button = ButtonLike::new_rounded_left("toggle_repl_icon")
@@ -367,7 +367,7 @@ impl QuickActionBar {
                                 .size(IconSize::XSmall),
                         ),
                 ),
-            Tooltip::text("Select Kernel"),
+            Tooltip::text(l10n::text("Select Kernel")),
         )
         .with_handle(menu_handle)
         .into_any_element()
