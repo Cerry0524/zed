@@ -3,7 +3,7 @@ use std::sync::Arc;
 use client::{Client, UserStore};
 use cloud_api_types::Plan;
 use gpui::{Entity, IntoElement, ParentElement};
-use ui::prelude::*;
+use ui::{l10n, prelude::*};
 
 use crate::ZedAiOnboarding;
 
@@ -45,17 +45,21 @@ impl Render for EditPredictionOnboarding {
         let github_copilot = v_flex()
             .gap_1()
             .child(Label::new(if self.copilot_is_configured {
-                "Alternatively, you can continue to use GitHub Copilot as that's already set up."
+                l10n::text(
+                    "Alternatively, you can continue to use GitHub Copilot as that's already set up.",
+                )
             } else {
-                "Alternatively, you can use GitHub Copilot as your edit prediction provider."
+                l10n::text(
+                    "Alternatively, you can use GitHub Copilot as your edit prediction provider.",
+                )
             }))
             .child(
                 Button::new(
                     "configure-copilot",
                     if self.copilot_is_configured {
-                        "Use Copilot"
+                        l10n::text("Use Copilot")
                     } else {
-                        "Configure Copilot"
+                        l10n::text("Configure Copilot")
                     },
                 )
                 .full_width()

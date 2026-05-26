@@ -215,6 +215,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Uninstall" => "解除安裝",
         "Update" => "更新",
         "Reload" => "重新載入",
+        "Customize" => "自訂",
         "Recent" => "最近使用",
         "Favorites" => "我的最愛",
         "All" => "全部",
@@ -408,6 +409,275 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         }
         "Add Server" => "新增伺服器",
         "No MCP servers added yet." => "尚未新增 MCP 伺服器。",
+        "No configuration view for {provider_name}" => "沒有 {provider_name} 的設定檢視",
+        "Remove Provider" => "移除提供者",
+        "Compatible APIs" => "相容 API",
+        "Add Custom Server" => "新增自訂伺服器",
+        "Install from Extensions" => "從延伸模組安裝",
+        "Model Context Protocol (MCP) Servers" => "Model Context Protocol (MCP) 伺服器",
+        "All MCP servers connected directly or via a Zed extension." => {
+            "所有直接連線或透過 Zed 延伸模組連線的 MCP 伺服器。"
+        }
+        "Configure MCP Server" => "設定 MCP 伺服器",
+        "Configure Server" => "設定伺服器",
+        "View Tools" => "檢視工具",
+        "Log Out" => "登出",
+        "Authenticate to connect this server" => "驗證以連線此伺服器",
+        "Enter a client secret to connect this server" => "輸入 client secret 以連線此伺服器",
+        "Enter Client Secret" => "輸入 Client Secret",
+        "Authenticating…" => "驗證中…",
+        "1 tool" => "1 個工具",
+        "{count} tools" => "{count} 個工具",
+        "Add Agent" => "新增代理",
+        "Install from Registry" => "從登錄檔安裝",
+        "Add Custom Agent" => "新增自訂代理",
+        "ACP Docs" => "ACP 文件",
+        "External Agents" => "外部代理",
+        "All agents connected through the Agent Client Protocol." => {
+            "所有透過 Agent Client Protocol 連線的代理。"
+        }
+        "Restart Agent Connection" => "重新啟動代理連線",
+        "Remove Registry Agent" => "移除登錄檔代理",
+        "Remove Custom Agent" => "移除自訂代理",
+        "The {id} extension provides more than just the MCP server. Proceed to uninstall anyway?" => {
+            "{id} 延伸模組不只提供 MCP 伺服器。仍要解除安裝嗎？"
+        }
+        "Provider Name" => "提供者名稱",
+        "API URL" => "API URL",
+        "API Key" => "API 金鑰",
+        "Model Name" => "模型名稱",
+        "Max Completion Tokens" => "最大 Completion Token 數",
+        "Max Output Tokens" => "最大 Output Token 數",
+        "Max Tokens" => "最大 Token 數",
+        "Models" => "模型",
+        "Add Model" => "新增模型",
+        "Remove Model" => "移除模型",
+        "Supports tools" => "支援工具",
+        "Supports images" => "支援圖片",
+        "Supports parallel_tool_calls" => "支援 parallel_tool_calls",
+        "Supports prompt_cache_key" => "支援 prompt_cache_key",
+        "Supports /chat/completions" => "支援 /chat/completions",
+        "Add LLM Provider" => "新增 LLM 提供者",
+        "This provider will use an OpenAI compatible API." => "此提供者會使用 OpenAI 相容 API。",
+        "Save Provider" => "儲存提供者",
+        "Model Name cannot be empty" => "模型名稱不可空白",
+        "Max Completion Tokens must be a number" => "最大 Completion Token 數必須是數字",
+        "Max Output Tokens must be a number" => "最大 Output Token 數必須是數字",
+        "Max Tokens must be a number" => "最大 Token 數必須是數字",
+        "Provider Name cannot be empty" => "提供者名稱不可空白",
+        "Provider Name is already taken by another provider" => "提供者名稱已被其他提供者使用",
+        "API URL cannot be empty" => "API URL 不可空白",
+        "API Key cannot be empty" => "API 金鑰不可空白",
+        "Model Names must be unique" => "模型名稱必須唯一",
+        "Failed to write API key to keychain" => "無法將 API 金鑰寫入鑰匙圈",
+        "Profile name" => "設定檔名稱",
+        "Agent Profiles" => "代理設定檔",
+        "Custom Profiles" => "自訂設定檔",
+        "Add New Profile" => "新增設定檔",
+        "New Profile" => "新增設定檔",
+        "Fork Profile" => "分支設定檔",
+        "Fork {base_profile}" => "分支 {base_profile}",
+        "Configure Default Model" => "設定預設模型",
+        "Configure Built-in Tools" => "設定內建工具",
+        "Configure MCP Tools" => "設定 MCP 工具",
+        "Delete Profile" => "刪除設定檔",
+        "Go Back" => "返回",
+        "{profile_name} — Configure Built-in Tools" => "{profile_name} — 設定內建工具",
+        "{profile_name} — Configure Default Model" => "{profile_name} — 設定預設模型",
+        "{profile_name} — Configure MCP Tools" => "{profile_name} — 設定 MCP 工具",
+        "Search built-in tools…" => "搜尋內建工具…",
+        "Search MCP tools…" => "搜尋 MCP 工具…",
+        "Tools from {id}" => "{id} 的工具",
+        "Add MCP Server" => "新增 MCP 伺服器",
+        "Check the server docs for required arguments and environment variables." => {
+            "請查看伺服器文件，確認必要引數與環境變數。"
+        }
+        "Local" => "本機",
+        "Remote" => "遠端",
+        "Open Repository" => "開啟 Repository",
+        "Enter client secret (leave empty for public clients)" => {
+            "輸入 client secret（公開 client 可留空）"
+        }
+        "Enter your OAuth client secret, or leave empty for public clients" => {
+            "輸入 OAuth client secret，公開 client 可留空"
+        }
+        "Submit" => "送出",
+        "Connecting Server…" => "連線伺服器中…",
+        "Select a Model" => "選取模型",
+        "Select a model…" => "選取模型…",
+        "Favorite" => "我的最愛",
+        "Latest" => "最新",
+        "Cost Multiplier: {cost}" => "成本倍率：{cost}",
+        "Cost per Million Tokens: {cost}" => "每百萬 token 成本：{cost}",
+        "Cost: {cost}" => "成本：{cost}",
+        "Favorite Model" => "加入喜愛模型",
+        "Unfavorite Model" => "從喜愛模型移除",
+        "Refresh Models" => "重新整理模型",
+        "Configure a Provider" => "設定提供者",
+        "Sign In Or Configure a Provider" => "登入或設定提供者",
+        "This Buffer" => "此緩衝區",
+        "All Files" => "所有檔案",
+        "Display Modes" => "顯示模式",
+        "Eager" => "積極",
+        "Subtle" => "低干擾",
+        "Training Data Collection" => "訓練資料收集",
+        "View Docs" => "檢視文件",
+        "No provider set" => "尚未設定提供者",
+        "Select which provider to use for edit predictions." => "選擇要用於編輯預測的提供者。",
+        "Edit Prediction" => "編輯預測",
+        "Enable to Use" => "啟用後使用",
+        "Sign In to Copilot" => "登入 Copilot",
+        "Disable Copilot" => "停用 Copilot",
+        "Edit predictions cannot be toggled for this buffer because they are disabled for {language}." => {
+            "此緩衝區無法切換編輯預測，因為已對 {language} 停用。"
+        }
+        "Display predictions inline when there are no language server completions available." => {
+            "沒有可用的語言伺服器完成項目時，內嵌顯示預測。"
+        }
+        "Display predictions inline only when holding a modifier key (alt by default)." => {
+            "只有按住修飾鍵時才內嵌顯示預測（預設為 alt）。"
+        }
+        "Tool Permissions" => "工具權限",
+        "Edit File" => "編輯檔案",
+        "Write File" => "寫入檔案",
+        "Delete Path" => "刪除路徑",
+        "Move Path" => "移動路徑",
+        "Create Directory" => "建立目錄",
+        "Fetch" => "擷取",
+        "Web Search" => "網頁搜尋",
+        "Skill" => "技能",
+        "Commands executed in the terminal" => "在終端機中執行的命令",
+        "File editing operations" => "檔案編輯操作",
+        "File creation and overwrite operations" => "檔案建立與覆寫操作",
+        "File and directory deletion" => "檔案與目錄刪除",
+        "File and directory copying" => "檔案與目錄複製",
+        "File and directory moves/renames" => "檔案與目錄移動/重新命名",
+        "Directory creation" => "目錄建立",
+        "HTTP requests to URLs" => "對 URL 發出的 HTTP 要求",
+        "Web search queries" => "網頁搜尋查詢",
+        "Loading agent skill instructions" => "載入代理技能指示",
+        "Patterns are matched against each command in the input. Commands chained with &&, ||, ;, or pipes are split and checked individually." => {
+            "Pattern 會對輸入中的每個命令進行比對。以 &&、||、; 或 pipe 串接的命令會被拆開並逐一檢查。"
+        }
+        "Patterns are matched against the file path being edited." => {
+            "Pattern 會對正在編輯的檔案路徑進行比對。"
+        }
+        "Patterns are matched against the file path being written." => {
+            "Pattern 會對正在寫入的檔案路徑進行比對。"
+        }
+        "Patterns are matched against the path being deleted." => {
+            "Pattern 會對正在刪除的路徑進行比對。"
+        }
+        "Patterns are matched independently against the source path and the destination path. Enter either path below to test." => {
+            "Pattern 會分別對來源路徑與目的地路徑進行比對。可在下方輸入任一路徑測試。"
+        }
+        "Patterns are matched against the directory path being created." => {
+            "Pattern 會對正在建立的目錄路徑進行比對。"
+        }
+        "Patterns are matched against the URL being fetched." => {
+            "Pattern 會對正在擷取的 URL 進行比對。"
+        }
+        "Patterns are matched against the search query." => "Pattern 會對搜尋查詢進行比對。",
+        "Patterns are matched against the absolute path to the skill's SKILL.md file." => {
+            "Pattern 會對技能 SKILL.md 檔案的絕對路徑進行比對。"
+        }
+        "`rm -rf` commands are always blocked when run on `$HOME`, `~`, `.`, `..`, or `/`" => {
+            "在 `$HOME`、`~`、`.`、`..` 或 `/` 執行 `rm -rf` 命令時一律封鎖"
+        }
+        "Note: custom tool permissions only apply to the Zed native agent and don’t extend to external agents connected through the Agent Client Protocol (ACP)." => {
+            "注意：自訂工具權限只會套用到 Zed 原生代理，不會延伸到透過 Agent Client Protocol (ACP) 連線的外部代理。"
+        }
+        "{tool} Tool" => "{tool} 工具",
+        "1 rule" => "1 條規則",
+        "{count} rules" => "{count} 條規則",
+        "{count} invalid" => "{count} 個無效",
+        "Enter a tool input to test your rules…" => "輸入工具內容以測試你的規則…",
+        "Always Deny" => "一律拒絕",
+        "Always Allow" => "一律允許",
+        "Always Confirm" => "一律確認",
+        "Confirm" => "確認",
+        "If any of these regexes match, the tool action will be denied." => {
+            "如果其中任一 regex 相符，工具動作將被拒絕。"
+        }
+        "If any of these regexes match, the action will be approved—unless an Always Confirm or Always Deny matches." => {
+            "如果其中任一 regex 相符，動作將被允許，除非同時符合「一律確認」或「一律拒絕」。"
+        }
+        "If any of these regexes match, a confirmation will be shown unless an Always Deny regex matches." => {
+            "如果其中任一 regex 相符，將顯示確認提示，除非同時符合「一律拒絕」regex。"
+        }
+        "Controls the default behavior for all tool actions. Per-tool rules and patterns can override this." => {
+            "控制所有工具動作的預設行為。各工具規則與 pattern 可覆寫此設定。"
+        }
+        "Action to take when no patterns match." => "沒有 pattern 相符時要採取的動作。",
+        "Test Your Rules" => "測試你的規則",
+        "No regex matches, using the default action." => "沒有符合的 regex，使用預設動作。",
+        "Denied: {reason}" => "已拒絕：{reason}",
+        "Pattern preview differs from engine — showing authoritative result." => {
+            "Pattern 預覽與引擎不同，正在顯示權威結果。"
+        }
+        "Reason: {reason}" => "原因：{reason}",
+        "Result:" => "結果：",
+        "Invalid Patterns" => "無效 Pattern",
+        "These patterns failed to compile as regular expressions. The tool will be blocked until they are fixed or removed." => {
+            "這些 pattern 無法編譯為 regular expression。修正或移除前，此工具會被封鎖。"
+        }
+        "Delete Invalid Pattern" => "刪除無效 Pattern",
+        "Error: {error}" => "錯誤：{error}",
+        "No skills available for this context." => "此情境沒有可用技能。",
+        "No patterns configured" => "尚未設定 pattern",
+        "New Skill" => "新增技能",
+        "Name" => "名稱",
+        "Description" => "描述",
+        "Scope" => "範圍",
+        "Disable model invocation" => "停用模型叫用",
+        "Hide this skill from the model's catalog. It can still be invoked via slash command." => {
+            "從模型目錄隱藏此技能。仍可透過 slash command 叫用。"
+        }
+        "Front-matter" => "Front-matter",
+        "Skill Content" => "技能內容",
+        "Add skill content…" => "新增技能內容…",
+        "Save Skill" => "儲存技能",
+        "Saving…" => "正在儲存…",
+        "Skill Creator" => "技能建立器",
+        "Rules Library" => "規則庫",
+        "No rules found matching your search." => "找不到符合搜尋的規則。",
+        "Built-in Rules" => "內建規則",
+        "Built-in rules are those included out of the box with Zed." => {
+            "內建規則是 Zed 預設包含的規則。"
+        }
+        "Default Rules" => "預設規則",
+        "Default Rules are attached by default with every new thread." => {
+            "每個新對話串預設都會附加預設規則。"
+        }
+        "Untitled" => "未命名",
+        "Remove from Default Rules" => "從預設規則移除",
+        "Add to Default Rules" => "加入預設規則",
+        "Always included in every thread." => "每個對話串都會一律包含。",
+        "Delete Rule" => "刪除規則",
+        "Duplicate Rule" => "複製規則",
+        "Restore to Default Content" => "還原為預設內容",
+        "New Rule" => "新增規則",
+        "Agent Changes Rejected" => "已拒絕代理變更",
+        "Always for selected commands" => "一律套用於選取的命令",
+        "Only this time" => "僅限這一次",
+        "Always for {tool}" => "一律套用於 {tool}",
+        "Always for `{command}` commands" => "一律套用於 `{command}` 命令",
+        "Select Options…" => "選擇選項…",
+        "New From Summary" => "從摘要新增",
+        "Zed Agent" => "Zed 代理",
+        "Add More Agents" => "新增更多代理",
+        "Tools Unsupported" => "不支援工具",
+        "This model does not support tools." => "此模型不支援工具。",
+        "Change Profile" => "變更設定檔",
+        "Cycle Through Profiles" => "循環切換設定檔",
+        "MCP Servers" => "MCP 伺服器",
+        "Add Custom Server…" => "新增自訂伺服器…",
+        "Install New Servers…" => "安裝新伺服器…",
+        "Skills" => "技能",
+        "Create Skill…" => "建立技能…",
+        "Manage Skills…" => "管理技能…",
+        "Open Global AGENTS.md" => "開啟全域 AGENTS.md",
+        "Open Project AGENTS.md" => "開啟專案 AGENTS.md",
         "Search agents..." => "搜尋代理...",
         "Unavailable" => "無法使用",
         "ACP Registry" => "ACP 登錄檔",
@@ -417,7 +687,101 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Add your own keys to use AI without signing in." => {
             "新增你自己的金鑰，不登入也能使用 AI。"
         }
+        "Welcome to Zed AI" => "歡迎使用 Zed AI",
+        "Sign in to try Zed Pro free for 14 days." => "登入即可免費試用 Zed Pro 14 天。",
+        "Try Zed Pro for Free" => "免費試用 Zed Pro",
+        "(Current Plan)" => "（目前方案）",
+        "Pro Trial" => "Zed Pro 試用",
+        "Start Free Trial" => "開始免費試用",
+        "Welcome to the Zed Pro Trial" => "歡迎使用 Zed Pro 試用",
+        "Here's what you get for the next 14 days:" => "接下來 14 天你可以使用：",
+        "Welcome to Zed Pro" => "歡迎使用 Zed Pro",
+        "Welcome to Zed Business" => "歡迎使用 Zed Business",
+        "Welcome to Zed Student" => "歡迎使用 Zed Student",
+        "Here's what you get:" => "你將獲得：",
+        "You have access to Zed's hosted models through your Pro subscription." => {
+            "你可以透過 Pro 訂閱使用 Zed 託管模型。"
+        }
+        "You have access to Zed's hosted models through your Pro trial." => {
+            "你可以透過 Pro 試用使用 Zed 託管模型。"
+        }
+        "You have access to Zed's hosted models through your Student subscription." => {
+            "你可以透過 Student 訂閱使用 Zed 託管模型。"
+        }
+        "You have access to Zed's hosted models through your organization." => {
+            "你可以透過組織使用 Zed 託管模型。"
+        }
+        "Zed's hosted models are disabled by your organization's configuration." => {
+            "你的組織設定已停用 Zed 託管模型。"
+        }
+        "Subscribe for access to Zed's hosted models. Start with a 14 day free trial." => {
+            "訂閱即可使用 Zed 託管模型。可先開始 14 天免費試用。"
+        }
+        "Subscribe for access to Zed's hosted models." => "訂閱即可使用 Zed 託管模型。",
+        "Manage Subscription" => "管理訂閱",
+        "Start 14-day Free Pro Trial" => "開始 14 天免費 Pro 試用",
+        "Upgrade to Pro" => "升級至 Pro",
+        "Sign in to have access to Zed's complete agentic experience with hosted models." => {
+            "登入即可使用 Zed 搭配託管模型的完整代理體驗。"
+        }
+        "Sign In to use Zed AI" => "登入以使用 Zed AI",
+        "API key set in {env_var} environment variable" => "API 金鑰已由 {env_var} 環境變數設定",
+        "API key configured" => "API 金鑰已設定",
+        "API key configured for {api_url}" => "已為 {api_url} 設定 API 金鑰",
+        "dashboard" => "儀表板",
+        "Visit the" => "造訪",
+        "to generate an API key." => "以產生 API 金鑰。",
+        "API Key Set in Environment Variable" => "API 金鑰已由環境變數設定",
+        "API Key Configured" => "API 金鑰已設定",
+        "Reset Key" => "重設金鑰",
+        "Or set the {env_var} env var and restart Zed." => {
+            "或設定 {env_var} 環境變數並重新啟動 Zed。"
+        }
+        "To use Zed's agent with OpenAI, you need to add an API key. Follow these steps:" => {
+            "若要搭配 OpenAI 使用 Zed 的代理，你需要新增 API 金鑰。請依照下列步驟："
+        }
+        "Create one by visiting" => "前往此處建立",
+        "Ensure your OpenAI account has credits" => "確認你的 OpenAI 帳戶有可用額度",
+        "Paste your API key below and hit enter to start using the agent" => {
+            "在下方貼上你的 API 金鑰，然後按 Enter 即可開始使用代理"
+        }
+        "You can also set the {env_var} environment variable and restart Zed." => {
+            "你也可以設定 {env_var} 環境變數並重新啟動 Zed。"
+        }
+        "Note that having a subscription for another service like GitHub Copilot won't work." => {
+            "請注意，GitHub Copilot 等其他服務的訂閱無法在此使用。"
+        }
+        "To reset your API key, unset the {env_var} environment variable." => {
+            "若要重設 API 金鑰，請取消設定 {env_var} 環境變數。"
+        }
+        "Zed also supports OpenAI-compatible models." => "Zed 也支援 OpenAI-compatible 模型。",
+        "Loading credentials…" => "正在載入憑證…",
+        "2,000 accepted edit predictions" => "2,000 次已接受的編輯預測",
+        "Unlimited prompts with your AI API keys" => "使用你的 AI API 金鑰取得不限次數的提示",
+        "Unlimited use of external agents" => "不限次數使用外部代理",
+        "Unlimited edit predictions" => "不限次數的編輯預測",
+        "$20 of tokens in Zed agent" => "Zed 代理中價值 $20 的 tokens",
+        "$10 of tokens in Zed agent" => "Zed 代理中價值 $10 的 tokens",
+        "$5 of tokens in Zed agent" => "Zed 代理中價值 $5 的 tokens",
+        "No credit card required" => "不需要信用卡",
+        "Try it out for 14 days, no credit card required" => "試用 14 天，不需要信用卡",
+        "Usage-based billing beyond $5" => "超過 $5 後按用量計費",
+        "Usage-based billing" => "按用量計費",
+        "Optional credit packs for additional usage" => "可選購額外用量的 credit packs",
+        "Start now using API keys from your environment for the following providers:" => {
+            "立即使用環境中的 API 金鑰開始，適用於下列提供者："
+        }
+        "Alternatively, you can continue to use GitHub Copilot as that's already set up." => {
+            "或者，你也可以繼續使用已設定好的 GitHub Copilot。"
+        }
+        "Alternatively, you can use GitHub Copilot as your edit prediction provider." => {
+            "或者，你也可以使用 GitHub Copilot 作為編輯預測提供者。"
+        }
+        "Use Copilot" => "使用 Copilot",
+        "Configure Copilot" => "設定 Copilot",
         "Reinstall Copilot and Sign In" => "重新安裝 Copilot 並登入",
+        "Reinstall Copilot and Sign in" => "重新安裝 Copilot 並登入",
+        "Reinstall and Sign in" => "重新安裝並登入",
         "Copilot Enabled!" => "Copilot 已啟用！",
         "You're all set to use GitHub Copilot." => "你已可開始使用 GitHub Copilot。",
         "Done" => "完成",
@@ -432,6 +796,96 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Copilot had issues starting. You can try reinstalling it and signing in again." => {
             "Copilot 啟動時發生問題。你可以嘗試重新安裝並再次登入。"
         }
+        "Signing out of Copilot…" => "正在登出 Copilot…",
+        "Signed out of Copilot" => "已登出 Copilot",
+        "Copilot is reinstalling…" => "正在重新安裝 Copilot…",
+        "Copilot is starting…" => "Copilot 正在啟動…",
+        "Copilot has started." => "Copilot 已啟動。",
+        "Copied!" => "已複製！",
+        "Waiting for connection…" => "正在等待連線…",
+        "Connect to GitHub" => "連線至 GitHub",
+        "Use GitHub Copilot in Zed" => "在 Zed 中使用 GitHub Copilot",
+        "Using Copilot requires an active subscription on GitHub." => {
+            "使用 Copilot 需要有效的 GitHub 訂閱。"
+        }
+        "Paste this code into GitHub after clicking the button below." => {
+            "點選下方按鈕後，將此代碼貼到 GitHub。"
+        }
+        "Starting Copilot…" => "正在啟動 Copilot…",
+        "Signing into Copilot…" => "正在登入 Copilot…",
+        "Sign in to GitHub" => "登入 GitHub",
+        "Sign in to use GitHub Copilot" => "登入以使用 GitHub Copilot",
+        "Authenticate To Use" => "驗證後使用",
+        "To use Copilot for edit predictions, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot subscription." => {
+            "若要使用 Copilot 進行編輯預測，你需要登入 GitHub。請注意，你的 GitHub 帳戶必須有有效的 Copilot 訂閱。"
+        }
+        "Copilot requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different edit predictions provider." => {
+            "Copilot 需要有效的 GitHub Copilot 訂閱。請確認 Copilot 已設定並再試一次，或使用其他編輯預測提供者。"
+        }
+        "To use Zed's agent with GitHub Copilot, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot Chat subscription." => {
+            "若要搭配 GitHub Copilot 使用 Zed 的代理，你需要登入 GitHub。請注意，你的 GitHub 帳戶必須有有效的 Copilot Chat 訂閱。"
+        }
+        "Copilot Chat requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different LLM provider." => {
+            "Copilot Chat 需要有效的 GitHub Copilot 訂閱。請確認 Copilot 已設定並再試一次，或使用其他 LLM 提供者。"
+        }
+        "Copilot can't be started: {error}" => "Copilot 無法啟動：{error}",
+        "Reinstall Copilot" => "重新安裝 Copilot",
+        "Powered by Codestral" => "由 Codestral 提供支援",
+        "Missing API key for Codestral" => "缺少 Codestral API 金鑰",
+        "Powered by Ollama ({model})" => "由 Ollama 提供支援（{model}）",
+        "Ollama model not configured — configure a model before use" => {
+            "尚未設定 Ollama 模型，請先設定模型再使用"
+        }
+        "Missing API key for Mercury" => "缺少 Mercury API 金鑰",
+        "Mercury free tier limit reached" => "已達 Mercury 免費層級限制",
+        "Powered by Mercury" => "由 Mercury 提供支援",
+        "Powered by Zeta" => "由 Zeta 提供支援",
+        "Choose a Plan" => "選擇方案",
+        "Edit Predictions" => "編輯預測",
+        "Disabled For This File" => "已對此檔案停用",
+        "Providers" => "提供者",
+        "Edit predictions are disabled for this organization." => "此組織已停用編輯預測。",
+        "Show Edit Predictions For" => "顯示編輯預測的範圍",
+        "Project identified as open source, and you're sharing data." => {
+            "專案已識別為開源，且你正在分享資料。"
+        }
+        "Project identified as open source, but you're not sharing data." => {
+            "專案已識別為開源，但你未分享資料。"
+        }
+        "Project not identified as open source. No data captured." => {
+            "專案未識別為開源，不會擷取資料。"
+        }
+        "Project not identified as open source, and setting turned off." => {
+            "專案未識別為開源，且設定已關閉。"
+        }
+        "Help us improve our open dataset model by sharing data from open source repositories. Zed must detect a license file in your repo for this setting to take effect. Files with sensitive data and secrets are excluded by default." => {
+            "分享開源 repository 的資料，協助我們改善開放資料集模型。Zed 必須在你的 repository 中偵測到 license 檔，此設定才會生效。含有敏感資料與 secret 的檔案預設會排除。"
+        }
+        "No data captured." => "未擷取資料。",
+        "Configure Excluded Files" => "設定排除檔案",
+        "Open your settings to add sensitive paths for which Zed will never predict edits." => {
+            "開啟設定以新增敏感路徑，Zed 絕不會針對這些路徑預測編輯。"
+        }
+        "This file is excluded." => "此檔案已排除。",
+        "Predict Edit at Cursor" => "在游標處預測編輯",
+        "Rate Predictions" => "評分預測",
+        "Copilot: Next Edit Suggestions" => "Copilot：下一個編輯建議",
+        "Go to Copilot Settings" => "前往 Copilot 設定",
+        "You get 2,000 accepted suggestions at every keystroke for free, powered by Zeta, our open-source, open-data model" => {
+            "你可以免費取得 2,000 次每次按鍵即時提供、且已接受的建議，由我們的開源開放資料模型 Zeta 提供支援"
+        }
+        "Sign In & Start Using" => "登入並開始使用",
+        "Free tier limit reached" => "已達免費層級限制",
+        "Upgrade to a paid plan to continue using the service" => "升級至付費方案以繼續使用此服務",
+        "Usage" => "用量",
+        "Subscribe to increase your limit" => "訂閱以提高你的額度",
+        "Your GitHub account is less than 30 days old." => "你的 GitHub 帳戶建立未滿 30 天。",
+        "Upgrade to Zed Pro or contact us." => "升級至 Zed Pro 或聯絡我們。",
+        "You have an outstanding invoice" => "你有尚未付款的發票",
+        "Check your payment status or contact us at billing-support@zed.dev to continue using this feature." => {
+            "請檢查付款狀態，或透過 billing-support@zed.dev 聯絡我們以繼續使用此功能。"
+        }
+        "Experiment" => "實驗",
         "Sign Out" => "登出",
         "Authorized" => "已授權",
         "Sign In" => "登入",
@@ -1329,5 +1783,101 @@ mod tests {
         );
         assert_eq!(text("Rate Limit Reached"), "已達速率限制");
         assert_eq!(text("Invalid API Key"), "API 金鑰無效");
+    }
+
+    #[test]
+    fn milestone_eight_ai_onboarding_and_copilot_terms_are_guarded() {
+        assert_eq!(text("Welcome to Zed AI"), "歡迎使用 Zed AI");
+        assert_eq!(text("Try Zed Pro for Free"), "免費試用 Zed Pro");
+        assert_eq!(text("Start Free Trial"), "開始免費試用");
+        assert_eq!(text("Here's what you get:"), "你將獲得：");
+        assert_eq!(
+            text("Start now using API keys from your environment for the following providers:"),
+            "立即使用環境中的 API 金鑰開始，適用於下列提供者："
+        );
+        assert_eq!(
+            text("Use GitHub Copilot in Zed"),
+            "在 Zed 中使用 GitHub Copilot"
+        );
+        assert_eq!(text("Starting Copilot…"), "正在啟動 Copilot…");
+        assert_eq!(
+            text("Sign in to use GitHub Copilot"),
+            "登入以使用 GitHub Copilot"
+        );
+    }
+
+    #[test]
+    fn milestone_eight_agent_mcp_provider_and_profile_terms_are_guarded() {
+        assert_eq!(text("Add Custom Server"), "新增自訂伺服器");
+        assert_eq!(text("Install from Extensions"), "從延伸模組安裝");
+        assert_eq!(text("Configure MCP Server"), "設定 MCP 伺服器");
+        assert_eq!(
+            text("Model Context Protocol (MCP) Servers"),
+            "Model Context Protocol (MCP) 伺服器"
+        );
+        assert_eq!(text("View Tools"), "檢視工具");
+        assert_eq!(text("External Agents"), "外部代理");
+        assert_eq!(text("Add Agent"), "新增代理");
+        assert_eq!(text("Install from Registry"), "從登錄檔安裝");
+        assert_eq!(text("Agent Profiles"), "代理設定檔");
+        assert_eq!(text("Custom Profiles"), "自訂設定檔");
+        assert_eq!(text("Change Profile"), "變更設定檔");
+        assert_eq!(text("Tools Unsupported"), "不支援工具");
+        assert_eq!(text("Zed Agent"), "Zed 代理");
+        assert_eq!(text("New From Summary"), "從摘要新增");
+        assert_eq!(text("Configure Default Model"), "設定預設模型");
+        assert_eq!(text("Configure MCP Tools"), "設定 MCP 工具");
+        assert_eq!(text("Add LLM Provider"), "新增 LLM 提供者");
+        assert_eq!(text("Save Provider"), "儲存提供者");
+    }
+
+    #[test]
+    fn milestone_eight_provider_edit_prediction_and_tool_permission_terms_are_guarded() {
+        assert_eq!(text("Select a Model"), "選取模型");
+        assert_eq!(text("Favorite Model"), "加入喜愛模型");
+        assert_eq!(text("Unfavorite Model"), "從喜愛模型移除");
+        assert_eq!(text("Refresh Models"), "重新整理模型");
+        assert_eq!(text("Configure a Provider"), "設定提供者");
+        assert_eq!(text("Sign In Or Configure a Provider"), "登入或設定提供者");
+        assert_eq!(text("Reset Key"), "重設金鑰");
+        assert_eq!(text("Choose a Plan"), "選擇方案");
+        assert_eq!(text("Edit Predictions"), "編輯預測");
+        assert_eq!(text("Disabled For This File"), "已對此檔案停用");
+        assert_eq!(text("Providers"), "提供者");
+        assert_eq!(text("Show Edit Predictions For"), "顯示編輯預測的範圍");
+        assert_eq!(text("This Buffer"), "此緩衝區");
+        assert_eq!(text("All Files"), "所有檔案");
+        assert_eq!(text("Training Data Collection"), "訓練資料收集");
+        assert_eq!(text("Configure Excluded Files"), "設定排除檔案");
+        assert_eq!(text("Predict Edit at Cursor"), "在游標處預測編輯");
+        assert_eq!(text("Go to Copilot Settings"), "前往 Copilot 設定");
+        assert_eq!(text("Sign In & Start Using"), "登入並開始使用");
+        assert_eq!(text("Usage"), "用量");
+        assert_eq!(text("Tool Permissions"), "工具權限");
+        assert_eq!(text("Always Deny"), "一律拒絕");
+        assert_eq!(text("Always Allow"), "一律允許");
+        assert_eq!(text("Always Confirm"), "一律確認");
+        assert_eq!(text("Test Your Rules"), "測試你的規則");
+    }
+
+    #[test]
+    fn milestone_eight_skills_rules_and_safety_terms_are_guarded() {
+        assert_eq!(text("New Skill"), "新增技能");
+        assert_eq!(text("Scope"), "範圍");
+        assert_eq!(text("Skill Content"), "技能內容");
+        assert_eq!(text("Save Skill"), "儲存技能");
+        assert_eq!(text("Saving…"), "正在儲存…");
+        assert_eq!(text("Rules Library"), "規則庫");
+        assert_eq!(text("Remove from Default Rules"), "從預設規則移除");
+        assert_eq!(text("Delete Rule"), "刪除規則");
+        assert_eq!(text("New Rule"), "新增規則");
+        assert_eq!(text("Agent Changes Rejected"), "已拒絕代理變更");
+        assert_eq!(text("Undo"), "復原");
+        assert_eq!(
+            text(
+                "Note: custom tool permissions only apply to the Zed native agent and don’t extend to external agents connected through the Agent Client Protocol (ACP)."
+            ),
+            "注意：自訂工具權限只會套用到 Zed 原生代理，不會延伸到透過 Agent Client Protocol (ACP) 連線的外部代理。"
+        );
     }
 }

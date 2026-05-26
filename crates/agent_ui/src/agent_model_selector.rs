@@ -9,7 +9,7 @@ use language_model::IconOrSvg;
 use picker::popover_menu::PickerPopoverMenu;
 use settings::update_settings_file;
 use std::sync::Arc;
-use ui::{PopoverMenuHandle, Tooltip, prelude::*};
+use ui::{PopoverMenuHandle, Tooltip, l10n, prelude::*};
 
 pub struct AgentModelSelector {
     selector: Entity<LanguageModelSelector>,
@@ -91,7 +91,7 @@ impl Render for AgentModelSelector {
         let model_name = model
             .as_ref()
             .map(|model| model.model.name().0)
-            .unwrap_or_else(|| SharedString::from("Select a Model"));
+            .unwrap_or_else(|| SharedString::from(l10n::text("Select a Model")));
 
         let provider_icon = model.as_ref().map(|model| model.provider.icon());
         let color = if self.menu_handle.is_deployed() {

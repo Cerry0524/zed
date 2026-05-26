@@ -32,6 +32,30 @@ struct ThreadFeedbackState {
     comments_editor: Option<Entity<Editor>>,
 }
 
+fn localized_permission_label(label: SharedString) -> SharedString {
+    let label = label.as_ref();
+    if label == "Only this time" {
+        return l10n::text("Only this time").into();
+    }
+
+    if let Some(tool) = label.strip_prefix("Always for ") {
+        if let Some(command) = tool
+            .strip_prefix('`')
+            .and_then(|tool| tool.strip_suffix("` commands"))
+        {
+            return l10n::text("Always for `{command}` commands")
+                .replace("{command}", command)
+                .into();
+        }
+
+        return l10n::text("Always for {tool}")
+            .replace("{tool}", tool)
+            .into();
+    }
+
+    l10n::text_or_original(label).into_owned().into()
+}
+
 impl ThreadFeedbackState {
     pub fn submit(
         &mut self,
@@ -7301,13 +7325,13 @@ impl ThreadView {
 
         let dropdown_label: SharedString =
             if matches!(selection, Some(PermissionSelection::SelectedPatterns(_))) {
-                "Always for selected commands".into()
+                l10n::text("Always for selected commands").into()
             } else {
                 choices
                     .get(selected_index)
                     .or(choices.last())
-                    .map(|choice| choice.label())
-                    .unwrap_or_else(|| "Only this time".into())
+                    .map(|choice| localized_permission_label(choice.label()))
+                    .unwrap_or_else(|| l10n::text("Only this time").into())
             };
 
         let dropdown = if let Some((pattern_list, tool_name)) = patterns {
@@ -7344,7 +7368,7 @@ impl ThreadView {
                 h_flex()
                     .gap_0p5()
                     .child(
-                        Button::new(("allow-btn", entry_ix), "Allow")
+                        Button::new(("allow-btn", entry_ix), l10n::text("Allow"))
                             .start_icon(
                                 Icon::new(IconName::Check)
                                     .size(IconSize::XSmall)
@@ -7376,7 +7400,7 @@ impl ThreadView {
                             })),
                     )
                     .child(
-                        Button::new(("deny-btn", entry_ix), "Deny")
+                        Button::new(("deny-btn", entry_ix), l10n::text("Deny"))
                             .start_icon(
                                 Icon::new(IconName::Close)
                                     .size(IconSize::XSmall)
@@ -7422,7 +7446,7 @@ impl ThreadView {
         let menu_options: Vec<(usize, SharedString)> = choices
             .iter()
             .enumerate()
-            .map(|(i, choice)| (i, choice.label()))
+            .map(|(i, choice)| (i, localized_permission_label(choice.label())))
             .collect();
 
         let permission_dropdown_handle = self.permission_dropdown_handle.clone();
@@ -7497,7 +7521,7 @@ impl ThreadView {
         let menu_options: Vec<(usize, SharedString)> = choices
             .iter()
             .enumerate()
-            .map(|(i, choice)| (i, choice.label()))
+            .map(|(i, choice)| (i, localized_permission_label(choice.label())))
             .collect();
 
         let pattern_options: Vec<(usize, SharedString)> = patterns
@@ -7506,7 +7530,10 @@ impl ThreadView {
             .map(|(i, cp)| {
                 (
                     i,
-                    SharedString::from(format!("Always for `{}` commands", cp.display_name)),
+                    SharedString::from(
+                        l10n::text("Always for `{command}` commands")
+                            .replace("{command}", &cp.display_name),
+                    ),
                 )
             })
             .collect();
@@ -7590,7 +7617,7 @@ impl ThreadView {
                             );
                         }
 
-                        menu = menu.separator().header("Select Options…");
+                        menu = menu.separator().header(l10n::text("Select Options…"));
 
                         for (pattern_index, label) in patterns.iter() {
                             let label = label.clone();

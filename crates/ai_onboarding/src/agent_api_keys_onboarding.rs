@@ -99,7 +99,7 @@ impl Render for ApiKeysWithProviders {
                                 div()
                                     .w_full()
                                     .child(
-                                        Label::new("Start now using API keys from your environment for the following providers:")
+                                        Label::new(l10n::text("Start now using API keys from your environment for the following providers:"))
                                             .color(Color::Muted)
                                     )
                             )

@@ -19,7 +19,7 @@ use std::rc::Rc;
 use std::sync::Arc;
 use theme_settings::ThemeSettings;
 use ui::{
-    ContextMenu, Divider, DropdownMenu, DropdownStyle, Headline, HeadlineSize, SwitchField,
+    ContextMenu, Divider, DropdownMenu, DropdownStyle, Headline, HeadlineSize, SwitchField, l10n,
     prelude::*,
 };
 use ui_input::{ErasedEditorEvent, InputField};
@@ -148,7 +148,7 @@ pub fn open_skill_creator(
             cx.open_window(
                 WindowOptions {
                     titlebar: Some(TitlebarOptions {
-                        title: Some("New Skill".into()),
+                        title: Some(l10n::text("New Skill").into()),
                         appears_transparent: true,
                         traffic_light_position: Some(point(px(12.0), px(12.0))),
                     }),
@@ -221,7 +221,7 @@ impl SkillCreator {
 
         let name_editor = cx.new(|cx| {
             InputField::new(window, cx, "my-new-skill")
-                .label("Name")
+                .label(l10n::text("Name"))
                 .tab_index(NAME_FIELD_TAB_INDEX)
                 .tab_stop(true)
         });
@@ -239,7 +239,7 @@ impl SkillCreator {
                 cx,
                 "e.g., Fill the PR description following this template.",
             )
-            .label("Description")
+            .label(l10n::text("Description"))
             .tab_index(DESCRIPTION_FIELD_TAB_INDEX)
             .tab_stop(true)
         });
@@ -251,7 +251,7 @@ impl SkillCreator {
                 buffer
             });
             let mut editor = Editor::for_buffer(buffer, None, window, cx);
-            editor.set_placeholder_text("Add skill content…", window, cx);
+            editor.set_placeholder_text(l10n::text("Add skill content…"), window, cx);
             editor.set_soft_wrap_mode(SoftWrap::EditorWidth, cx);
             editor.set_show_gutter(false, cx);
             editor.set_show_wrap_guides(false, cx);
@@ -587,7 +587,7 @@ impl SkillCreator {
                 v_flex()
                     .flex_1()
                     .min_w_0()
-                    .child(Label::new("Scope"))
+                    .child(Label::new(l10n::text("Scope")))
                     .child(Label::new(scope_hint).color(Color::Muted)),
             )
             .child(
@@ -604,10 +604,12 @@ impl SkillCreator {
 
         SwitchField::new(
             "disable-model-invocation",
-            Some("Disable model invocation"),
+            Some(l10n::text("Disable model invocation")),
             Some(
-                "Hide this skill from the model's catalog. It can still be invoked via slash command."
-                    .into(),
+                l10n::text(
+                    "Hide this skill from the model's catalog. It can still be invoked via slash command.",
+                )
+                .into(),
             ),
             toggle_state,
             cx.listener(|this, _state: &ToggleState, _window, cx| {
@@ -673,7 +675,11 @@ impl SkillCreator {
     fn render_action_bar(&self, cx: &mut Context<Self>) -> impl IntoElement {
         let valid = self.is_valid(cx);
         let saving = self.saving;
-        let main_action = if saving { "Saving…" } else { "Save Skill" };
+        let main_action = if saving {
+            l10n::text("Saving…")
+        } else {
+            l10n::text("Save Skill")
+        };
 
         h_flex()
             .w_full()
@@ -694,7 +700,7 @@ impl SkillCreator {
                 h_flex()
                     .gap_1()
                     .child(
-                        Button::new("cancel-skill", "Cancel")
+                        Button::new("cancel-skill", l10n::text("Cancel"))
                             .disabled(saving)
                             .on_click(|_, window, cx| {
                                 window.dispatch_action(Box::new(Cancel), cx);
@@ -724,7 +730,7 @@ impl SkillCreator {
             .when(needs_traffic_light_clearance, |this| this.pl(px(84.)))
             .border_b_1()
             .border_color(theme.colors().border)
-            .child(Headline::new("Skill Creator").size(HeadlineSize::XSmall))
+            .child(Headline::new(l10n::text("Skill Creator")).size(HeadlineSize::XSmall))
     }
 
     fn focus_next_field(
@@ -811,7 +817,7 @@ impl Render for SkillCreator {
                         .child(
                             v_flex()
                                 .gap_2()
-                                .child(Label::new("Front-matter"))
+                                .child(Label::new(l10n::text("Front-matter")))
                                 .child(self.name_editor.clone())
                                 .child(self.description_editor.clone()),
                         )
@@ -823,7 +829,7 @@ impl Render for SkillCreator {
                             v_flex()
                                 .flex_1()
                                 .gap_2()
-                                .child(Label::new("Skill Content"))
+                                .child(Label::new(l10n::text("Skill Content")))
                                 .child(self.render_body_field(window, cx)),
                         ),
                 )

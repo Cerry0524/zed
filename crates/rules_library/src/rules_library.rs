@@ -18,7 +18,7 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 use theme_settings::ThemeSettings;
-use ui::{Divider, ListItem, ListItemSpacing, ListSubHeader, Tooltip, prelude::*};
+use ui::{Divider, ListItem, ListItemSpacing, ListSubHeader, Tooltip, l10n, prelude::*};
 use ui_input::ErasedEditor;
 use util::{ResultExt, TryFutureExt};
 use workspace::{MultiWorkspace, Workspace, WorkspaceSettings, client_side_decorations};
@@ -119,7 +119,7 @@ pub fn open_rules_library(
             cx.open_window(
                 WindowOptions {
                     titlebar: Some(TitlebarOptions {
-                        title: Some("Rules Library".into()),
+                        title: Some(l10n::text("Rules Library").into()),
                         appears_transparent: true,
                         traffic_light_position: Some(point(px(12.0), px(12.0))),
                     }),
@@ -197,7 +197,7 @@ impl PickerDelegate for RulePickerDelegate {
     }
 
     fn no_matches_text(&self, _window: &mut Window, _cx: &mut App) -> Option<SharedString> {
-        Some("No rules found matching your search.".into())
+        Some(l10n::text("No rules found matching your search.").into())
     }
 
     fn selected_index(&self) -> usize {
@@ -226,7 +226,7 @@ impl PickerDelegate for RulePickerDelegate {
     }
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search…".into()
+        l10n::text("Search…").into()
     }
 
     fn update_matches(
@@ -262,7 +262,8 @@ impl PickerDelegate for RulePickerDelegate {
                     let mut filtered_entries = Vec::new();
 
                     if !built_in_rules.is_empty() {
-                        filtered_entries.push(RulePickerEntry::Header("Built-in Rules".into()));
+                        filtered_entries
+                            .push(RulePickerEntry::Header(l10n::text("Built-in Rules").into()));
 
                         for rule in built_in_rules {
                             filtered_entries.push(RulePickerEntry::Rule(rule));
@@ -272,7 +273,8 @@ impl PickerDelegate for RulePickerDelegate {
                     }
 
                     if !default_rules.is_empty() {
-                        filtered_entries.push(RulePickerEntry::Header("Default Rules".into()));
+                        filtered_entries
+                            .push(RulePickerEntry::Header(l10n::text("Default Rules").into()));
 
                         for rule in default_rules {
                             filtered_entries.push(RulePickerEntry::Rule(rule));
@@ -338,10 +340,10 @@ impl PickerDelegate for RulePickerDelegate {
     ) -> Option<Self::ListItem> {
         match self.filtered_entries.get(ix)? {
             RulePickerEntry::Header(title) => {
-                let tooltip_text = if title.as_ref() == "Built-in Rules" {
-                    "Built-in rules are those included out of the box with Zed."
+                let tooltip_text = if title.as_ref() == l10n::text("Built-in Rules") {
+                    l10n::text("Built-in rules are those included out of the box with Zed.")
                 } else {
-                    "Default Rules are attached by default with every new thread."
+                    l10n::text("Default Rules are attached by default with every new thread.")
                 };
 
                 Some(
@@ -374,16 +376,20 @@ impl PickerDelegate for RulePickerDelegate {
                         .spacing(ListItemSpacing::Sparse)
                         .toggle_state(selected)
                         .child(
-                            Label::new(rule.title.clone().unwrap_or("Untitled".into()))
-                                .truncate()
-                                .mr_10(),
+                            Label::new(
+                                rule.title
+                                    .clone()
+                                    .unwrap_or_else(|| l10n::text("Untitled").into()),
+                            )
+                            .truncate()
+                            .mr_10(),
                         )
                         .end_slot::<IconButton>((default && !prompt_id.is_built_in()).then(|| {
                             IconButton::new("toggle-default-rule", IconName::Paperclip)
                                 .toggle_state(true)
                                 .icon_color(Color::Accent)
                                 .icon_size(IconSize::Small)
-                                .tooltip(Tooltip::text("Remove from Default Rules"))
+                                .tooltip(Tooltip::text(l10n::text("Remove from Default Rules")))
                                 .on_click(cx.listener(move |_, _, _, cx| {
                                     cx.emit(RulePickerEvent::ToggledDefault { prompt_id })
                                 }))
@@ -395,7 +401,7 @@ impl PickerDelegate for RulePickerDelegate {
                                         IconButton::new("delete-rule", IconName::Trash)
                                             .icon_color(Color::Muted)
                                             .icon_size(IconSize::Small)
-                                            .tooltip(Tooltip::text("Delete Rule"))
+                                            .tooltip(Tooltip::text(l10n::text("Delete Rule")))
                                             .on_click(cx.listener(move |_, _, _, cx| {
                                                 cx.emit(RulePickerEvent::Deleted { prompt_id })
                                             })),
@@ -412,15 +418,17 @@ impl PickerDelegate for RulePickerDelegate {
                                             })
                                             .map(|this| {
                                                 if default {
-                                                    this.tooltip(Tooltip::text(
+                                                    this.tooltip(Tooltip::text(l10n::text(
                                                         "Remove from Default Rules",
-                                                    ))
+                                                    )))
                                                 } else {
                                                     this.tooltip(move |_window, cx| {
                                                         Tooltip::with_meta(
-                                                            "Add to Default Rules",
+                                                            l10n::text("Add to Default Rules"),
                                                             None,
-                                                            "Always included in every thread.",
+                                                            l10n::text(
+                                                                "Always included in every thread.",
+                                                            ),
                                                             cx,
                                                         )
                                                     })
@@ -722,7 +730,7 @@ impl RulesLibrary {
                     Ok(rule) => {
                         let title_editor = cx.new(|cx| {
                             let mut editor = Editor::single_line(window, cx);
-                            editor.set_placeholder_text("Untitled", window, cx);
+                            editor.set_placeholder_text(l10n::text("Untitled"), window, cx);
                             editor.set_text(rule_metadata.title.unwrap_or_default(), window, cx);
                             if prompt_id.is_built_in() {
                                 editor.set_read_only(true);
@@ -844,7 +852,9 @@ impl RulesLibrary {
                 PromptLevel::Warning,
                 &format!(
                     "Are you sure you want to delete {}",
-                    metadata.title.unwrap_or("Untitled".into())
+                    metadata
+                        .title
+                        .unwrap_or_else(|| l10n::text("Untitled").into())
                 ),
                 None,
                 &["Delete", "Cancel"],
@@ -1080,7 +1090,7 @@ impl RulesLibrary {
                             .child(
                                 IconButton::new("new-rule", IconName::Plus)
                                     .tooltip(move |_window, cx| {
-                                        Tooltip::for_action("New Rule", &NewRule, cx)
+                                        Tooltip::for_action(l10n::text("New Rule"), &NewRule, cx)
                                     })
                                     .on_click(|_, window, cx| {
                                         window.dispatch_action(Box::new(NewRule), cx);
@@ -1090,7 +1100,7 @@ impl RulesLibrary {
                 } else {
                     this.child(
                         h_flex().p_1().w_full().child(
-                            Button::new("new-rule", "New Rule")
+                            Button::new("new-rule", l10n::text("New Rule"))
                                 .full_width()
                                 .style(ButtonStyle::Outlined)
                                 .start_icon(
@@ -1159,7 +1169,9 @@ impl RulesLibrary {
 
     fn render_duplicate_rule_button(&self) -> impl IntoElement {
         IconButton::new("duplicate-rule", IconName::BookCopy)
-            .tooltip(move |_window, cx| Tooltip::for_action("Duplicate Rule", &DuplicateRule, cx))
+            .tooltip(move |_window, cx| {
+                Tooltip::for_action(l10n::text("Duplicate Rule"), &DuplicateRule, cx)
+            })
             .on_click(|_, window, cx| {
                 window.dispatch_action(Box::new(DuplicateRule), cx);
             })
@@ -1173,7 +1185,7 @@ impl RulesLibrary {
                 IconButton::new("restore-default", IconName::RotateCcw)
                     .tooltip(move |_window, cx| {
                         Tooltip::for_action(
-                            "Restore to Default Content",
+                            l10n::text("Restore to Default Content"),
                             &RestoreDefaultContent,
                             cx,
                         )
@@ -1193,13 +1205,13 @@ impl RulesLibrary {
                     .when(default, |this| this.icon_color(Color::Accent))
                     .map(|this| {
                         if default {
-                            this.tooltip(Tooltip::text("Remove from Default Rules"))
+                            this.tooltip(Tooltip::text(l10n::text("Remove from Default Rules")))
                         } else {
                             this.tooltip(move |_window, cx| {
                                 Tooltip::with_meta(
-                                    "Add to Default Rules",
+                                    l10n::text("Add to Default Rules"),
                                     None,
-                                    "Always included in every thread.",
+                                    l10n::text("Always included in every thread."),
                                     cx,
                                 )
                             })
@@ -1212,7 +1224,9 @@ impl RulesLibrary {
             .child(self.render_duplicate_rule_button())
             .child(
                 IconButton::new("delete-rule", IconName::Trash)
-                    .tooltip(move |_window, cx| Tooltip::for_action("Delete Rule", &DeleteRule, cx))
+                    .tooltip(move |_window, cx| {
+                        Tooltip::for_action(l10n::text("Delete Rule"), &DeleteRule, cx)
+                    })
                     .on_click(|_, window, cx| {
                         window.dispatch_action(Box::new(DeleteRule), cx);
                     }),

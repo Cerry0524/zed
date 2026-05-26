@@ -55,7 +55,7 @@ pub(crate) fn render_skills_setup_page(
                 let message = match &settings_window.current_file {
                     SettingsUiFile::User => l10n::text("No global skills installed."),
                     SettingsUiFile::Project(_) => l10n::text("No project skills found."),
-                    _ => "No skills available for this context.",
+                    _ => l10n::text("No skills available for this context."),
                 };
                 let original_window = settings_window.original_window;
                 this.items_center().justify_center().child(

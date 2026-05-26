@@ -20,7 +20,7 @@ use open_ai::{
 use settings::{OpenAiAvailableModel as AvailableModel, Settings, SettingsStore};
 use std::sync::{Arc, LazyLock};
 use strum::IntoEnumIterator;
-use ui::{ButtonLink, ConfiguredApiCard, List, ListBulletItem, prelude::*};
+use ui::{ButtonLink, ConfiguredApiCard, List, ListBulletItem, l10n, prelude::*};
 use ui_input::InputField;
 use util::ResultExt;
 
@@ -610,45 +610,47 @@ impl Render for ConfigurationView {
     fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let env_var_set = self.state.read(cx).api_key_state.is_from_env_var();
         let configured_card_label = if env_var_set {
-            format!("API key set in {API_KEY_ENV_VAR_NAME} environment variable")
+            l10n::text("API key set in {env_var} environment variable")
+                .replace("{env_var}", API_KEY_ENV_VAR_NAME)
         } else {
             let api_url = OpenAiLanguageModelProvider::api_url(cx);
             if api_url == OPEN_AI_API_URL {
-                "API key configured".to_string()
+                l10n::text("API key configured").to_string()
             } else {
-                format!("API key configured for {}", api_url)
+                l10n::text("API key configured for {api_url}").replace("{api_url}", &api_url)
             }
         };
 
         let api_key_section = if self.should_render_editor(cx) {
             v_flex()
                 .on_action(cx.listener(Self::save_api_key))
-                .child(Label::new("To use Zed's agent with OpenAI, you need to add an API key. Follow these steps:"))
+                .child(Label::new(l10n::text("To use Zed's agent with OpenAI, you need to add an API key. Follow these steps:")))
                 .child(
                     List::new()
                         .child(
                             ListBulletItem::new("")
-                                .child(Label::new("Create one by visiting"))
+                                .child(Label::new(l10n::text("Create one by visiting")))
                                 .child(ButtonLink::new("OpenAI's console", "https://platform.openai.com/api-keys"))
                         )
                         .child(
-                            ListBulletItem::new("Ensure your OpenAI account has credits")
+                            ListBulletItem::new(l10n::text("Ensure your OpenAI account has credits"))
                         )
                         .child(
-                            ListBulletItem::new("Paste your API key below and hit enter to start using the agent")
+                            ListBulletItem::new(l10n::text("Paste your API key below and hit enter to start using the agent"))
                         ),
                 )
                 .child(self.api_key_editor.clone())
                 .child(
-                    Label::new(format!(
-                        "You can also set the {API_KEY_ENV_VAR_NAME} environment variable and restart Zed."
-                    ))
+                    Label::new(
+                        l10n::text("You can also set the {env_var} environment variable and restart Zed.")
+                            .replace("{env_var}", API_KEY_ENV_VAR_NAME),
+                    )
                     .size(LabelSize::Small)
                     .color(Color::Muted),
                 )
                 .child(
                     Label::new(
-                        "Note that having a subscription for another service like GitHub Copilot won't work.",
+                        l10n::text("Note that having a subscription for another service like GitHub Copilot won't work."),
                     )
                     .size(LabelSize::Small).color(Color::Muted),
                 )
@@ -658,7 +660,12 @@ impl Render for ConfigurationView {
                 .disabled(env_var_set)
                 .on_click(cx.listener(|this, _, window, cx| this.reset_api_key(window, cx)))
                 .when(env_var_set, |this| {
-                    this.tooltip_label(format!("To reset your API key, unset the {API_KEY_ENV_VAR_NAME} environment variable."))
+                    this.tooltip_label(
+                        l10n::text(
+                            "To reset your API key, unset the {env_var} environment variable.",
+                        )
+                        .replace("{env_var}", API_KEY_ENV_VAR_NAME),
+                    )
                 })
                 .into_any_element()
         };
@@ -680,10 +687,12 @@ impl Render for ConfigurationView {
                             .size(IconSize::XSmall)
                             .color(Color::Muted),
                     )
-                    .child(Label::new("Zed also supports OpenAI-compatible models.")),
+                    .child(Label::new(l10n::text(
+                        "Zed also supports OpenAI-compatible models.",
+                    ))),
             )
             .child(
-                Button::new("docs", "Learn More")
+                Button::new("docs", l10n::text("Learn More"))
                     .end_icon(
                         Icon::new(IconName::ArrowUpRight)
                             .size(IconSize::Small)
@@ -695,7 +704,9 @@ impl Render for ConfigurationView {
             );
 
         if self.load_credentials_task.is_some() {
-            div().child(Label::new("Loading credentials…")).into_any()
+            div()
+                .child(Label::new(l10n::text("Loading credentials…")))
+                .into_any()
         } else {
             v_flex()
                 .size_full()

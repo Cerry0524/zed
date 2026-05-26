@@ -117,7 +117,10 @@ fn render_provider_dropdown(window: &mut Window, cx: &mut App) -> AnyElement {
     let current_provider = AllLanguageSettings::get_global(cx)
         .edit_predictions
         .provider;
-    let current_provider_name = current_provider.display_name().unwrap_or("No provider set");
+    let current_provider_name = current_provider
+        .display_name()
+        .map(SharedString::from)
+        .unwrap_or_else(|| SharedString::from(l10n::text("No provider set")));
 
     let menu = ContextMenu::build(window, cx, move |mut menu, _, cx| {
         let available_providers = get_available_providers(cx);
@@ -155,11 +158,13 @@ fn render_provider_dropdown(window: &mut Window, cx: &mut App) -> AnyElement {
                         .w_full()
                         .min_w_0()
                         .max_w_1_2()
-                        .child(Label::new("Provider"))
+                        .child(Label::new(l10n::text("Provider")))
                         .child(
-                            Label::new("Select which provider to use for edit predictions.")
-                                .size(LabelSize::Small)
-                                .color(Color::Muted),
+                            Label::new(l10n::text(
+                                "Select which provider to use for edit predictions.",
+                            ))
+                            .size(LabelSize::Small)
+                            .color(Color::Muted),
                         ),
                 )
                 .child(
@@ -235,7 +240,7 @@ fn render_api_key_provider(
     let header = SettingsSectionHeader::new(title)
         .icon(icon)
         .no_padding(true);
-    let button_link_label = format!("{} dashboard", title);
+    let button_link_label = format!("{} {}", title, l10n::text("dashboard"));
     let description = match docs {
         ApiKeyDocs::Custom { message } => div().min_w_0().w_full().child(
             Label::new(message)
@@ -248,7 +253,7 @@ fn render_api_key_provider(
             .flex_wrap()
             .gap_0p5()
             .child(
-                Label::new("Visit the")
+                Label::new(l10n::text("Visit the"))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             )
@@ -259,29 +264,31 @@ fn render_api_key_provider(
                     .label_color(Color::Muted),
             )
             .child(
-                Label::new("to generate an API key.")
+                Label::new(l10n::text("to generate an API key."))
                     .size(LabelSize::Small)
                     .color(Color::Muted),
             ),
     };
     let configured_card_label = if is_from_env_var {
-        "API Key Set in Environment Variable"
+        l10n::text("API Key Set in Environment Variable")
     } else {
-        "API Key Configured"
+        l10n::text("API Key Configured")
     };
 
     let container = if has_key {
         base_container.child(header).child(
             ConfiguredApiCard::new(configured_card_label)
-                .button_label("Reset Key")
+                .button_label(l10n::text("Reset Key"))
                 .button_tab_index(0)
                 .disabled(is_from_env_var)
                 .when_some(env_var_name, |this, env_var_name| {
                     this.when(is_from_env_var, |this| {
-                        this.tooltip_label(format!(
-                            "To reset your API key, unset the {} environment variable.",
-                            env_var_name
-                        ))
+                        this.tooltip_label(
+                            l10n::text(
+                                "To reset your API key, unset the {env_var} environment variable.",
+                            )
+                            .replace("{env_var}", env_var_name.as_ref()),
+                        )
                     })
                 })
                 .on_click(move |_, _, cx| {
@@ -300,14 +307,13 @@ fn render_api_key_provider(
                         .w_full()
                         .min_w_0()
                         .max_w_1_2()
-                        .child(Label::new("API Key"))
+                        .child(Label::new(l10n::text("API Key")))
                         .child(description)
                         .when_some(env_var_name, |this, env_var_name| {
                             this.child({
-                                let label = format!(
-                                    "Or set the {} env var and restart Zed.",
-                                    env_var_name.as_ref()
-                                );
+                                let label =
+                                    l10n::text("Or set the {env_var} env var and restart Zed.")
+                                        .replace("{env_var}", env_var_name.as_ref());
                                 Label::new(label).size(LabelSize::Small).color(Color::Muted)
                             })
                         }),

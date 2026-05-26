@@ -4,7 +4,7 @@ use context_server::ContextServerId;
 use gpui::{
     DismissEvent, Entity, EventEmitter, FocusHandle, Focusable, ScrollHandle, Window, prelude::*,
 };
-use ui::{Divider, DividerColor, Modal, ModalHeader, WithScrollbar, prelude::*};
+use ui::{Divider, DividerColor, Modal, ModalHeader, WithScrollbar, l10n, prelude::*};
 use workspace::{ModalView, Workspace};
 
 pub struct ConfigureContextServerToolsModal {
@@ -166,7 +166,10 @@ impl Render for ConfigureContextServerToolsModal {
                 Modal::new("configure-context-server-tools", None::<ScrollHandle>)
                     .header(
                         ModalHeader::new()
-                            .headline(format!("Tools from {}", self.context_server_id.0))
+                            .headline(
+                                l10n::text("Tools from {id}")
+                                    .replace("{id}", &self.context_server_id.0),
+                            )
                             .show_dismiss_button(true),
                     )
                     .child(self.render_modal_content(window, cx)),

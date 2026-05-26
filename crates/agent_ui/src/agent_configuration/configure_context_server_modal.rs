@@ -26,7 +26,7 @@ use std::sync::Arc;
 use theme_settings::ThemeSettings;
 use ui::{
     CommonAnimationExt, KeyBinding, Modal, ModalFooter, ModalHeader, Section, Tooltip,
-    WithScrollbar, prelude::*,
+    WithScrollbar, l10n, prelude::*,
 };
 use util::ResultExt as _;
 use workspace::{ModalView, Workspace};
@@ -593,7 +593,7 @@ impl ConfigureContextServerModal {
                     secret_editor: cx.new(|cx| {
                         let mut editor = Editor::single_line(window, cx);
                         editor.set_placeholder_text(
-                            "Enter client secret (leave empty for public clients)",
+                            l10n::text("Enter client secret (leave empty for public clients)"),
                             window,
                             cx,
                         );
@@ -826,9 +826,11 @@ impl EventEmitter<DismissEvent> for ConfigureContextServerModal {}
 impl ConfigureContextServerModal {
     fn render_modal_header(&self) -> ModalHeader {
         let text: SharedString = match &self.source {
-            ConfigurationSource::New { .. } => "Add MCP Server".into(),
-            ConfigurationSource::Existing { .. } => "Configure MCP Server".into(),
-            ConfigurationSource::Extension { id, .. } => format!("Configure {}", id.0).into(),
+            ConfigurationSource::New { .. } => l10n::text("Add MCP Server").into(),
+            ConfigurationSource::Existing { .. } => l10n::text("Configure MCP Server").into(),
+            ConfigurationSource::Extension { id, .. } => {
+                format!("{} {}", l10n::text("Configure"), id.0).into()
+            }
         };
         ModalHeader::new().headline(text)
     }
@@ -851,7 +853,7 @@ impl ConfigureContextServerModal {
                 ))
                 .into_any_element()
         } else {
-            Label::new(MODAL_DESCRIPTION)
+            Label::new(l10n::text(MODAL_DESCRIPTION))
                 .color(Color::Muted)
                 .into_any_element()
         }
@@ -878,7 +880,7 @@ impl ConfigureContextServerModal {
                         .text_color(cx.theme().colors().text_muted)
                         .hover(|s| s.text_color(cx.theme().colors().text))
                 })
-                .child(label)
+                .child(l10n::text(label))
         };
 
         Some(
@@ -973,7 +975,7 @@ impl ConfigureContextServerModal {
                 } = &self.source
                 {
                     Some(
-                        Button::new("open-repository", "Open Repository")
+                        Button::new("open-repository", l10n::text("Open Repository"))
                             .end_icon(
                                 Icon::new(IconName::ArrowUpRight)
                                     .size(IconSize::Small)
@@ -983,7 +985,7 @@ impl ConfigureContextServerModal {
                                 let repository_url = repository_url.clone();
                                 move |_window, cx| {
                                     Tooltip::with_meta(
-                                        "Open Repository",
+                                        l10n::text("Open Repository"),
                                         None,
                                         repository_url.clone(),
                                         cx,
@@ -1006,9 +1008,9 @@ impl ConfigureContextServerModal {
                         Button::new(
                             "cancel",
                             if self.source.has_configuration_options() {
-                                "Cancel"
+                                l10n::text("Cancel")
                             } else {
-                                "Dismiss"
+                                l10n::text("Dismiss")
                             },
                         )
                         .key_binding(
@@ -1023,9 +1025,9 @@ impl ConfigureContextServerModal {
                         Button::new(
                             "add-server",
                             if self.source.is_new() {
-                                "Add Server"
+                                l10n::text("Add Server")
                             } else {
-                                "Configure Server"
+                                l10n::text("Configure Server")
                             },
                         )
                         .disabled(is_busy)
@@ -1072,13 +1074,13 @@ impl ConfigureContextServerModal {
                             .color(Color::Muted),
                     )
                     .child(
-                        Label::new("Authenticate to connect this server")
+                        Label::new(l10n::text("Authenticate to connect this server"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     ),
             )
             .child(
-                Button::new("authenticate-server", "Authenticate")
+                Button::new("authenticate-server", l10n::text("Authenticate"))
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
                     .on_click({
@@ -1122,9 +1124,9 @@ impl ConfigureContextServerModal {
                             .color(Color::Muted),
                     )
                     .child(
-                        Label::new(
+                        Label::new(l10n::text(
                             "Enter your OAuth client secret, or leave empty for public clients",
-                        )
+                        ))
                         .size(LabelSize::Small)
                         .color(Color::Muted),
                     ),
@@ -1150,7 +1152,7 @@ impl ConfigureContextServerModal {
                         },
                     )))
                     .child(
-                        Button::new("submit-client-secret", "Submit")
+                        Button::new("submit-client-secret", l10n::text("Submit"))
                             .style(ButtonStyle::Outlined)
                             .label_size(LabelSize::Small)
                             .on_click({
@@ -1178,13 +1180,13 @@ impl ConfigureContextServerModal {
                             .with_rotate_animation(3),
                     )
                     .child(
-                        Label::new("Authenticating…")
+                        Label::new(l10n::text("Authenticating…"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     ),
             )
             .child(
-                Button::new("cancel-authentication", "Cancel")
+                Button::new("cancel-authentication", l10n::text("Cancel"))
                     .style(ButtonStyle::Outlined)
                     .label_size(LabelSize::Small)
                     .on_click({
@@ -1249,9 +1251,8 @@ impl Render for ConfigureContextServerModal {
                                         .child(self.render_modal_content(cx))
                                         .child(match &self.state {
                                             State::Idle => div(),
-                                            State::Waiting => {
-                                                self.render_loading("Connecting Server…")
-                                            }
+                                            State::Waiting => self
+                                                .render_loading(l10n::text("Connecting Server…")),
                                             State::AuthRequired { server_id } => {
                                                 self.render_auth_required(&server_id.clone(), cx)
                                             }

@@ -88,7 +88,9 @@ fn copilot_toast(message: Option<&'static str>, window: &Window, cx: &mut App) {
 
     cx.defer(move |cx| {
         workspace.update(cx, |workspace, cx| match message {
-            Some(message) => workspace.show_toast(Toast::new(NOTIFICATION_ID, message), cx),
+            Some(message) => {
+                workspace.show_toast(Toast::new(NOTIFICATION_ID, l10n::text(message)), cx)
+            }
             None => workspace.dismiss_toast(&NOTIFICATION_ID, cx),
         });
     })
@@ -107,9 +109,9 @@ pub fn initiate_sign_in_impl(
         Status::Starting { task } => {
             copilot_toast(
                 Some(if is_reinstall {
-                    "Copilot is reinstalling…"
+                    l10n::text("Copilot is reinstalling…")
                 } else {
-                    "Copilot is starting…"
+                    l10n::text("Copilot is starting…")
                 }),
                 window,
                 cx,
@@ -220,7 +222,11 @@ impl CopilotCodeVerification {
                     .p_1()
                     .justify_between()
                     .child(Label::new(data.user_code.clone()))
-                    .child(Label::new(if copied { "Copied!" } else { "Copy" })),
+                    .child(Label::new(if copied {
+                        l10n::text("Copied!")
+                    } else {
+                        l10n::text("Copy")
+                    })),
             )
             .on_click({
                 let user_code = data.user_code.clone();
@@ -238,9 +244,9 @@ impl CopilotCodeVerification {
         cx: &mut Context<Self>,
     ) -> impl Element {
         let connect_button_label = if connect_clicked {
-            "Waiting for connection…"
+            l10n::text("Waiting for connection…")
         } else {
-            "Connect to GitHub"
+            l10n::text("Connect to GitHub")
         };
 
         v_flex()
@@ -248,15 +254,19 @@ impl CopilotCodeVerification {
             .gap_2p5()
             .items_center()
             .text_center()
-            .child(Headline::new("Use GitHub Copilot in Zed").size(HeadlineSize::Large))
+            .child(Headline::new(l10n::text("Use GitHub Copilot in Zed")).size(HeadlineSize::Large))
             .child(
-                Label::new("Using Copilot requires an active subscription on GitHub.")
-                    .color(Color::Muted),
+                Label::new(l10n::text(
+                    "Using Copilot requires an active subscription on GitHub.",
+                ))
+                .color(Color::Muted),
             )
             .child(Self::render_device_code(data, cx))
             .child(
-                Label::new("Paste this code into GitHub after clicking the button below.")
-                    .color(Color::Muted),
+                Label::new(l10n::text(
+                    "Paste this code into GitHub after clicking the button below.",
+                ))
+                .color(Color::Muted),
             )
             .child(
                 v_flex()
@@ -532,9 +542,9 @@ impl ConfigurationView {
 
     fn loading_message(&self) -> Option<SharedString> {
         if self.is_starting() {
-            Some("Starting Copilot…".into())
+            Some(l10n::text("Starting Copilot…").into())
         } else if self.is_signing_in() {
-            Some("Signing into Copilot…".into())
+            Some(l10n::text("Signing into Copilot…").into())
         } else {
             None
         }
@@ -555,9 +565,9 @@ impl ConfigurationView {
 
     fn render_sign_in_button(&self, edit_prediction: bool) -> impl IntoElement {
         let label = if edit_prediction {
-            "Sign in to GitHub"
+            l10n::text("Sign in to GitHub")
         } else {
-            "Sign in to use GitHub Copilot"
+            l10n::text("Sign in to use GitHub Copilot")
         };
 
         Button::new("sign_in", label)
@@ -585,9 +595,9 @@ impl ConfigurationView {
 
     fn render_reinstall_button(&self, edit_prediction: bool) -> impl IntoElement {
         let label = if edit_prediction {
-            "Reinstall and Sign in"
+            l10n::text("Reinstall and Sign in")
         } else {
-            "Reinstall Copilot and Sign in"
+            l10n::text("Reinstall Copilot and Sign in")
         };
 
         Button::new("reinstall_and_sign_in", label)
@@ -622,7 +632,7 @@ impl ConfigurationView {
                     v_flex()
                         .w_full()
                         .max_w_1_2()
-                        .child(Label::new("Authenticate To Use"))
+                        .child(Label::new(l10n::text("Authenticate To Use")))
                         .child(
                             Label::new(description)
                                 .color(Color::Muted)
@@ -632,8 +642,8 @@ impl ConfigurationView {
                 .child(action)
         };
 
-        let start_label = "To use Copilot for edit predictions, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot subscription.".into();
-        let no_status_label = "Copilot requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different edit predictions provider.".into();
+        let start_label = l10n::text("To use Copilot for edit predictions, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot subscription.").into();
+        let no_status_label = l10n::text("Copilot requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different edit predictions provider.").into();
 
         if let Some(msg) = self.loading_message() {
             container(
@@ -643,7 +653,7 @@ impl ConfigurationView {
             .into_any_element()
         } else if self.is_error() {
             container(
-                ERROR_LABEL.into(),
+                l10n::text(ERROR_LABEL).into(),
                 self.render_reinstall_button(true).into_any_element(),
             )
             .into_any_element()
@@ -663,8 +673,12 @@ impl ConfigurationView {
     }
 
     fn render_for_chat(&self) -> impl IntoElement {
-        let start_label = "To use Zed's agent with GitHub Copilot, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot Chat subscription.";
-        let no_status_label = "Copilot Chat requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different LLM provider.";
+        let start_label = l10n::text(
+            "To use Zed's agent with GitHub Copilot, you need to be logged in to GitHub. Note that your GitHub account must have an active Copilot Chat subscription.",
+        );
+        let no_status_label = l10n::text(
+            "Copilot Chat requires an active GitHub Copilot subscription. Please ensure Copilot is configured and try again, or use a different LLM provider.",
+        );
 
         if let Some(msg) = self.loading_message() {
             v_flex()
@@ -675,7 +689,7 @@ impl ConfigurationView {
         } else if self.is_error() {
             v_flex()
                 .gap_2()
-                .child(Label::new(ERROR_LABEL))
+                .child(Label::new(l10n::text(ERROR_LABEL)))
                 .child(self.render_reinstall_button(false))
                 .into_any_element()
         } else if self.has_no_status() {

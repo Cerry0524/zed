@@ -4878,10 +4878,13 @@ impl AgentPanel {
 
                         if !showing_terminal {
                             menu = menu
-                                .header("MCP Servers")
-                                .action("Add Custom Server…", Box::new(AddContextServer))
+                                .header(l10n::text("MCP Servers"))
                                 .action(
-                                    "Install New Servers…",
+                                    l10n::text("Add Custom Server…"),
+                                    Box::new(AddContextServer),
+                                )
+                                .action(
+                                    l10n::text("Install New Servers…"),
                                     Box::new(zed_actions::Extensions {
                                         category_filter: Some(
                                             zed_actions::ExtensionCategoryFilter::ContextServers,
@@ -4890,15 +4893,15 @@ impl AgentPanel {
                                     }),
                                 )
                                 .separator()
-                                .header("Skills")
+                                .header(l10n::text("Skills"))
                                 .entry(
-                                    "Create Skill…",
+                                    l10n::text("Create Skill…"),
                                     Some(Box::new(OpenRulesLibrary::default())),
                                     |window, cx| {
                                         window.dispatch_action(Box::new(OpenSkillCreator), cx);
                                     },
                                 )
-                                .entry("Manage Skills…", None, |window, cx| {
+                                .entry(l10n::text("Manage Skills…"), None, |window, cx| {
                                     window.dispatch_action(
                                         Box::new(zed_actions::OpenSettingsAt {
                                             path: "agent.skills".to_string(),
@@ -4909,12 +4912,12 @@ impl AgentPanel {
                                 .separator();
 
                             if project_agents_md_path.is_some() || global_agents_md_loaded {
-                                menu = menu.header("Rules");
+                                menu = menu.header(l10n::text("Rules"));
 
                                 if global_agents_md_loaded {
                                     let workspace = workspace.clone();
                                     menu = menu.entry(
-                                        "Open Global AGENTS.md",
+                                        l10n::text("Open Global AGENTS.md"),
                                         None,
                                         move |window, cx| {
                                             workspace
@@ -4939,7 +4942,7 @@ impl AgentPanel {
                                 if let Some(path) = project_agents_md_path.clone() {
                                     let workspace = workspace.clone();
                                     menu = menu.entry(
-                                        "Open Project AGENTS.md",
+                                        l10n::text("Open Project AGENTS.md"),
                                         None,
                                         move |window, cx| {
                                             let path = path.clone();
@@ -5078,7 +5081,7 @@ impl AgentPanel {
                             if !thread.is_empty() {
                                 let session_id = thread.id().clone();
                                 this.item(
-                                    ContextMenuEntry::new("New From Summary")
+                                    ContextMenuEntry::new(l10n::text("New From Summary"))
                                         .icon(IconName::ThreadFromSummary)
                                         .icon_color(Color::Muted)
                                         .handler(move |window, cx| {
@@ -5095,7 +5098,7 @@ impl AgentPanel {
                             }
                         })
                         .item(
-                            ContextMenuEntry::new("Zed Agent")
+                            ContextMenuEntry::new(l10n::text("Zed Agent"))
                                 .when(
                                     !showing_terminal && is_agent_selected(Agent::NativeAgent),
                                     |this| this.action(Box::new(NewThread)),
@@ -5127,7 +5130,7 @@ impl AgentPanel {
                         )
                         .when(supports_terminal, |menu| {
                             menu.item(
-                                ContextMenuEntry::new("Terminal")
+                                ContextMenuEntry::new(l10n::text("Terminal"))
                                     .when(showing_terminal, |this| this.action(Box::new(NewThread)))
                                     .when(!showing_terminal, |this| {
                                         this.action(Box::new(NewTerminalThread))
@@ -5188,7 +5191,7 @@ impl AgentPanel {
                                 .collect::<Vec<_>>();
 
                             if !agent_items.is_empty() {
-                                menu = menu.separator().header("External Agents");
+                                menu = menu.separator().header(l10n::text("External Agents"));
                             }
                             for item in &agent_items {
                                 let mut entry = ContextMenuEntry::new(item.display_name.clone());
@@ -5248,7 +5251,7 @@ impl AgentPanel {
                         })
                         .separator()
                         .item(
-                            ContextMenuEntry::new("Add More Agents")
+                            ContextMenuEntry::new(l10n::text("Add More Agents"))
                                 .icon(IconName::Plus)
                                 .icon_color(Color::Muted)
                                 .handler({

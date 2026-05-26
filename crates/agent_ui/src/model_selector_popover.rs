@@ -5,7 +5,7 @@ use acp_thread::{AgentModelIcon, AgentModelInfo, AgentModelSelector};
 use fs::Fs;
 use gpui::{Entity, FocusHandle};
 use picker::popover_menu::PickerPopoverMenu;
-use ui::{PopoverMenuHandle, Tooltip, prelude::*};
+use ui::{PopoverMenuHandle, Tooltip, l10n, prelude::*};
 
 use crate::ui::ModelSelectorTooltip;
 use crate::{ModelSelector, model_selector::acp_model_selector};
@@ -55,7 +55,7 @@ impl Render for ModelSelectorPopover {
         let model_name = model
             .as_ref()
             .map(|model| model.name.clone())
-            .unwrap_or_else(|| SharedString::from("Select a Model"));
+            .unwrap_or_else(|| SharedString::from(l10n::text("Select a Model")));
 
         let model_icon = model.as_ref().and_then(|model| model.icon.clone());
 

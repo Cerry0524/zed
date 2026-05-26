@@ -11,7 +11,7 @@ use language_models::provider::open_ai_compatible::{AvailableModel, ModelCapabil
 use settings::{OpenAiCompatibleSettingsContent, update_settings_file};
 use ui::{
     Banner, Checkbox, KeyBinding, Modal, ModalFooter, ModalHeader, Section, ToggleState,
-    WithScrollbar, prelude::*,
+    WithScrollbar, l10n, prelude::*,
 };
 use ui_input::InputField;
 use workspace::{ModalView, Workspace};
@@ -65,16 +65,29 @@ struct AddLlmProviderInput {
 
 impl AddLlmProviderInput {
     fn new(provider: LlmCompatibleProvider, window: &mut Window, cx: &mut App) -> Self {
-        let provider_name =
-            single_line_input("Provider Name", provider.name(), None, 1, window, cx);
-        let api_url = single_line_input("API URL", provider.api_url(), None, 2, window, cx);
+        let provider_name = single_line_input(
+            l10n::text("Provider Name"),
+            provider.name(),
+            None,
+            1,
+            window,
+            cx,
+        );
+        let api_url = single_line_input(
+            l10n::text("API URL"),
+            provider.api_url(),
+            None,
+            2,
+            window,
+            cx,
+        );
         let api_key = cx.new(|cx| {
             InputField::new(
                 window,
                 cx,
                 "000000000000000000000000000000000000000000000000",
             )
-            .label("API Key")
+            .label(l10n::text("API Key"))
             .tab_index(3)
             .tab_stop(true)
             .masked(true)
@@ -119,7 +132,7 @@ impl ModelInput {
         let base_tab_index = (3 + (model_index * 4)) as isize;
 
         let model_name = single_line_input(
-            "Model Name",
+            l10n::text("Model Name"),
             "e.g. gpt-5, claude-opus-4, gemini-2.5-pro",
             None,
             base_tab_index + 1,
@@ -127,7 +140,7 @@ impl ModelInput {
             cx,
         );
         let max_completion_tokens = single_line_input(
-            "Max Completion Tokens",
+            l10n::text("Max Completion Tokens"),
             "200000",
             Some("200000"),
             base_tab_index + 2,
@@ -135,7 +148,7 @@ impl ModelInput {
             cx,
         );
         let max_output_tokens = single_line_input(
-            "Max Output Tokens",
+            l10n::text("Max Output Tokens"),
             "Max Output Tokens",
             Some("32000"),
             base_tab_index + 3,
@@ -143,7 +156,7 @@ impl ModelInput {
             cx,
         );
         let max_tokens = single_line_input(
-            "Max Tokens",
+            l10n::text("Max Tokens"),
             "Max Tokens",
             Some("200000"),
             base_tab_index + 4,
@@ -178,7 +191,7 @@ impl ModelInput {
     fn parse(&self, cx: &App) -> Result<AvailableModel, SharedString> {
         let name = self.name.read(cx).text(cx);
         if name.is_empty() {
-            return Err(SharedString::from("Model Name cannot be empty"));
+            return Err(SharedString::from(l10n::text("Model Name cannot be empty")));
         }
         Ok(AvailableModel {
             name,
@@ -188,21 +201,25 @@ impl ModelInput {
                     .read(cx)
                     .text(cx)
                     .parse::<u64>()
-                    .map_err(|_| SharedString::from("Max Completion Tokens must be a number"))?,
+                    .map_err(|_| {
+                        SharedString::from(l10n::text("Max Completion Tokens must be a number"))
+                    })?,
             ),
             max_output_tokens: Some(
                 self.max_output_tokens
                     .read(cx)
                     .text(cx)
                     .parse::<u64>()
-                    .map_err(|_| SharedString::from("Max Output Tokens must be a number"))?,
+                    .map_err(|_| {
+                        SharedString::from(l10n::text("Max Output Tokens must be a number"))
+                    })?,
             ),
             max_tokens: self
                 .max_tokens
                 .read(cx)
                 .text(cx)
                 .parse::<u64>()
-                .map_err(|_| SharedString::from("Max Tokens must be a number"))?,
+                .map_err(|_| SharedString::from(l10n::text("Max Tokens must be a number")))?,
             reasoning_effort: None,
             capabilities: ModelCapabilities {
                 tools: self.capabilities.supports_tools.selected(),
@@ -222,7 +239,7 @@ fn save_provider_to_settings(
 ) -> Task<Result<(), SharedString>> {
     let provider_name: Arc<str> = input.provider_name.read(cx).text(cx).into();
     if provider_name.is_empty() {
-        return Task::ready(Err("Provider Name cannot be empty".into()));
+        return Task::ready(Err(l10n::text("Provider Name cannot be empty").into()));
     }
 
     if LanguageModelRegistry::read_global(cx)
@@ -233,19 +250,20 @@ fn save_provider_to_settings(
                 || provider.name().0.as_ref() == provider_name.as_ref()
         })
     {
-        return Task::ready(Err(
-            "Provider Name is already taken by another provider".into()
-        ));
+        return Task::ready(Err(l10n::text(
+            "Provider Name is already taken by another provider",
+        )
+        .into()));
     }
 
     let api_url = input.api_url.read(cx).text(cx);
     if api_url.is_empty() {
-        return Task::ready(Err("API URL cannot be empty".into()));
+        return Task::ready(Err(l10n::text("API URL cannot be empty").into()));
     }
 
     let api_key = input.api_key.read(cx).text(cx);
     if api_key.is_empty() {
-        return Task::ready(Err("API Key cannot be empty".into()));
+        return Task::ready(Err(l10n::text("API Key cannot be empty").into()));
     }
 
     let mut models = Vec::new();
@@ -254,7 +272,7 @@ fn save_provider_to_settings(
         match model.parse(cx) {
             Ok(model) => {
                 if !model_names.insert(model.name.clone()) {
-                    return Task::ready(Err("Model Names must be unique".into()));
+                    return Task::ready(Err(l10n::text("Model Names must be unique").into()));
                 }
                 models.push(model)
             }
@@ -266,7 +284,7 @@ fn save_provider_to_settings(
     let task = cx.write_credentials(&api_url, "Bearer", api_key.as_bytes());
     cx.spawn(async move |cx| {
         task.await
-            .map_err(|_| SharedString::from("Failed to write API key to keychain"))?;
+            .map_err(|_| SharedString::from(l10n::text("Failed to write API key to keychain")))?;
         cx.update(|cx| {
             update_settings_file(fs, cx, |settings, _cx| {
                 settings
@@ -343,9 +361,9 @@ impl AddLlmProviderModal {
             .child(
                 h_flex()
                     .justify_between()
-                    .child(Label::new("Models").size(LabelSize::Small))
+                    .child(Label::new(l10n::text("Models")).size(LabelSize::Small))
                     .child(
-                        Button::new("add-model", "Add Model")
+                        Button::new("add-model", l10n::text("Add Model"))
                             .start_icon(
                                 Icon::new(IconName::Plus)
                                     .size(IconSize::XSmall)
@@ -392,7 +410,7 @@ impl AddLlmProviderModal {
                     .gap_1()
                     .child(
                         Checkbox::new(("supports-tools", ix), model.capabilities.supports_tools)
-                            .label("Supports tools")
+                            .label(l10n::text("Supports tools"))
                             .on_click(cx.listener(move |this, checked, _window, cx| {
                                 this.input.models[ix].capabilities.supports_tools = *checked;
                                 cx.notify();
@@ -400,7 +418,7 @@ impl AddLlmProviderModal {
                     )
                     .child(
                         Checkbox::new(("supports-images", ix), model.capabilities.supports_images)
-                            .label("Supports images")
+                            .label(l10n::text("Supports images"))
                             .on_click(cx.listener(move |this, checked, _window, cx| {
                                 this.input.models[ix].capabilities.supports_images = *checked;
                                 cx.notify();
@@ -411,7 +429,7 @@ impl AddLlmProviderModal {
                             ("supports-parallel-tool-calls", ix),
                             model.capabilities.supports_parallel_tool_calls,
                         )
-                        .label("Supports parallel_tool_calls")
+                        .label(l10n::text("Supports parallel_tool_calls"))
                         .on_click(cx.listener(
                             move |this, checked, _window, cx| {
                                 this.input.models[ix]
@@ -426,7 +444,7 @@ impl AddLlmProviderModal {
                             ("supports-prompt-cache-key", ix),
                             model.capabilities.supports_prompt_cache_key,
                         )
-                        .label("Supports prompt_cache_key")
+                        .label(l10n::text("Supports prompt_cache_key"))
                         .on_click(cx.listener(
                             move |this, checked, _window, cx| {
                                 this.input.models[ix].capabilities.supports_prompt_cache_key =
@@ -440,7 +458,7 @@ impl AddLlmProviderModal {
                             ("supports-chat-completions", ix),
                             model.capabilities.supports_chat_completions,
                         )
-                        .label("Supports /chat/completions")
+                        .label(l10n::text("Supports /chat/completions"))
                         .on_click(cx.listener(
                             move |this, checked, _window, cx| {
                                 this.input.models[ix].capabilities.supports_chat_completions =
@@ -452,7 +470,7 @@ impl AddLlmProviderModal {
             )
             .when(has_more_than_one_model, |this| {
                 this.child(
-                    Button::new(("remove-model", ix), "Remove Model")
+                    Button::new(("remove-model", ix), l10n::text("Remove Model"))
                         .start_icon(
                             Icon::new(IconName::Trash)
                                 .size(IconSize::XSmall)
@@ -520,13 +538,15 @@ impl Render for AddLlmProviderModal {
             }))
             .child(
                 Modal::new("configure-context-server", None)
-                    .header(ModalHeader::new().headline("Add LLM Provider").description(
-                        match self.provider {
-                            LlmCompatibleProvider::OpenAi => {
-                                "This provider will use an OpenAI compatible API."
-                            }
-                        },
-                    ))
+                    .header(
+                        ModalHeader::new()
+                            .headline(l10n::text("Add LLM Provider"))
+                            .description(match self.provider {
+                                LlmCompatibleProvider::OpenAi => {
+                                    l10n::text("This provider will use an OpenAI compatible API.")
+                                }
+                            }),
+                    )
                     .when_some(self.last_error.clone(), |this, error| {
                         this.section(
                             Section::new().child(
@@ -563,7 +583,7 @@ impl Render for AddLlmProviderModal {
                             h_flex()
                                 .gap_1()
                                 .child(
-                                    Button::new("cancel", "Cancel")
+                                    Button::new("cancel", l10n::text("Cancel"))
                                         .key_binding(
                                             KeyBinding::for_action_in(
                                                 &menu::Cancel,
@@ -577,7 +597,7 @@ impl Render for AddLlmProviderModal {
                                         })),
                                 )
                                 .child(
-                                    Button::new("save-server", "Save Provider")
+                                    Button::new("save-server", l10n::text("Save Provider"))
                                         .key_binding(
                                             KeyBinding::for_action_in(
                                                 &menu::Confirm,

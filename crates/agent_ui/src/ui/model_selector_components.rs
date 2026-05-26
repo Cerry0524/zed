@@ -144,14 +144,18 @@ impl RenderOnce for ModelSelectorListItem {
                         )
                     })
                     .child(Label::new(self.title).truncate())
-                    .when(self.is_latest, |parent| parent.child(Chip::new("Latest")))
+                    .when(self.is_latest, |parent| {
+                        parent.child(Chip::new(l10n::text("Latest")))
+                    })
                     .when_some(self.cost_info, |this, cost_info| {
                         let tooltip_text = if cost_info.ends_with('×') {
-                            format!("Cost Multiplier: {}", cost_info)
+                            l10n::text("Cost Multiplier: {cost}")
+                                .replace("{cost}", cost_info.as_ref())
                         } else if cost_info.contains('$') {
-                            format!("Cost per Million Tokens: {}", cost_info)
+                            l10n::text("Cost per Million Tokens: {cost}")
+                                .replace("{cost}", cost_info.as_ref())
                         } else {
-                            format!("Cost: {}", cost_info)
+                            l10n::text("Cost: {cost}").replace("{cost}", cost_info.as_ref())
                         };
 
                         this.child(Chip::new(cost_info).tooltip(Tooltip::text(tooltip_text)))
@@ -163,9 +167,13 @@ impl RenderOnce for ModelSelectorListItem {
             .end_slot_on_hover(div().pr_1p5().when_some(self.on_toggle_favorite, {
                 |this, handle_click| {
                     let (icon, color, tooltip) = if is_favorite {
-                        (IconName::StarFilled, Color::Accent, "Unfavorite Model")
+                        (
+                            IconName::StarFilled,
+                            Color::Accent,
+                            l10n::text("Unfavorite Model"),
+                        )
                     } else {
-                        (IconName::Star, Color::Default, "Favorite Model")
+                        (IconName::Star, Color::Default, l10n::text("Favorite Model"))
                     };
                     this.child(
                         IconButton::new(("toggle-favorite", self.index), icon)

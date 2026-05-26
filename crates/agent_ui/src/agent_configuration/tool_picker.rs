@@ -6,7 +6,7 @@ use fs::Fs;
 use gpui::{App, Context, DismissEvent, Entity, EventEmitter, Focusable, Task, WeakEntity, Window};
 use picker::{Picker, PickerDelegate};
 use settings::{AgentProfileContent, ContextServerPresetContent, update_settings_file};
-use ui::{ListItem, ListItemSpacing, prelude::*};
+use ui::{ListItem, ListItemSpacing, l10n, prelude::*};
 use util::ResultExt as _;
 
 pub struct ToolPicker {
@@ -182,8 +182,8 @@ impl PickerDelegate for ToolPickerDelegate {
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
         match self.mode {
-            ToolPickerMode::BuiltinTools => "Search built-in tools…",
-            ToolPickerMode::McpTools => "Search MCP tools…",
+            ToolPickerMode::BuiltinTools => l10n::text("Search built-in tools…"),
+            ToolPickerMode::McpTools => l10n::text("Search MCP tools…"),
         }
         .into()
     }

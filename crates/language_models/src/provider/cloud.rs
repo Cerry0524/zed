@@ -20,7 +20,7 @@ use settings::SettingsStore;
 pub use settings::ZedDotDevAvailableModel as AvailableModel;
 pub use settings::ZedDotDevAvailableProvider as AvailableProvider;
 use std::sync::Arc;
-use ui::{TintColor, prelude::*};
+use ui::{TintColor, l10n, prelude::*};
 
 const PROVIDER_ID: LanguageModelProviderId = ZED_CLOUD_PROVIDER_ID;
 const PROVIDER_NAME: LanguageModelProviderName = ZED_CLOUD_PROVIDER_NAME;
@@ -322,50 +322,56 @@ impl RenderOnce for ZedAiConfiguration {
     fn render(self, _window: &mut Window, _cx: &mut App) -> impl IntoElement {
         let (subscription_text, has_paid_plan) = match self.plan {
             Some(Plan::ZedPro) => (
-                "You have access to Zed's hosted models through your Pro subscription.",
+                l10n::text("You have access to Zed's hosted models through your Pro subscription."),
                 true,
             ),
             Some(Plan::ZedProTrial) => (
-                "You have access to Zed's hosted models through your Pro trial.",
+                l10n::text("You have access to Zed's hosted models through your Pro trial."),
                 false,
             ),
             Some(Plan::ZedStudent) => (
-                "You have access to Zed's hosted models through your Student subscription.",
+                l10n::text(
+                    "You have access to Zed's hosted models through your Student subscription.",
+                ),
                 true,
             ),
             Some(Plan::ZedBusiness) => (
                 if self.is_zed_model_provider_enabled {
-                    "You have access to Zed's hosted models through your organization."
+                    l10n::text("You have access to Zed's hosted models through your organization.")
                 } else {
-                    "Zed's hosted models are disabled by your organization's configuration."
+                    l10n::text(
+                        "Zed's hosted models are disabled by your organization's configuration.",
+                    )
                 },
                 true,
             ),
             Some(Plan::ZedFree) | None => (
                 if self.eligible_for_trial {
-                    "Subscribe for access to Zed's hosted models. Start with a 14 day free trial."
+                    l10n::text(
+                        "Subscribe for access to Zed's hosted models. Start with a 14 day free trial.",
+                    )
                 } else {
-                    "Subscribe for access to Zed's hosted models."
+                    l10n::text("Subscribe for access to Zed's hosted models.")
                 },
                 false,
             ),
         };
 
         let manage_subscription_buttons = if has_paid_plan {
-            Button::new("manage_settings", "Manage Subscription")
+            Button::new("manage_settings", l10n::text("Manage Subscription"))
                 .full_width()
                 .label_size(LabelSize::Small)
                 .style(ButtonStyle::Tinted(TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::account_url(cx)))
                 .into_any_element()
         } else if self.plan.is_none() || self.eligible_for_trial {
-            Button::new("start_trial", "Start 14-day Free Pro Trial")
+            Button::new("start_trial", l10n::text("Start 14-day Free Pro Trial"))
                 .full_width()
                 .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::start_trial_url(cx)))
                 .into_any_element()
         } else {
-            Button::new("upgrade", "Upgrade to Pro")
+            Button::new("upgrade", l10n::text("Upgrade to Pro"))
                 .full_width()
                 .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                 .on_click(|_, _, cx| cx.open_url(&zed_urls::upgrade_to_zed_pro_url(cx)))
@@ -375,9 +381,9 @@ impl RenderOnce for ZedAiConfiguration {
         if !self.is_connected {
             return v_flex()
                 .gap_2()
-                .child(Label::new("Sign in to have access to Zed's complete agentic experience with hosted models."))
+                .child(Label::new(l10n::text("Sign in to have access to Zed's complete agentic experience with hosted models.")))
                 .child(
-                    Button::new("sign_in", "Sign In to use Zed AI")
+                    Button::new("sign_in", l10n::text("Sign In to use Zed AI"))
                         .start_icon(Icon::new(IconName::Github).size(IconSize::Small).color(Color::Muted))
                         .full_width()
                         .on_click({
@@ -390,7 +396,7 @@ impl RenderOnce for ZedAiConfiguration {
         v_flex().gap_2().w_full().map(|this| {
             if self.account_too_young {
                 this.child(YoungAccountBanner).child(
-                    Button::new("upgrade", "Upgrade to Pro")
+                    Button::new("upgrade", l10n::text("Upgrade to Pro"))
                         .style(ui::ButtonStyle::Tinted(ui::TintColor::Accent))
                         .full_width()
                         .on_click(|_, _, cx| cx.open_url(&zed_urls::upgrade_to_zed_pro_url(cx))),

@@ -18,7 +18,7 @@ use std::{
 };
 use ui::{
     DocumentationAside, HighlightedLabel, KeyBinding, LabelSize, ListItem, ListItemSpacing,
-    PopoverMenuHandle, Tooltip, prelude::*,
+    PopoverMenuHandle, Tooltip, l10n, prelude::*,
 };
 
 /// Trait for types that can provide and manage agent profiles
@@ -165,12 +165,17 @@ impl Render for ProfileSelector {
         }
 
         if !self.provider.profiles_supported(cx) {
-            return Button::new("tools-not-supported-button", "Tools Unsupported")
-                .disabled(true)
-                .label_size(LabelSize::Small)
-                .color(Color::Muted)
-                .tooltip(Tooltip::text("This model does not support tools."))
-                .into_any_element();
+            return Button::new(
+                "tools-not-supported-button",
+                l10n::text("Tools Unsupported"),
+            )
+            .disabled(true)
+            .label_size(LabelSize::Small)
+            .color(Color::Muted)
+            .tooltip(Tooltip::text(l10n::text(
+                "This model does not support tools.",
+            )))
+            .into_any_element();
         }
 
         let picker = self.ensure_picker(window, cx);
@@ -201,7 +206,7 @@ impl Render for ProfileSelector {
                     .gap_1()
                     .child(
                         container()
-                            .child(Label::new("Change Profile"))
+                            .child(Label::new(l10n::text("Change Profile")))
                             .child(KeyBinding::for_action(&ToggleProfileSelector, cx)),
                     )
                     .child(
@@ -209,7 +214,7 @@ impl Render for ProfileSelector {
                             .pt_1()
                             .border_t_1()
                             .border_color(cx.theme().colors().border_variant)
-                            .child(Label::new("Cycle Through Profiles"))
+                            .child(Label::new(l10n::text("Cycle Through Profiles")))
                             .child(KeyBinding::for_action(&CycleModeSelector, cx)),
                     )
                     .into_any()
@@ -669,7 +674,7 @@ impl PickerDelegate for ProfilePickerDelegate {
                 .border_color(cx.theme().colors().border_variant)
                 .p_1p5()
                 .child(
-                    Button::new("configure", "Configure")
+                    Button::new("configure", l10n::text("Configure"))
                         .full_width()
                         .style(ButtonStyle::Outlined)
                         .key_binding(
