@@ -6,7 +6,7 @@ use ui::{
     ActiveTheme, AnyElement, App, Button, Clickable, Color, Context, DynamicSpacing, Headline,
     HeadlineSize, Icon, IconName, IconSize, InteractiveElement, IntoElement, Label, LabelCommon,
     LabelSize, ParentElement, Render, SharedString, StyledExt, StyledTypography, Window, div,
-    h_flex, v_flex,
+    h_flex, l10n, v_flex,
 };
 use util::maybe;
 use workspace::ModalView;
@@ -90,10 +90,10 @@ impl AskPassModal {
                             Icon::new(IconName::Github).size(IconSize::Small)
                         )
                         .child(
-                            Label::new("You may need to configure git for Github.")
+                            Label::new(l10n::text("You may need to configure git for Github."))
                                 .size(LabelSize::Small),
                         )
-                        .child(Button::new("learn-more", "Learn more").color(Color::Accent).label_size(LabelSize::Small).on_click(|_, _, cx| {
+                        .child(Button::new("learn-more", l10n::text("Learn more")).color(Color::Accent).label_size(LabelSize::Small).on_click(|_, _, cx| {
                             cx.open_url("https://docs.github.com/en/get-started/git-basics/set-up-git#authenticating-with-github-from-git")
                         })),
                 )

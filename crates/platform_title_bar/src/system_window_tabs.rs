@@ -8,7 +8,7 @@ use gpui::{
 use theme_settings::ThemeSettings;
 use ui::{
     Color, ContextMenu, DynamicSpacing, IconButton, IconButtonShape, IconName, IconSize, Label,
-    LabelSize, Tab, h_flex, prelude::*, right_click_menu,
+    LabelSize, Tab, h_flex, l10n, prelude::*, right_click_menu,
 };
 use workspace::{
     CloseWindow, ItemSettings, Workspace, WorkspaceSettings,
@@ -286,7 +286,7 @@ impl SystemWindowTabs {
                 let merge_tabs = tabs.clone();
 
                 ContextMenu::build(window, cx, move |mut menu, _window_, _cx| {
-                    menu = menu.entry("Close Tab", None, move |window, cx| {
+                    menu = menu.entry(l10n::text("Close Tab"), None, move |window, cx| {
                         Self::handle_right_click_action(
                             cx,
                             window,
@@ -298,7 +298,7 @@ impl SystemWindowTabs {
                         );
                     });
 
-                    menu = menu.entry("Close Other Tabs", None, move |window, cx| {
+                    menu = menu.entry(l10n::text("Close Other Tabs"), None, move |window, cx| {
                         Self::handle_right_click_action(
                             cx,
                             window,
@@ -310,23 +310,27 @@ impl SystemWindowTabs {
                         );
                     });
 
-                    menu = menu.entry("Move Tab to New Window", None, move |window, cx| {
-                        Self::handle_right_click_action(
-                            cx,
-                            window,
-                            &move_tabs,
-                            |tab| tab.id == item.id,
-                            |window, cx| {
-                                SystemWindowTabController::move_tab_to_new_window(
-                                    cx,
-                                    window.window_handle().window_id(),
-                                );
-                                window.move_tab_to_new_window();
-                            },
-                        );
-                    });
+                    menu = menu.entry(
+                        l10n::text("Move Tab to New Window"),
+                        None,
+                        move |window, cx| {
+                            Self::handle_right_click_action(
+                                cx,
+                                window,
+                                &move_tabs,
+                                |tab| tab.id == item.id,
+                                |window, cx| {
+                                    SystemWindowTabController::move_tab_to_new_window(
+                                        cx,
+                                        window.window_handle().window_id(),
+                                    );
+                                    window.move_tab_to_new_window();
+                                },
+                            );
+                        },
+                    );
 
-                    menu = menu.entry("Show All Tabs", None, move |window, cx| {
+                    menu = menu.entry(l10n::text("Show All Tabs"), None, move |window, cx| {
                         Self::handle_right_click_action(
                             cx,
                             window,

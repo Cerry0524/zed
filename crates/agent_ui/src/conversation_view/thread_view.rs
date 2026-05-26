@@ -8807,10 +8807,10 @@ impl ThreadView {
             ThreadError::PaymentRequired => self.render_payment_required_error(cx),
             ThreadError::RateLimitExceeded { provider } => self.render_error_callout(
                 "Rate Limit Reached",
-                format!(
-                    "{provider}'s rate limit was reached. Zed will retry automatically. \
-                    You can also wait a moment and try again."
+                l10n::text(
+                    "{provider}'s rate limit was reached. Zed will retry automatically. You can also wait a moment and try again.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 true,
                 true,
@@ -8818,10 +8818,10 @@ impl ThreadView {
             ),
             ThreadError::ServerOverloaded { provider } => self.render_error_callout(
                 "Provider Unavailable",
-                format!(
-                    "{provider}'s servers are temporarily unavailable. Zed will retry \
-                    automatically. If the problem persists, check the provider's status page."
+                l10n::text(
+                    "{provider}'s servers are temporarily unavailable. Zed will retry automatically. If the problem persists, check the provider's status page.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 true,
                 true,
@@ -8830,10 +8830,10 @@ impl ThreadView {
             ThreadError::PromptTooLarge => self.render_prompt_too_large_error(cx),
             ThreadError::NoApiKey { provider } => self.render_error_callout(
                 "API Key Missing",
-                format!(
-                    "No API key is configured for {provider}. \
-                    Add your key via the Agent Panel settings to continue."
+                l10n::text(
+                    "No API key is configured for {provider}. Add your key via the Agent Panel settings to continue.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 false,
                 true,
@@ -8841,10 +8841,10 @@ impl ThreadView {
             ),
             ThreadError::StreamError { provider } => self.render_error_callout(
                 "Connection Interrupted",
-                format!(
-                    "The connection to {provider}'s API was interrupted. Zed will retry \
-                    automatically. If the problem persists, check your network connection."
+                l10n::text(
+                    "The connection to {provider}'s API was interrupted. Zed will retry automatically. If the problem persists, check your network connection.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 true,
                 true,
@@ -8852,10 +8852,10 @@ impl ThreadView {
             ),
             ThreadError::InvalidApiKey { provider } => self.render_error_callout(
                 "Invalid API Key",
-                format!(
-                    "The API key for {provider} is invalid or has expired. \
-                    Update your key via the Agent Panel settings to continue."
+                l10n::text(
+                    "The API key for {provider} is invalid or has expired. Update your key via the Agent Panel settings to continue.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 false,
                 false,
@@ -8863,10 +8863,10 @@ impl ThreadView {
             ),
             ThreadError::PermissionDenied { provider } => self.render_error_callout(
                 "Permission Denied",
-                format!(
-                    "{provider}'s API rejected the request due to insufficient permissions. \
-                    Check that your API key has access to this model."
+                l10n::text(
+                    "{provider}'s API rejected the request due to insufficient permissions. Check that your API key has access to this model.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 false,
                 false,
@@ -8874,35 +8874,34 @@ impl ThreadView {
             ),
             ThreadError::RequestFailed => self.render_error_callout(
                 "Request Failed",
-                "The request could not be completed after multiple attempts. \
-                Try again in a moment."
-                    .into(),
+                l10n::text(
+                    "The request could not be completed after multiple attempts. Try again in a moment.",
+                )
+                .into(),
                 true,
                 false,
                 cx,
             ),
             ThreadError::MaxOutputTokens => self.render_error_callout(
                 "Output Limit Reached",
-                "The model stopped because it reached its maximum output length. \
-                You can ask it to continue where it left off."
-                    .into(),
+                l10n::text("The model stopped because it reached its maximum output length. You can ask it to continue where it left off.").into(),
                 false,
                 false,
                 cx,
             ),
             ThreadError::NoModelSelected => self.render_error_callout(
                 "No Model Selected",
-                "Select a model from the model picker below to get started.".into(),
+                l10n::text("Select a model from the model picker below to get started.").into(),
                 false,
                 false,
                 cx,
             ),
             ThreadError::ApiError { provider } => self.render_error_callout(
                 "API Error",
-                format!(
-                    "{provider}'s API returned an unexpected error. \
-                    If the problem persists, try switching models or restarting Zed."
+                l10n::text(
+                    "{provider}'s API returned an unexpected error. If the problem persists, try switching models or restarting Zed.",
                 )
+                .replace("{provider}", provider)
                 .into(),
                 true,
                 true,
@@ -8915,12 +8914,8 @@ impl ThreadView {
 
     fn render_refusal_error(&self, cx: &mut Context<'_, Self>) -> Callout {
         let model_or_agent_name = self.current_model_name(cx);
-        let refusal_message = format!(
-            "{} refused to respond to this prompt. \
-            This can happen when a model believes the prompt violates its content policy \
-            or safety guidelines, so rephrasing it can sometimes address the issue.",
-            model_or_agent_name
-        );
+        let refusal_message = l10n::text("{model} refused to respond to this prompt. This can happen when a model believes the prompt violates its content policy or safety guidelines, so rephrasing it can sometimes address the issue.")
+            .replace("{model}", model_or_agent_name.as_ref());
 
         Callout::new()
             .severity(Severity::Error)
@@ -8958,7 +8953,7 @@ impl ThreadView {
             .severity(Severity::Error)
             .icon(IconName::XCircle)
             .title(l10n::text("Free Usage Exceeded"))
-            .description(ERROR_MESSAGE)
+            .description(l10n::text(ERROR_MESSAGE))
             .actions_slot(
                 h_flex()
                     .gap_0p5()
@@ -8982,7 +8977,7 @@ impl ThreadView {
         Callout::new()
             .severity(Severity::Error)
             .icon(IconName::XCircle)
-            .title(title)
+            .title(l10n::text(title))
             .description(message.clone())
             .when(show_actions, |callout| {
                 callout.actions_slot(
@@ -9005,7 +9000,7 @@ impl ThreadView {
             .severity(Severity::Error)
             .icon(IconName::XCircle)
             .title(l10n::text("Context Too Large"))
-            .description(MESSAGE)
+            .description(l10n::text(MESSAGE))
             .actions_slot(
                 h_flex()
                     .gap_0p5()
@@ -9179,7 +9174,7 @@ impl ThreadView {
             .severity(Severity::Info)
             .icon(IconName::Info)
             .title(l10n::text("Resumed Session"))
-            .description(description)
+            .description(l10n::text(description))
             .into_any_element()
     }
 
@@ -9188,7 +9183,9 @@ impl ThreadView {
             .icon(IconName::Warning)
             .severity(Severity::Warning)
             .title(l10n::text("Codex on Windows"))
-            .description("For best performance, run Codex in Windows Subsystem for Linux (WSL2)")
+            .description(l10n::text(
+                "For best performance, run Codex in Windows Subsystem for Linux (WSL2)",
+            ))
             .actions_slot(
                 Button::new("open-wsl-modal", l10n::text("Open in WSL")).on_click(cx.listener({
                     move |_, _, _window, cx| {
@@ -9227,11 +9224,11 @@ impl ThreadView {
                 Callout::new()
                     .icon(IconName::Warning)
                     .severity(Severity::Warning)
-                    .title("Skill failed to load")
+                    .title(l10n::text("Skill failed to load"))
                     .description(format!("{}\n{path_label}", error.message))
                     .actions_slot(
-                        Button::new(("open-skill-file", index), "Open File").on_click(cx.listener(
-                            move |_, _, window, cx| {
+                        Button::new(("open-skill-file", index), l10n::text("Open File")).on_click(
+                            cx.listener(move |_, _, window, cx| {
                                 let abs_path = abs_path.clone();
                                 workspace
                                     .update(cx, |workspace, cx| {
@@ -9245,8 +9242,8 @@ impl ThreadView {
                                             .detach_and_log_err(cx);
                                     })
                                     .ok();
-                            },
-                        )),
+                            }),
+                        ),
                     )
                     .dismiss_action(
                         IconButton::new(("dismiss-skill-error", index), IconName::Close)
@@ -9267,8 +9264,8 @@ impl ThreadView {
         Callout::new()
             .icon(IconName::Warning)
             .severity(Severity::Warning)
-            .title("Review before sending")
-            .description("This prompt was pre-filled by an external link. Read it carefully before you send it.")
+            .title(l10n::text("Review before sending"))
+            .description(l10n::text("This prompt was pre-filled by an external link. Read it carefully before you send it."))
             .dismiss_action(
                 IconButton::new("dismiss-external-source-prompt-warning", IconName::Close)
                     .icon_size(IconSize::Small)
@@ -9316,15 +9313,20 @@ impl ThreadView {
             .unwrap_or_else(|| "one folder".to_string());
 
         let description = format!(
-            "This agent only operates on \"{}\". Other folders in this workspace are not accessible to it.",
-            active_dir
+            "{}",
+            l10n::text(
+                "This agent only operates on \"{folder}\". Other folders in this workspace are not accessible to it.",
+            )
+            .replace("{folder}", &active_dir)
         );
 
         Some(
             Callout::new()
                 .severity(Severity::Warning)
                 .icon(IconName::Warning)
-                .title("External Agents currently don't support multi-root workspaces")
+                .title(l10n::text(
+                    "External Agents currently don't support multi-root workspaces",
+                ))
                 .description(description)
                 .border_position(ui::BorderPosition::Bottom)
                 .dismiss_action(
@@ -9343,14 +9345,14 @@ impl ThreadView {
         let server_view = self.server_view.clone();
         let has_version = !version.is_empty();
         let title = if has_version {
-            "New version available"
+            l10n::text("New version available").to_string()
         } else {
-            "Agent update available"
+            l10n::text("Agent update available").to_string()
         };
         let button_label = if has_version {
-            format!("Update to v{}", version)
+            l10n::text("Update to v{}").replace("{}", version.as_ref())
         } else {
-            "Reconnect".to_string()
+            l10n::text("Reconnect").to_string()
         };
 
         v_flex().w_full().justify_end().child(
@@ -9399,12 +9401,12 @@ impl ThreadView {
             acp_thread::TokenUsageRatio::Warning => (
                 Severity::Warning,
                 IconName::Warning,
-                "Thread reaching the token limit soon",
+                l10n::text("Thread reaching the token limit soon"),
             ),
             acp_thread::TokenUsageRatio::Exceeded => (
                 Severity::Error,
                 IconName::XCircle,
-                "Thread reached the token limit",
+                l10n::text("Thread reached the token limit"),
             ),
         };
 
@@ -9415,7 +9417,7 @@ impl ThreadView {
                 .severity(severity)
                 .icon(icon)
                 .title(title)
-                .description(description)
+                .description(l10n::text(description))
                 .actions_slot(
                     h_flex().gap_0p5().child(
                         Button::new("start-new-thread", l10n::text("Start New Thread"))

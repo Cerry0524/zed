@@ -435,12 +435,12 @@ fn init_renderers(cx: &mut App) {
                     settings_window,
                     item,
                     settings_file,
-                    Button::new("open-in-settings-file", "Edit in settings.json")
+                    Button::new("open-in-settings-file", l10n::text("Edit in settings.json"))
                         .style(ButtonStyle::Outlined)
                         .size(ButtonSize::Medium)
                         .tab_index(0_isize)
                         .tooltip(Tooltip::for_action_title_in(
-                            "Edit in settings.json",
+                            l10n::text("Edit in settings.json"),
                             &OpenCurrentFile,
                             &settings_window.focus_handle,
                         ))
@@ -674,7 +674,7 @@ pub fn open_settings_editor(
         cx.open_window(
             WindowOptions {
                 titlebar: Some(TitlebarOptions {
-                    title: Some("Zed — Settings".into()),
+                    title: Some(l10n::text("Zed — Settings").into()),
                     appears_transparent: true,
                     traffic_light_position: Some(point(px(12.0), px(12.0))),
                 }),
@@ -1511,7 +1511,7 @@ impl SettingsWindow {
         let current_file = SettingsUiFile::User;
         let search_bar = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Search settings…", window, cx);
+            editor.set_placeholder_text(l10n::text("Search settings…"), window, cx);
             editor
         });
         cx.subscribe(&search_bar, |this, _, event: &EditorEvent, cx| {
@@ -2126,6 +2126,10 @@ impl SettingsWindow {
                             .field
                             .json_path()
                             .map(|path| path.trim_end_matches('$'));
+                        let page_title = l10n::text_or_original(page.title);
+                        let header = l10n::text_or_original(header_str);
+                        let title = l10n::text_or_original(item.title);
+                        let description = l10n::text_or_original(item.description);
                         documents.push(SearchDocument {
                             id: key_index,
                             words: split_into_words(&[
@@ -2133,28 +2137,50 @@ impl SettingsWindow {
                                 header_str,
                                 item.title,
                                 item.description,
+                                page_title.as_ref(),
+                                header.as_ref(),
+                                title.as_ref(),
+                                description.as_ref(),
                             ]),
                         });
                         push_candidates(&mut fuzzy_match_candidates, key_index, item.title);
                         push_candidates(&mut fuzzy_match_candidates, key_index, item.description);
+                        push_candidates(&mut fuzzy_match_candidates, key_index, title.as_ref());
+                        push_candidates(
+                            &mut fuzzy_match_candidates,
+                            key_index,
+                            description.as_ref(),
+                        );
                     }
                     SettingsPageItem::SectionHeader(header) => {
+                        let localized_header = l10n::text_or_original(header);
                         documents.push(SearchDocument {
                             id: key_index,
-                            words: split_into_words(&[header]),
+                            words: split_into_words(&[header, localized_header.as_ref()]),
                         });
                         push_candidates(&mut fuzzy_match_candidates, key_index, header);
+                        push_candidates(
+                            &mut fuzzy_match_candidates,
+                            key_index,
+                            localized_header.as_ref(),
+                        );
                         header_index = item_index;
                         header_str = *header;
                     }
                     SettingsPageItem::SubPageLink(sub_page_link) => {
                         json_path = sub_page_link.json_path;
+                        let page_title = l10n::text_or_original(page.title);
+                        let header = l10n::text_or_original(header_str);
+                        let title = l10n::text_or_original(sub_page_link.title.as_ref());
                         documents.push(SearchDocument {
                             id: key_index,
                             words: split_into_words(&[
                                 page.title,
                                 header_str,
                                 sub_page_link.title.as_ref(),
+                                page_title.as_ref(),
+                                header.as_ref(),
+                                title.as_ref(),
                             ]),
                         });
                         push_candidates(
@@ -2162,14 +2188,21 @@ impl SettingsWindow {
                             key_index,
                             sub_page_link.title.as_ref(),
                         );
+                        push_candidates(&mut fuzzy_match_candidates, key_index, title.as_ref());
                     }
                     SettingsPageItem::ActionLink(action_link) => {
+                        let page_title = l10n::text_or_original(page.title);
+                        let header = l10n::text_or_original(header_str);
+                        let title = l10n::text_or_original(action_link.title.as_ref());
                         documents.push(SearchDocument {
                             id: key_index,
                             words: split_into_words(&[
                                 page.title,
                                 header_str,
                                 action_link.title.as_ref(),
+                                page_title.as_ref(),
+                                header.as_ref(),
+                                title.as_ref(),
                             ]),
                         });
                         push_candidates(
@@ -2177,10 +2210,21 @@ impl SettingsWindow {
                             key_index,
                             action_link.title.as_ref(),
                         );
+                        push_candidates(&mut fuzzy_match_candidates, key_index, title.as_ref());
                     }
                 }
                 push_candidates(&mut fuzzy_match_candidates, key_index, page.title);
                 push_candidates(&mut fuzzy_match_candidates, key_index, header_str);
+                push_candidates(
+                    &mut fuzzy_match_candidates,
+                    key_index,
+                    l10n::text_or_original(page.title).as_ref(),
+                );
+                push_candidates(
+                    &mut fuzzy_match_candidates,
+                    key_index,
+                    l10n::text_or_original(header_str).as_ref(),
+                );
 
                 key_lut.push(SearchKeyLUTEntry {
                     page_index,
@@ -2549,7 +2593,9 @@ impl SettingsWindow {
                                         }),
                                     )
                                     .style(DropdownStyle::Subtle)
-                                    .trigger_tooltip(Tooltip::text("View Other Projects"))
+                                    .trigger_tooltip(Tooltip::text(l10n::text(
+                                        "View Other Projects",
+                                    )))
                                     .trigger_icon(IconName::ChevronDown)
                                     .attach(gpui::Anchor::BottomLeft)
                                     .offset(gpui::Point {
@@ -2562,11 +2608,11 @@ impl SettingsWindow {
                     }),
             )
             .child(
-                Button::new(edit_in_json_id, "Edit in settings.json")
+                Button::new(edit_in_json_id, l10n::text("Edit in settings.json"))
                     .tab_index(0_isize)
                     .style(ButtonStyle::OutlinedGhost)
                     .tooltip(Tooltip::for_action_title_in(
-                        "Edit in settings.json",
+                        l10n::text("Edit in settings.json"),
                         &OpenCurrentFile,
                         &self.focus_handle,
                     ))
@@ -2652,9 +2698,9 @@ impl SettingsWindow {
                 .visible_navbar_entries()
                 .any(|(_, entry)| entry.focus_handle.is_focused(window))
         {
-            "Focus Content"
+            l10n::text("Focus Content")
         } else {
-            "Focus Navbar"
+            l10n::text("Focus Navbar")
         };
 
         let mut key_context = KeyContext::new_with_defaults();
@@ -3316,17 +3362,22 @@ impl SettingsWindow {
                 .when(current_sub_page.link.in_json, |this| {
                     this.child(
                         div().flex_shrink_0().child(
-                            Button::new("open-in-settings-file", "Edit in settings.json")
-                                .tab_index(0_isize)
-                                .style(ButtonStyle::OutlinedGhost)
-                                .tooltip(Tooltip::for_action_title_in(
-                                    "Edit in settings.json",
-                                    &OpenCurrentFile,
-                                    &self.focus_handle,
-                                ))
-                                .on_click(cx.listener(|this, _, window, cx| {
+                            Button::new(
+                                "open-in-settings-file",
+                                l10n::text("Edit in settings.json"),
+                            )
+                            .tab_index(0_isize)
+                            .style(ButtonStyle::OutlinedGhost)
+                            .tooltip(Tooltip::for_action_title_in(
+                                l10n::text("Edit in settings.json"),
+                                &OpenCurrentFile,
+                                &self.focus_handle,
+                            ))
+                            .on_click(cx.listener(
+                                |this, _, window, cx| {
                                     this.open_current_settings_file(window, cx);
-                                })),
+                                },
+                            )),
                         ),
                     )
                 })
@@ -3364,12 +3415,12 @@ impl SettingsWindow {
                         v_flex()
                             .my_0p5()
                             .gap_0p5()
-                            .child(Label::new(label))
+                            .child(Label::new(l10n::text(label)))
                             .child(Label::new(error).size(LabelSize::Small).color(Color::Muted)),
                     )
                     .action_slot(
                         div().pr_1().pb_1().child(
-                            Button::new("fix-in-json", "Fix in settings.json")
+                            Button::new("fix-in-json", l10n::text("Fix in settings.json"))
                                 .tab_index(0_isize)
                                 .style(ButtonStyle::Tinted(ui::TintColor::Warning))
                                 .on_click(cx.listener(|this, _, window, cx| {
@@ -3396,9 +3447,10 @@ impl SettingsWindow {
                     settings::MigrationStatus::Succeeded => this.child(banner(
                         "Your settings are out of date, and need to be updated.",
                         match &self.current_file {
-                            SettingsUiFile::User => "They can be automatically migrated to the latest version.",
-                            SettingsUiFile::Server(_) | SettingsUiFile::Project(_)  => "They must be manually migrated to the latest version."
-                        }.to_string(),
+                            SettingsUiFile::User => l10n::text("They can be automatically migrated to the latest version."),
+                            SettingsUiFile::Server(_) | SettingsUiFile::Project(_)  => l10n::text("They must be manually migrated to the latest version.")
+                        }
+                        .to_string(),
                         &mut self.shown_errors,
                         cx,
                     )),
@@ -3436,10 +3488,10 @@ impl SettingsWindow {
                         v_flex()
                             .my_0p5()
                             .gap_0p5()
-                            .child(Label::new("Restricted Mode"))
+                            .child(Label::new(l10n::text("Restricted Mode")))
                             .child(
                                 Label::new(
-                                    "This project is in restricted mode. Some project settings may not apply.",
+                                    l10n::text("This project is in restricted mode. Some project settings may not apply."),
                                 )
                                 .size(LabelSize::Small)
                                 .color(Color::Muted),
@@ -3447,7 +3499,7 @@ impl SettingsWindow {
                     )
                     .action_slot(
                         div().pr_2().pb_1().child(
-                            Button::new("manage-trust", "Manage Trust")
+                            Button::new("manage-trust", l10n::text("Manage Trust"))
                                 .style(ButtonStyle::Tinted(ui::TintColor::Warning))
                                 .on_click(cx.listener(move |_this, _, window, cx| {
                                     if let Some(original_window) = original_window {

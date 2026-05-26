@@ -395,7 +395,7 @@ impl CommitModal {
             .with_handle(self.branch_list_handle.clone())
             .trigger_with_tooltip(
                 branch_picker_button,
-                Tooltip::for_action_title("Switch Branch", &zed_actions::git::Branch),
+                Tooltip::for_action_title(l10n::text("Switch Branch"), &zed_actions::git::Branch),
             )
             .anchor(Anchor::BottomLeft)
             .offset(gpui::Point {
@@ -405,7 +405,8 @@ impl CommitModal {
         let focus_handle = self.focus_handle(cx);
 
         let close_kb_hint = ui::KeyBinding::for_action(&menu::Cancel, cx).map(|close_kb| {
-            KeybindingHint::new(close_kb, cx.theme().colors().editor_background).suffix("Cancel")
+            KeybindingHint::new(close_kb, cx.theme().colors().editor_background)
+                .suffix(l10n::text("Cancel"))
         });
 
         h_flex()
@@ -671,7 +672,14 @@ impl Render for CommitModal {
                                 )
                                 .child(
                                     Label::new(format!(
-                                        "Commit message title exceeds {max_title_length}-character limit."
+                                        "{}",
+                                        l10n::text(
+                                            "Commit message title exceeds {max_title_length}-character limit."
+                                        )
+                                        .replace(
+                                            "{max_title_length}",
+                                            &max_title_length.to_string()
+                                        )
                                     ))
                                     .size(LabelSize::Small),
                                 ),

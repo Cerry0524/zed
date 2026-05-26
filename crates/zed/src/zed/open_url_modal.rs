@@ -3,7 +3,7 @@ use gpui::{AppContext as _, DismissEvent, Entity, EventEmitter, Focusable, ReadG
 use ui::{
     ActiveTheme, App, Color, Context, FluentBuilder, InteractiveElement, IntoElement, Label,
     LabelCommon, LabelSize, ParentElement, Render, SharedString, StyledExt, Window, div, h_flex,
-    v_flex,
+    l10n, v_flex,
 };
 use workspace::ModalView;
 
@@ -69,7 +69,11 @@ impl OpenUrlModal {
                 cx.emit(DismissEvent);
             }
             Err(e) => {
-                self.last_error = Some(format!("Invalid URL: {}", e).into());
+                self.last_error = Some(
+                    l10n::text("Invalid URL: {error}")
+                        .replace("{error}", &e.to_string())
+                        .into(),
+                );
                 cx.notify();
             }
         }
@@ -106,7 +110,7 @@ impl Render for OpenUrlModal {
                     })
                     .when(self.last_error.is_none(), |this| {
                         this.child(
-                            Label::new("Paste a URL to open.")
+                            Label::new(l10n::text("Paste a URL to open."))
                                 .color(Color::Muted)
                                 .size(LabelSize::Small),
                         )

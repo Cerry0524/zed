@@ -5,7 +5,7 @@ use gpui::{
 };
 use itertools::Itertools;
 use serde_json::json;
-use ui::{Button, ButtonStyle};
+use ui::{Button, ButtonStyle, l10n};
 use ui::{
     ButtonCommon, Clickable, Context, FluentBuilder, InteractiveElement, Label, LabelCommon,
     LabelSize, ParentElement, SharedString, StatefulInteractiveElement, Styled, Window, div,
@@ -200,19 +200,19 @@ impl Render for KeyContextView {
                     });
                 }),
             )
-            .child(Label::new("Keyboard Context").size(LabelSize::Large))
-            .child(Label::new("This view lets you determine the current context stack for creating custom key bindings in Zed. When a keyboard shortcut is triggered, it also shows all the possible contexts it could have triggered in, and which one matched."))
+            .child(Label::new(l10n::text("Keyboard Context")).size(LabelSize::Large))
+            .child(Label::new(l10n::text("This view lets you determine the current context stack for creating custom key bindings in Zed. When a keyboard shortcut is triggered, it also shows all the possible contexts it could have triggered in, and which one matched.")))
             .child(
                 h_flex()
                     .mt_4()
                     .gap_4()
                     .child(
-                        Button::new("open_documentation", "Open Documentation")
+                        Button::new("open_documentation", l10n::text("Open Documentation"))
                             .style(ButtonStyle::Filled)
                             .on_click(|_, _, cx| cx.open_url("https://zed.dev/docs/key-bindings")),
                     )
                     .child(
-                        Button::new("view_default_keymap", "View Default Keymap")
+                        Button::new("view_default_keymap", l10n::text("View Default Keymap"))
                             .style(ButtonStyle::Filled)
                             .key_binding(ui::KeyBinding::for_action(
                                 &zed_actions::OpenDefaultKeymap,
@@ -223,7 +223,7 @@ impl Render for KeyContextView {
                             }),
                     )
                     .child(
-                        Button::new("edit_your_keymap", "Edit Keymap File")
+                        Button::new("edit_your_keymap", l10n::text("Edit Keymap File"))
                             .style(ButtonStyle::Filled)
                             .key_binding(ui::KeyBinding::for_action(&zed_actions::OpenKeymapFile, cx))
                             .on_click(|_, window, cx| {
@@ -232,7 +232,7 @@ impl Render for KeyContextView {
                     ),
             )
             .child(
-                Label::new("Current Context Stack")
+                Label::new(l10n::text("Current Context Stack"))
                     .size(LabelSize::Large)
                     .mt_8(),
             )
@@ -252,26 +252,37 @@ impl Render for KeyContextView {
                     Label::new(format!("{} {}", primary, secondary)).ml(px(12. * (i + 1) as f32))
                 })
             })
-            .child(Label::new("Last Keystroke").mt_4().size(LabelSize::Large))
+            .child(
+                Label::new(l10n::text("Last Keystroke"))
+                    .mt_4()
+                    .size(LabelSize::Large),
+            )
             .when_some(self.pending_keystrokes.as_ref(), |el, keystrokes| {
                 el.child(
-                    Label::new(format!(
-                        "Waiting for more input: {}",
-                        keystrokes.iter().map(|k| k.unparse()).join(" ")
-                    ))
+                    Label::new(
+                        l10n::text("Waiting for more input: {keys}").replace(
+                            "{keys}",
+                            &keystrokes.iter().map(|k| k.unparse()).join(" "),
+                        ),
+                    )
                     .ml(px(12.)),
                 )
             })
             .when_some(self.last_keystrokes.as_ref(), |el, keystrokes| {
-                el.child(Label::new(format!("Typed: {}", keystrokes)).ml_4())
+                el.child(
+                    Label::new(l10n::text("Typed: {keys}").replace("{keys}", keystrokes.as_ref()))
+                        .ml_4(),
+                )
                     .children(
                         self.last_possibilities
                             .iter()
                             .map(|(name, predicate, state)| {
                                 let (text, color) = match state {
-                                    Some(true) => ("(match)", ui::Color::Success),
-                                    Some(false) => ("(low precedence)", ui::Color::Hint),
-                                    None => ("(no match)", ui::Color::Error),
+                                    Some(true) => (l10n::text("(match)"), ui::Color::Success),
+                                    Some(false) => {
+                                        (l10n::text("(low precedence)"), ui::Color::Hint)
+                                    }
+                                    None => (l10n::text("(no match)"), ui::Color::Error),
                                 };
                                 h_flex()
                                     .gap_2()
@@ -283,8 +294,12 @@ impl Render for KeyContextView {
                     )
             })
             .when_some(key_equivalents, |el, key_equivalents| {
-                el.child(Label::new("Key Equivalents").mt_4().size(LabelSize::Large))
-                    .child(Label::new("Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option."))
+                el.child(
+                    Label::new(l10n::text("Key Equivalents"))
+                        .mt_4()
+                        .size(LabelSize::Large),
+                )
+                    .child(Label::new(l10n::text("Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option.")))
                     .children(
                         key_equivalents
                             .iter()

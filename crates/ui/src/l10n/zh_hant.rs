@@ -758,6 +758,285 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Zed is running from a temporary location. Move it to Applications to finish installing it." => {
             "Zed 正從暫存位置執行。請將它移至「應用程式」以完成安裝。"
         }
+        "Zoom" => "縮放",
+        "Keymap" => "按鍵對應",
+        "Keymap Editor" => "鍵盤快速鍵編輯器",
+        "Edit Keybindings" => "編輯鍵盤快速鍵",
+        "Customize keybindings in the keymap editor." => "在鍵盤快速鍵編輯器中自訂鍵盤快速鍵。",
+        "Base Keymap" => "基底按鍵對應",
+        "The name of a base set of key bindings to use." => "要使用的基底按鍵對應組名稱。",
+        "Modal Editing" => "模式編輯",
+        "Vim Mode" => "Vim 模式",
+        "Enable Vim mode and key bindings." => "啟用 Vim 模式與鍵盤快速鍵。",
+        "Which-key Menu" => "Which-key 選單",
+        "Show Which-key Menu" => "顯示 Which-key 選單",
+        "Search settings…" => "搜尋設定…",
+        "Zed — Settings" => "Zed — 設定",
+        "View Other Projects" => "檢視其他專案",
+        "Edit in settings.json" => "在 settings.json 中編輯",
+        "Focus Content" => "聚焦內容",
+        "Focus Navbar" => "聚焦導覽列",
+        "Filter action names…" => "篩選動作名稱…",
+        "Create" => "建立",
+        "Copy Action" => "複製動作",
+        "Copy Context" => "複製內容條件",
+        "Show Matching Keybindings" => "顯示相符的鍵盤快速鍵",
+        "This action is unbound" => "此動作尚未繫結",
+        "View conflicts" => "檢視衝突",
+        "Use alt+click to show all conflicts" => "使用 Alt+按一下顯示所有衝突",
+        "Edit this binding" => "編輯此繫結",
+        "This binding is overridden by other bindings." => "此繫結已被其他繫結覆寫。",
+        "Show matching keybinds" => "顯示相符的鍵盤快速鍵",
+        "This binding is overridden by other bindings.\nUse alt+click to edit this binding" => {
+            "此繫結已被其他繫結覆寫。\n使用 Alt+按一下編輯此繫結"
+        }
+        "No conflicting keybinds found that match the provided query" => {
+            "找不到符合查詢的衝突鍵盤快速鍵"
+        }
+        "No conflicting keybinds found" => "找不到衝突的鍵盤快速鍵",
+        "No keybinds found matching the entered keystrokes" => "找不到符合輸入按鍵的鍵盤快速鍵",
+        "No matches found for the provided query" => "找不到符合查詢的相符項目",
+        "Filters" => "篩選器",
+        "Conflicts" => "衝突",
+        "No Action" => "無動作",
+        "Categories" => "類別",
+        "User" => "使用者",
+        "Default" => "預設",
+        "Vim" => "Vim",
+        "Toggle Exact Match Mode" => "切換完全相符模式",
+        "Search by Keystrokes" => "依按鍵搜尋",
+        "Edit in JSON" => "以 JSON 編輯",
+        "Create Keybinding" => "建立鍵盤快速鍵",
+        "Edit Keybinding" => "編輯鍵盤快速鍵",
+        "Edit Keystroke" => "編輯按鍵",
+        "Edit Arguments" => "編輯引數",
+        "Action" => "動作",
+        "Arguments" => "引數",
+        "Keystrokes" => "按鍵",
+        "Source" => "來源",
+        "Type an action name" => "輸入動作名稱",
+        "Keybinding Context" => "鍵盤快速鍵內容條件",
+        "Edit Context" => "編輯內容條件",
+        "Action Arguments" => "動作引數",
+        "Action name is required" => "必須輸入動作名稱",
+        "Action '{action}' not found" => "找不到動作「{action}」",
+        "Failed to parse action arguments as JSON" => "無法將動作引數剖析為 JSON",
+        "Failed to validate action arguments" => "無法驗證動作引數",
+        "Keystrokes cannot be empty" => "按鍵不可為空",
+        "Failed to parse key context" => "無法剖析按鍵內容條件",
+        "Your keybind would conflict with the \"{action}\" action and {count} other bindings" => {
+            "你的鍵盤快速鍵會與「{action}」動作及其他 {count} 個繫結衝突"
+        }
+        "Your keybind would conflict with the \"{action}\" action" => {
+            "你的鍵盤快速鍵會與「{action}」動作衝突"
+        }
+        "Your keybind would conflict with other actions" => "你的鍵盤快速鍵會與其他動作衝突",
+        "Saved edits to the {action} action." => "已儲存「{action}」動作的編輯。",
+        "your keymap" => "你的按鍵對應",
+        "the vim keymap" => "Vim 按鍵對應",
+        "your base keymap" => "你的基底按鍵對應",
+        "This keybinding is overridden by the '{action}' binding from {source}." => {
+            "此鍵盤快速鍵已被 {source} 中的「{action}」繫結覆寫。"
+        }
+        "This binding is overridden." => "此繫結已被覆寫。",
+        "binding has the same keystrokes." => "個繫結使用相同按鍵。",
+        "bindings have the same keystrokes." => "個繫結使用相同按鍵。",
+        "Start Searching" => "開始搜尋",
+        "Stop Searching" => "停止搜尋",
+        "Start Recording" => "開始錄製",
+        "Stop Recording" => "停止錄製",
+        "Clear Keystrokes" => "清除按鍵",
+        "Hit it three times to execute" => "連按三次即可執行",
+        "REC" => "錄製",
+        "SEARCH" => "搜尋",
+        "Close Other Tabs" => "關閉其他索引標籤",
+        "Move Tab to New Window" => "將索引標籤移至新視窗",
+        "Show All Tabs" => "顯示所有索引標籤",
+        "Keyboard Context" => "鍵盤內容條件",
+        "This view lets you determine the current context stack for creating custom key bindings in Zed. When a keyboard shortcut is triggered, it also shows all the possible contexts it could have triggered in, and which one matched." => {
+            "此檢視可協助判斷目前的內容條件堆疊，以便在 Zed 中建立自訂鍵盤快速鍵。觸發鍵盤快速鍵時，也會顯示所有可能觸發的內容條件，以及實際相符的項目。"
+        }
+        "Open Documentation" => "開啟文件",
+        "View Default Keymap" => "檢視預設按鍵對應",
+        "Edit Keymap File" => "編輯按鍵對應檔",
+        "Current Context Stack" => "目前內容條件堆疊",
+        "Last Keystroke" => "上一個按鍵",
+        "Waiting for more input: {keys}" => "等待更多輸入：{keys}",
+        "Typed: {keys}" => "已輸入：{keys}",
+        "(match)" => "(相符)",
+        "(low precedence)" => "(低優先順序)",
+        "(no match)" => "(不相符)",
+        "Key Equivalents" => "按鍵等效項",
+        "Shortcuts defined using some characters have been remapped so that shortcuts can be typed without holding option." => {
+            "使用部分字元定義的快速鍵已重新對應，因此不必按住 Option 也能輸入快速鍵。"
+        }
+        "View Message" => "檢視訊息",
+        "View Logs" => "檢視記錄",
+        "Restart Server" => "重新啟動伺服器",
+        "Stop Server" => "停止伺服器",
+        "Stage Hunk" => "暫存變更區塊",
+        "Unstage Hunk" => "取消暫存變更區塊",
+        "Restore Hunk" => "還原變更區塊",
+        "Next Hunk" => "下一個變更區塊",
+        "Previous Hunk" => "上一個變更區塊",
+        "Learn more" => "了解更多",
+        "You may need to configure git for Github." => "你可能需要設定 GitHub 的 Git。",
+        "Switch Branch" => "切換分支",
+        "Commit message title exceeds {max_title_length}-character limit." => {
+            "提交訊息標題超過 {max_title_length} 個字元限制。"
+        }
+        "Output Limit Reached" => "已達輸出限制",
+        "The model stopped because it reached its maximum output length. You can ask it to continue where it left off." => {
+            "模型因達到最大輸出長度而停止。你可以要求它從中斷處繼續。"
+        }
+        "No Model Selected" => "尚未選取模型",
+        "Select a model from the model picker below to get started." => {
+            "請從下方模型選擇器選取模型以開始。"
+        }
+        "API Error" => "API 錯誤",
+        "Rate Limit Reached" => "已達速率限制",
+        "{provider}'s rate limit was reached. Zed will retry automatically. You can also wait a moment and try again." => {
+            "{provider} 已達速率限制。Zed 會自動重試。你也可以稍候再試一次。"
+        }
+        "Provider Unavailable" => "提供者無法使用",
+        "{provider}'s servers are temporarily unavailable. Zed will retry automatically. If the problem persists, check the provider's status page." => {
+            "{provider} 的伺服器暫時無法使用。Zed 會自動重試。若問題持續發生，請查看提供者的狀態頁。"
+        }
+        "API Key Missing" => "缺少 API 金鑰",
+        "No API key is configured for {provider}. Add your key via the Agent Panel settings to continue." => {
+            "尚未設定 {provider} 的 API 金鑰。請透過代理面板設定新增金鑰以繼續。"
+        }
+        "Connection Interrupted" => "連線已中斷",
+        "The connection to {provider}'s API was interrupted. Zed will retry automatically. If the problem persists, check your network connection." => {
+            "與 {provider} API 的連線已中斷。Zed 會自動重試。若問題持續發生，請檢查網路連線。"
+        }
+        "Invalid API Key" => "API 金鑰無效",
+        "The API key for {provider} is invalid or has expired. Update your key via the Agent Panel settings to continue." => {
+            "{provider} 的 API 金鑰無效或已過期。請透過代理面板設定更新金鑰以繼續。"
+        }
+        "Permission Denied" => "權限遭拒",
+        "{provider}'s API rejected the request due to insufficient permissions. Check that your API key has access to this model." => {
+            "{provider} 的 API 因權限不足而拒絕此要求。請確認你的 API 金鑰可存取此模型。"
+        }
+        "Request Failed" => "要求失敗",
+        "The request could not be completed after multiple attempts. Try again in a moment." => {
+            "多次嘗試後仍無法完成要求。請稍候再試。"
+        }
+        "{provider}'s API returned an unexpected error. If the problem persists, try switching models or restarting Zed." => {
+            "{provider} 的 API 傳回未預期的錯誤。若問題持續發生，請嘗試切換模型或重新啟動 Zed。"
+        }
+        "{model} refused to respond to this prompt. This can happen when a model believes the prompt violates its content policy or safety guidelines, so rephrasing it can sometimes address the issue." => {
+            "{model} 拒絕回應此提示。當模型判斷提示可能違反內容政策或安全準則時，可能會發生這種情況；改寫提示有時可以解決。"
+        }
+        "You reached your free usage limit. Upgrade to Zed Pro for more prompts." => {
+            "你已達免費使用額度上限。升級至 Zed Pro 可取得更多提示額度。"
+        }
+        "This conversation is too long for the model's context window. Start a new thread or remove some attached files to continue." => {
+            "這個對話已超過模型的內容視窗。請開啟新的對話串，或移除部分附加檔案後再繼續。"
+        }
+        "This agent does not support viewing previous messages. However, your session will still continue from where you last left off." => {
+            "此代理不支援檢視先前訊息。不過，你的工作階段仍會從上次離開的地方繼續。"
+        }
+        "For best performance, run Codex in Windows Subsystem for Linux (WSL2)" => {
+            "為了獲得最佳效能，請在 Windows Subsystem for Linux (WSL2) 中執行 Codex"
+        }
+        "Skill failed to load" => "技能載入失敗",
+        "Review before sending" => "送出前請先檢查",
+        "This prompt was pre-filled by an external link. Read it carefully before you send it." => {
+            "這段提示由外部連結預先填入。送出前請仔細檢查。"
+        }
+        "This agent only operates on \"{folder}\". Other folders in this workspace are not accessible to it." => {
+            "此代理只會在「{folder}」中運作，無法存取此工作區中的其他資料夾。"
+        }
+        "External Agents currently don't support multi-root workspaces" => {
+            "外部代理目前不支援多根目錄工作區"
+        }
+        "New version available" => "有新版本可用",
+        "Agent update available" => "代理更新可用",
+        "Update to v{}" => "更新至 v{}",
+        "Thread reaching the token limit soon" => "對話串即將達到 token 限制",
+        "Thread reached the token limit" => "對話串已達 token 限制",
+        "To continue, start a new thread from a summary." => "若要繼續，請從摘要開始新的對話串。",
+        "Invalid URL: {error}" => "URL 無效：{error}",
+        "Paste a URL to open." => "貼上要開啟的 URL。",
+        "Developer" => "開發人員",
+        "Feature Flags" => "功能旗標",
+        "Instrumentation" => "檢測",
+        "Performance Profiler" => "效能分析器",
+        "Collect timing data for foreground and background executor tasks so they can be inspected via `zed: open performance profiler`. May lead to increased memory usage." => {
+            "收集前景與背景執行器工作的時間資料，以便透過 `zed: open performance profiler` 檢查。可能會增加記憶體使用量。"
+        }
+        "General" => "一般",
+        "When Closing With No Tabs" => "沒有索引標籤時關閉",
+        "On Last Window Closed" => "最後一個視窗關閉時",
+        "Use System Path Prompts" => "使用系統路徑提示",
+        "Use System Prompts" => "使用系統提示",
+        "Redact Private Values" => "遮蔽私人值",
+        "Private Files" => "私人檔案",
+        "CLI Default Open Behavior" => "CLI 預設開啟行為",
+        "Security" => "安全性",
+        "Trust All Projects By Default" => "預設信任所有專案",
+        "Failed to load your settings. Some values may be incorrect and changes may be lost." => {
+            "無法載入你的設定。部分值可能不正確，變更也可能遺失。"
+        }
+        "Fix in settings.json" => "在 settings.json 中修正",
+        "Your settings are out of date, and need to be updated." => "你的設定已過期，需要更新。",
+        "They can be automatically migrated to the latest version." => {
+            "它們可以自動遷移至最新版本。"
+        }
+        "They must be manually migrated to the latest version." => "它們必須手動遷移至最新版本。",
+        "Your settings file is out of date, automatic migration failed" => {
+            "你的設定檔已過期，自動遷移失敗"
+        }
+        "This project is in restricted mode. Some project settings may not apply." => {
+            "此專案處於受限模式。部分專案設定可能不會套用。"
+        }
+        "Manage Trust" => "管理信任",
+        "Workspace Restoration" => "工作區還原",
+        "Restore Unsaved Buffers" => "還原未儲存的緩衝區",
+        "Restore On Startup" => "啟動時還原",
+        "Privacy" => "隱私權",
+        "Telemetry Diagnostics" => "遙測診斷",
+        "Telemetry Metrics" => "遙測指標",
+        "Auto Update" => "自動更新",
+        "Theme Mode" => "佈景主題模式",
+        "Theme Name" => "佈景主題名稱",
+        "Mode" => "模式",
+        "Light Theme" => "淺色佈景主題",
+        "Dark Theme" => "深色佈景主題",
+        "Icon Theme" => "圖示佈景主題",
+        "Icon Theme Name" => "圖示佈景主題名稱",
+        "Light Icon Theme" => "淺色圖示佈景主題",
+        "Dark Icon Theme" => "深色圖示佈景主題",
+        "Buffer Font" => "緩衝區字型",
+        "UI Font" => "UI 字型",
+        "Agent Panel Font" => "代理面板字型",
+        "Text Rendering" => "文字轉譯",
+        "Font Family" => "字型系列",
+        "Font Size" => "字型大小",
+        "Font Weight" => "字重",
+        "Line Height" => "行高",
+        "Custom Line Height" => "自訂行高",
+        "Font Features" => "字型功能",
+        "Font Fallbacks" => "字型後援",
+        "UI Font Size" => "UI 字型大小",
+        "Buffer Font Size" => "緩衝區字型大小",
+        "Cursor" => "游標",
+        "Multi Cursor Modifier" => "多重游標輔助鍵",
+        "Cursor Blink" => "游標閃爍",
+        "Cursor Shape" => "游標形狀",
+        "Hide Mouse" => "隱藏滑鼠",
+        "Highlighting" => "醒目提示",
+        "Current Line Highlight" => "目前行醒目提示",
+        "Selection Highlight" => "選取範圍醒目提示",
+        "Rounded Selection" => "圓角選取範圍",
+        "Guides" => "輔助線",
+        "Indentation" => "縮排",
+        "Wrapping" => "自動換行",
+        "Formatting" => "格式化",
+        "Completions" => "自動完成",
+        "Inlay Hints" => "行內提示",
+        "Miscellaneous" => "其他",
         _ => return None,
     })
 }
@@ -961,5 +1240,94 @@ mod tests {
             text("Your connection to {server} has been lost due to the server {reason}."),
             "與 {server} 的連線已中斷，原因是伺服器{reason}。"
         );
+    }
+
+    #[test]
+    fn milestone_seven_menu_keymap_and_command_terms_are_guarded() {
+        assert_eq!(text("Zoom"), "縮放");
+        assert_eq!(text("Keymap Editor"), "鍵盤快速鍵編輯器");
+        assert_eq!(text("Filter action names…"), "篩選動作名稱…");
+        assert_eq!(text("Edit in JSON"), "以 JSON 編輯");
+        assert_eq!(text("Create Keybinding"), "建立鍵盤快速鍵");
+        assert_eq!(text("Edit Keybinding"), "編輯鍵盤快速鍵");
+        assert_eq!(text("Edit Keystroke"), "編輯按鍵");
+        assert_eq!(text("Action"), "動作");
+        assert_eq!(text("Arguments"), "引數");
+        assert_eq!(text("Keystrokes"), "按鍵");
+        assert_eq!(text("Context"), "內容");
+        assert_eq!(text("Source"), "來源");
+        assert_eq!(text("Filters"), "篩選器");
+        assert_eq!(text("Conflicts"), "衝突");
+        assert_eq!(text("No Action"), "無動作");
+        assert_eq!(text("Search by Keystrokes"), "依按鍵搜尋");
+        assert_eq!(text("Toggle Exact Match Mode"), "切換完全相符模式");
+        assert_eq!(text("Last Keystroke"), "上一個按鍵");
+        assert_eq!(text("Key Equivalents"), "按鍵等效項");
+        assert_eq!(text("(match)"), "(相符)");
+    }
+
+    #[test]
+    fn milestone_seven_settings_terms_are_guarded() {
+        assert_eq!(text("Developer"), "開發人員");
+        assert_eq!(text("Feature Flags"), "功能旗標");
+        assert_eq!(text("Performance Profiler"), "效能分析器");
+        assert_eq!(text("General"), "一般");
+        assert_eq!(text("When Closing With No Tabs"), "沒有索引標籤時關閉");
+        assert_eq!(text("Use System Prompts"), "使用系統提示");
+        assert_eq!(text("Workspace Restoration"), "工作區還原");
+        assert_eq!(text("Privacy"), "隱私權");
+        assert_eq!(text("Auto Update"), "自動更新");
+        assert_eq!(text("Buffer Font"), "緩衝區字型");
+        assert_eq!(text("UI Font"), "UI 字型");
+        assert_eq!(text("Font Family"), "字型系列");
+        assert_eq!(text("Font Size"), "字型大小");
+        assert_eq!(text("Font Weight"), "字重");
+        assert_eq!(text("Fix in settings.json"), "在 settings.json 中修正");
+        assert_eq!(text("Manage Trust"), "管理信任");
+        assert_eq!(
+            text("Your settings are out of date, and need to be updated."),
+            "你的設定已過期，需要更新。"
+        );
+        assert_eq!(
+            text("This project is in restricted mode. Some project settings may not apply."),
+            "此專案處於受限模式。部分專案設定可能不會套用。"
+        );
+    }
+
+    #[test]
+    fn milestone_seven_notifications_dialogs_and_error_templates_are_guarded() {
+        assert_eq!(text("Learn more"), "了解更多");
+        assert_eq!(
+            text("You may need to configure git for Github."),
+            "你可能需要設定 GitHub 的 Git。"
+        );
+        assert_eq!(text("Switch Branch"), "切換分支");
+        assert_eq!(
+            text("Commit message title exceeds {max_title_length}-character limit."),
+            "提交訊息標題超過 {max_title_length} 個字元限制。"
+        );
+        assert_eq!(text("Action name is required"), "必須輸入動作名稱");
+        assert_eq!(
+            text("Action '{action}' not found"),
+            "找不到動作「{action}」"
+        );
+        assert_eq!(
+            text("Failed to parse action arguments as JSON"),
+            "無法將動作引數剖析為 JSON"
+        );
+        assert_eq!(text("Keystrokes cannot be empty"), "按鍵不可為空");
+        assert_eq!(
+            text("Saved edits to the {action} action."),
+            "已儲存「{action}」動作的編輯。"
+        );
+        assert_eq!(text("Request Failed"), "要求失敗");
+        assert_eq!(
+            text(
+                "The request could not be completed after multiple attempts. Try again in a moment."
+            ),
+            "多次嘗試後仍無法完成要求。請稍候再試。"
+        );
+        assert_eq!(text("Rate Limit Reached"), "已達速率限制");
+        assert_eq!(text("Invalid API Key"), "API 金鑰無效");
     }
 }

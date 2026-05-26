@@ -14,7 +14,7 @@ use theme_settings::ThemeSettings;
 use std::ops::Deref;
 use std::sync::{Arc, LazyLock};
 use std::{any::TypeId, time::Duration};
-use ui::{CopyButton, Tooltip, prelude::*};
+use ui::{CopyButton, Tooltip, l10n, prelude::*};
 use util::ResultExt;
 
 #[derive(Default)]
@@ -1229,7 +1229,13 @@ where
                         display.push('.');
                     }
                     let detail = f(err, window, cx).unwrap_or(display);
-                    window.prompt(PromptLevel::Critical, &msg, Some(&detail), &["Ok"], cx)
+                    window.prompt(
+                        PromptLevel::Critical,
+                        l10n::text_or_original(&msg).as_ref(),
+                        Some(&detail),
+                        &[l10n::text("Ok")],
+                        cx,
+                    )
                 }) {
                     prompt.await.ok();
                 }
