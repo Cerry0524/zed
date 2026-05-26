@@ -2624,7 +2624,7 @@ impl SettingsWindow {
 
     pub(crate) fn display_name(&self, file: &SettingsUiFile) -> Option<String> {
         match file {
-            SettingsUiFile::User => Some("User".to_string()),
+            SettingsUiFile::User => Some(l10n::text("User").to_string()),
             SettingsUiFile::Project((worktree_id, path)) => self
                 .worktree_root_dirs
                 .get(&worktree_id)
@@ -5400,6 +5400,89 @@ pub mod test {
                 project_files
             );
         });
+    }
+}
+
+#[cfg(test)]
+mod settings_l10n_tests {
+    use std::collections::HashSet;
+
+    fn read_rust_string_literal_body(source: &str) -> Option<(String, usize)> {
+        let mut body = String::new();
+        let mut chars = source.char_indices();
+
+        while let Some((index, ch)) = chars.next() {
+            match ch {
+                '"' => return Some((body, index + ch.len_utf8())),
+                '\\' => {
+                    body.push(ch);
+                    let (_, escaped) = chars.next()?;
+                    body.push(escaped);
+                }
+                _ => body.push(ch),
+            }
+        }
+
+        None
+    }
+
+    fn collect_literals_after_marker(source: &str, marker: &str, output: &mut HashSet<String>) {
+        let mut offset = 0;
+
+        while let Some(marker_index) = source[offset..].find(marker) {
+            let literal_start = offset + marker_index + marker.len();
+            let Some((literal, consumed)) = read_rust_string_literal_body(&source[literal_start..])
+            else {
+                break;
+            };
+            output.insert(literal);
+            offset = literal_start + consumed;
+        }
+    }
+
+    fn zh_hant_match_keys(source: &str) -> HashSet<String> {
+        source
+            .lines()
+            .filter_map(|line| {
+                let trimmed = line.trim_start();
+                let rest = trimmed.strip_prefix('"')?;
+                let (literal, consumed) = read_rust_string_literal_body(rest)?;
+                rest[consumed..]
+                    .trim_start()
+                    .starts_with("=>")
+                    .then_some(literal)
+            })
+            .collect()
+    }
+
+    #[test]
+    fn page_data_titles_buttons_and_descriptions_have_zh_hant_entries() {
+        let page_data = include_str!("page_data.rs");
+        let zh_hant = include_str!("../../ui/src/l10n/zh_hant.rs");
+        let zh_hant_keys = zh_hant_match_keys(zh_hant);
+
+        let mut settings_literals = HashSet::new();
+        for marker in [
+            "SettingsPageItem::SectionHeader(\"",
+            "title: \"",
+            "description: \"",
+            "description: Some(\"",
+            "button_text: \"",
+        ] {
+            collect_literals_after_marker(page_data, marker, &mut settings_literals);
+        }
+
+        let mut missing = settings_literals
+            .into_iter()
+            .filter(|literal| !zh_hant_keys.contains(literal))
+            .collect::<Vec<_>>();
+        missing.sort();
+
+        assert!(
+            missing.is_empty(),
+            "Missing zh-Hant settings entries:\n{}",
+            missing.join("\n")
+        );
     }
 }
 
