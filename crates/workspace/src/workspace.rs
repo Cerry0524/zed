@@ -63,9 +63,10 @@ use gpui::{
     Action, AnyEntity, AnyView, AnyWeakView, App, AsyncApp, AsyncWindowContext, Axis, Bounds,
     Context, CursorStyle, Decorations, DragMoveEvent, Entity, EntityId, EventEmitter, FocusHandle,
     Focusable, Global, HitboxBehavior, Hsla, KeyContext, Keystroke, ManagedView, MouseButton,
-    PathPromptOptions, Point, PromptLevel, Render, ResizeEdge, Size, Stateful, Subscription,
-    SystemWindowTabController, Task, TaskExt, Tiling, WeakEntity, WindowBounds, WindowHandle,
-    WindowId, WindowOptions, actions, canvas, point, relative, size, transparent_black,
+    PathPromptOptions, Point, PromptButton, PromptLevel, Render, ResizeEdge, Size, Stateful,
+    Subscription, SystemWindowTabController, Task, TaskExt, Tiling, WeakEntity, WindowBounds,
+    WindowHandle, WindowId, WindowOptions, actions, canvas, point, relative, size,
+    transparent_black,
 };
 pub use history_manager::*;
 pub use item::{
@@ -144,7 +145,7 @@ pub use toolbar::{
     PaneSearchBarCallbacks, Toolbar, ToolbarItemEvent, ToolbarItemLocation, ToolbarItemView,
 };
 pub use ui;
-use ui::{Window, prelude::*};
+use ui::{Window, l10n, prelude::*};
 use util::{
     ResultExt, TryFutureExt,
     paths::{PathStyle, SanitizedPath},
@@ -9427,32 +9428,29 @@ pub fn join_channel(
                 active_window
                     .update(cx, |_, window, cx| {
                         let detail: SharedString = match err.error_code() {
-                            ErrorCode::SignedOut => "Please sign in to continue.".into(),
-                            ErrorCode::UpgradeRequired => concat!(
-                                "Your are running an unsupported version of Zed. ",
-                                "Please update to continue."
+                            ErrorCode::SignedOut => l10n::text("Please sign in to continue.").into(),
+                            ErrorCode::UpgradeRequired => l10n::text(
+                                "You are running an unsupported version of Zed. Please update to continue.",
                             )
                             .into(),
-                            ErrorCode::NoSuchChannel => concat!(
-                                "No matching channel was found. ",
-                                "Please check the link and try again."
+                            ErrorCode::NoSuchChannel => l10n::text(
+                                "No matching channel was found. Please check the link and try again.",
                             )
                             .into(),
-                            ErrorCode::Forbidden => concat!(
-                                "This channel is private, and you do not have access. ",
-                                "Please ask someone to add you and try again."
+                            ErrorCode::Forbidden => l10n::text(
+                                "This channel is private, and you do not have access. Please ask someone to add you and try again.",
                             )
                             .into(),
                             ErrorCode::Disconnected => {
-                                "Please check your internet connection and try again.".into()
+                                l10n::text("Please check your internet connection and try again.").into()
                             }
-                            _ => format!("{}\n\nPlease try again.", err).into(),
+                            _ => format!("{}\n\n{}", err, l10n::text("Please try again.")).into(),
                         };
                         window.prompt(
                             PromptLevel::Critical,
-                            "Failed to join channel",
+                            l10n::text("Failed to join channel"),
                             Some(&detail),
-                            &["Ok"],
+                            &[PromptButton::ok(l10n::text("Ok"))],
                             cx,
                         )
                     })?
@@ -10427,9 +10425,12 @@ pub fn reload(cx: &mut App) {
             .update(cx, |_, window, cx| {
                 window.prompt(
                     PromptLevel::Info,
-                    "Are you sure you want to restart?",
+                    l10n::text("Are you sure you want to restart?"),
                     None,
-                    &["Restart", "Cancel"],
+                    &[
+                        PromptButton::new(l10n::text("Restart")),
+                        PromptButton::cancel(l10n::text("Cancel")),
+                    ],
                     cx,
                 )
             })

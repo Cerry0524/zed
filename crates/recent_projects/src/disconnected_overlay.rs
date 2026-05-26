@@ -148,26 +148,26 @@ impl Render for DisconnectedOverlay {
 
         let message = match &self.host {
             Host::CollabGuestProject => {
-                "Your connection to the remote project has been lost.".to_string()
+                l10n::text("Your connection to the remote project has been lost.").to_string()
             }
             Host::RemoteServerProject(options, server_not_running) => {
                 let autosave = if ProjectSettings::get_global(cx)
                     .session
                     .restore_unsaved_buffers
                 {
-                    "\nUnsaved changes are stored locally."
+                    format!("\n{}", l10n::text("Unsaved changes are stored locally."))
                 } else {
-                    ""
+                    String::new()
                 };
                 let reason = if *server_not_running {
-                    "process exiting unexpectedly"
+                    l10n::text("process exiting unexpectedly")
                 } else {
-                    "not responding"
+                    l10n::text("not responding")
                 };
-                format!(
-                    "Your connection to {} has been lost due to the server {reason}.{autosave}",
-                    options.display_name(),
-                )
+                l10n::text("Your connection to {server} has been lost due to the server {reason}.")
+                    .replace("{server}", &options.display_name())
+                    .replace("{reason}", reason)
+                    + &autosave
             }
         };
 

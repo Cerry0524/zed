@@ -1225,7 +1225,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                     .child(
                         IconButton::new(("remove-folder", worktree_id.to_usize()), IconName::Close)
                             .icon_size(IconSize::Small)
-                            .tooltip(Tooltip::text("Remove Folder from Project"))
+                            .tooltip(Tooltip::text(l10n::text("Remove Folder from Project")))
                             .on_click(cx.listener(move |picker, _, window, cx| {
                                 let Some(workspace) = picker.delegate.workspace.upgrade() else {
                                     return;
@@ -1358,7 +1358,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                                     let focus_handle = self.focus_handle.clone();
                                     move |_, cx| {
                                         Tooltip::for_action_in(
-                                            "Open in New Window",
+                                            l10n::text("Open in New Window"),
                                             &menu::SecondaryConfirm,
                                             &focus_handle,
                                             cx,
@@ -1384,7 +1384,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                         this.child(
                             IconButton::new("remove_open_project", IconName::Close)
                                 .icon_size(IconSize::Small)
-                                .tooltip(Tooltip::text("Remove Project from Window"))
+                                .tooltip(Tooltip::text(l10n::text("Remove Project from Window")))
                                 .on_click({
                                     let project_group_key = project_group_key.clone();
                                     cx.listener(move |picker, _, window, cx| {
@@ -1497,7 +1497,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                                     Tooltip::with_meta(
                                         tooltip_title,
                                         None,
-                                        "As a multi-root folder",
+                                        l10n::text("As a multi-root folder"),
                                         cx,
                                     )
                                 })
@@ -1521,7 +1521,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                             .tooltip({
                                 move |_, cx| {
                                     Tooltip::for_action_in(
-                                        "Open Project in New Window",
+                                        l10n::text("Open Project in New Window"),
                                         &menu::SecondaryConfirm,
                                         &focus_handle,
                                         cx,
@@ -1847,7 +1847,7 @@ impl PickerDelegate for RecentProjectsDelegate {
                                         menu.context(focus_handle)
                                             .when(show_add_to_workspace, |menu| {
                                                 menu.action(
-                                                    "Add Folder to this Project",
+                                                    l10n::text("Add Folder to this Project"),
                                                     AddToWorkspace.boxed_clone(),
                                                 )
                                                 .separator()

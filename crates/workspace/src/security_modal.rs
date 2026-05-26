@@ -79,9 +79,14 @@ impl Render for SecurityModal {
 
         let restricted_count = self.restricted_paths.len();
         let header_label: SharedString = if restricted_count == 1 {
-            "Unrecognized Project".into()
+            l10n::text("Unrecognized Project").into()
         } else {
-            format!("Unrecognized Projects ({})", restricted_count).into()
+            format!(
+                "{} ({})",
+                l10n::text("Unrecognized Projects"),
+                restricted_count
+            )
+            .into()
         };
 
         let trust_label = self.build_trust_label();
@@ -173,9 +178,9 @@ impl Render for SecurityModal {
                     .child(
                         v_flex()
                             .child(
-                                Label::new(
+                                Label::new(l10n::text(
                                     "Untrusted projects are opened in Restricted Mode to protect your system.",
-                                )
+                                ))
                                 .color(Color::Muted),
                             )
                             .child(
@@ -290,16 +295,23 @@ impl SecurityModal {
         match available_parents.len() {
             0 => {
                 if has_restricted_files {
-                    Some(Cow::Borrowed("Trust all single files"))
+                    Some(Cow::Borrowed(l10n::text("Trust all single files")))
                 } else {
                     None
                 }
             }
-            1 => Some(Cow::Owned(format!(
-                "Trust all projects in the {:} folder",
-                self.shorten_path(available_parents[0]).display()
+            1 => Some(Cow::Owned(
+                l10n::text("Trust all projects in the {folder} folder").replace(
+                    "{folder}",
+                    &self
+                        .shorten_path(available_parents[0])
+                        .display()
+                        .to_string(),
+                ),
+            )),
+            _ => Some(Cow::Borrowed(l10n::text(
+                "Trust all projects in the parent folders",
             ))),
-            _ => Some(Cow::Borrowed("Trust all projects in the parent folders")),
         }
     }
 

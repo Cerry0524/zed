@@ -2169,7 +2169,7 @@ impl Sidebar {
                         .when(!has_active_draft, |this| this.visible_on_hover(&group_name))
                         .tooltip(move |_, cx| {
                             Tooltip::for_action_in(
-                                "Start New Agent Thread",
+                                l10n::text("Start New Agent Thread"),
                                 &NewThread,
                                 &focus_handle,
                                 cx,
@@ -2342,7 +2342,7 @@ impl Sidebar {
 
                         let menu = menu.when(show_multi_project_entries, |this| {
                             this.entry(
-                                "Open Project in New Window",
+                                l10n::text("Open Project in New Window"),
                                 Some(Box::new(workspace::MoveProjectToNewWindow)),
                                 {
                                     let project_group_key = project_group_key.clone();
@@ -2380,9 +2380,9 @@ impl Sidebar {
                                             .child(Label::new("-click").color(Color::Muted));
 
                                         let label = if has_threads {
-                                            "Focus Last Project"
+                                            l10n::text("Focus Last Project")
                                         } else {
-                                            "Focus Project"
+                                            l10n::text("Focus Project")
                                         };
 
                                         h_flex()
@@ -2428,7 +2428,7 @@ impl Sidebar {
                         let menu = if open_workspaces.is_empty() {
                             menu
                         } else {
-                            let mut menu = menu.separator().header("Open Worktrees");
+                            let mut menu = menu.separator().header(l10n::text("Open Worktrees"));
 
                             for (
                                 workspace_index,
@@ -2552,7 +2552,7 @@ impl Sidebar {
 
                             this.separator()
                                 .item(
-                                    ContextMenuEntry::new("Move Up")
+                                    ContextMenuEntry::new(l10n::text("Move Up"))
                                         .disabled(!can_move_up)
                                         .handler(move |_window, cx| {
                                             move_up_multi_workspace
@@ -2566,7 +2566,7 @@ impl Sidebar {
                                         }),
                                 )
                                 .item(
-                                    ContextMenuEntry::new("Move Down")
+                                    ContextMenuEntry::new(l10n::text("Move Down"))
                                         .disabled(!can_move_down)
                                         .handler(move |_window, cx| {
                                             move_down_multi_workspace
@@ -2583,16 +2583,17 @@ impl Sidebar {
 
                         let project_group_key = project_group_key.clone();
                         let remove_multi_workspace = multi_workspace.clone();
-                        menu.separator().entry("Remove", None, move |window, cx| {
-                            remove_multi_workspace
-                                .update(cx, |multi_workspace, cx| {
-                                    multi_workspace
-                                        .remove_project_group(&project_group_key, window, cx)
-                                        .detach_and_log_err(cx);
-                                })
-                                .ok();
-                            weak_menu.update(cx, |_, cx| cx.emit(DismissEvent)).ok();
-                        })
+                        menu.separator()
+                            .entry(l10n::text("Remove"), None, move |window, cx| {
+                                remove_multi_workspace
+                                    .update(cx, |multi_workspace, cx| {
+                                        multi_workspace
+                                            .remove_project_group(&project_group_key, window, cx)
+                                            .detach_and_log_err(cx);
+                                    })
+                                    .ok();
+                                weak_menu.update(cx, |_, cx| cx.emit(DismissEvent)).ok();
+                            })
                     });
 
                 let this = this.clone();
@@ -5622,7 +5623,7 @@ impl Sidebar {
                             let focus_handle = focus_handle.clone();
                             move |_window, cx| {
                                 Tooltip::for_action_in(
-                                    "Close Terminal",
+                                    l10n::text("Close Terminal"),
                                     &ArchiveSelectedThread,
                                     &focus_handle,
                                     cx,
@@ -5701,7 +5702,7 @@ impl Sidebar {
                     .selected_style(ButtonStyle::Tinted(TintColor::Accent)),
                 |_window, cx| {
                     Tooltip::for_action(
-                        "Add Project",
+                        l10n::text("Add Project"),
                         &OpenRecent {
                             create_new_window: false,
                         },
@@ -6367,9 +6368,9 @@ impl Sidebar {
     fn render_no_results(&self, cx: &mut Context<Self>) -> impl IntoElement {
         let has_query = self.has_filter_query(cx);
         let message = if has_query {
-            "No threads match your search."
+            l10n::text("No threads match your search.")
         } else {
-            "No threads yet"
+            l10n::text("No threads yet")
         };
 
         v_flex()
@@ -6571,9 +6572,9 @@ impl Sidebar {
                     .toggle_state(is_archive)
                     .tooltip(move |_, cx| {
                         let label = if is_archive {
-                            "Hide Thread History"
+                            l10n::text("Hide Thread History")
                         } else {
-                            "Show Thread History"
+                            l10n::text("Show Thread History")
                         };
                         Tooltip::for_action(label, &ToggleThreadHistory, cx)
                     })
@@ -6651,12 +6652,14 @@ impl Sidebar {
         });
         render_import_onboarding_banner(
             "acp",
-            "Looking for threads from external agents?",
-            "Import threads from agents like Claude Agent, Codex, and more, whether started in Zed or another client.",
+            l10n::text("Looking for threads from external agents?"),
+            l10n::text(
+                "Import threads from agents like Claude Agent, Codex, and more, whether started in Zed or another client.",
+            ),
             if verbose_labels {
-                "Import Threads from External Agents"
+                l10n::text("Import Threads from External Agents")
             } else {
-                "Import Threads"
+                l10n::text("Import Threads")
             },
             |_, _window, cx| AcpThreadImportOnboarding::dismiss(cx),
             on_import,
@@ -6680,10 +6683,9 @@ impl Sidebar {
             .collect::<Vec<_>>()
             .join(" and ");
 
-        let description = format!(
-            "Import threads from {} to continue where you left off.",
-            channel_names
-        );
+        let description =
+            l10n::text("Import threads from {channels} to continue where you left off.")
+                .replace("{channels}", &channel_names);
 
         let on_import = cx.listener(|this, _, _window, cx| {
             CrossChannelImportOnboarding::dismiss(cx);
@@ -6695,12 +6697,12 @@ impl Sidebar {
         });
         render_import_onboarding_banner(
             "channel",
-            "Threads found from other channels",
+            l10n::text("Threads found from other channels"),
             description,
             if verbose_labels {
-                "Import Threads from Other Channels"
+                l10n::text("Import Threads from Other Channels")
             } else {
-                "Import Threads"
+                l10n::text("Import Threads")
             },
             |_, _window, cx| CrossChannelImportOnboarding::dismiss(cx),
             on_import,

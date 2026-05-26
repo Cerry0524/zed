@@ -326,7 +326,7 @@ impl PickerDelegate for DevContainerPickerDelegate {
                 .border_t_1()
                 .border_color(cx.theme().colors().border_variant)
                 .child(
-                    Button::new("run-action", "Start Dev Container")
+                    Button::new("run-action", l10n::text("Start Dev Container"))
                         .key_binding(
                             KeyBinding::for_action(&menu::Confirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -336,7 +336,7 @@ impl PickerDelegate for DevContainerPickerDelegate {
                         }),
                 )
                 .child(
-                    Button::new("run-action-secondary", "Open devcontainer.json")
+                    Button::new("run-action-secondary", l10n::text("Open devcontainer.json"))
                         .key_binding(
                             KeyBinding::for_action(&menu::SecondaryConfirm, cx)
                                 .map(|kb| kb.size(rems_from_px(12.))),
@@ -1428,7 +1428,7 @@ impl RemoteServerProjects {
                                         .inset(true)
                                         .spacing(ui::ListItemSpacing::Sparse)
                                         .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                                        .child(Label::new("Open Folder"))
+                                        .child(Label::new(l10n::text("Open Folder")))
                                         .on_click(cx.listener({
                                             let connection = connection.clone();
                                             move |this, _, window, cx| {
@@ -1467,7 +1467,7 @@ impl RemoteServerProjects {
                                         .start_slot(
                                             Icon::new(IconName::Settings).color(Color::Muted),
                                         )
-                                        .child(Label::new("View Server Options"))
+                                        .child(Label::new(l10n::text("View Server Options")))
                                         .on_click(cx.listener({
                                             let ssh_connection = connection.clone();
                                             move |this, _, window, cx| {
@@ -1639,7 +1639,9 @@ impl RemoteServerProjects {
                                             .icon_size(IconSize::Small)
                                             .shape(IconButtonShape::Square)
                                             .size(ButtonSize::Large)
-                                            .tooltip(Tooltip::text("Delete Remote Project"))
+                                            .tooltip(Tooltip::text(l10n::text(
+                                                "Delete Remote Project",
+                                            )))
                                             .on_click(cx.listener(move |this, _, _, cx| {
                                                 this.delete_remote_project(server_ix, &project, cx)
                                             }))
@@ -1959,7 +1961,9 @@ impl RemoteServerProjects {
                                         .start_slot(
                                             Icon::new(IconName::XCircle).color(Color::Error),
                                         )
-                                        .child(Label::new("Error Creating Dev Container:"))
+                                        .child(Label::new(l10n::text(
+                                            "Error Creating Dev Container:",
+                                        )))
                                         .child(Label::new(message).buffer_font(cx)),
                                 ),
                             ),
@@ -1985,7 +1989,7 @@ impl RemoteServerProjects {
                                         .inset(true)
                                         .spacing(ui::ListItemSpacing::Sparse)
                                         .start_slot(Icon::new(IconName::File).color(Color::Muted))
-                                        .child(Label::new("Open Zed Log"))
+                                        .child(Label::new(l10n::text("Open Zed Log")))
                                         .on_click(cx.listener(|_, _, window, cx| {
                                             window.dispatch_action(Box::new(OpenLog), cx);
                                             cx.emit(DismissEvent);
@@ -2012,7 +2016,7 @@ impl RemoteServerProjects {
                                         .inset(true)
                                         .spacing(ui::ListItemSpacing::Sparse)
                                         .start_slot(Icon::new(IconName::Exit).color(Color::Muted))
-                                        .child(Label::new("Exit"))
+                                        .child(Label::new(l10n::text("Exit")))
                                         .on_click(cx.listener(|this, _, window, cx| {
                                             this.cancel(&menu::Cancel, window, cx);
                                             cx.notify();
@@ -2134,9 +2138,9 @@ impl RemoteServerProjects {
                                     .w_full()
                                     .gap_1()
                                     .child(
-                                        Label::new(
+                                        Label::new(l10n::text(
                                             "Enter the command you use to SSH into this server.",
-                                        )
+                                        ))
                                         .color(Color::Muted)
                                         .size(LabelSize::Small),
                                     )
@@ -2635,7 +2639,7 @@ impl RemoteServerProjects {
                     .inset(true)
                     .spacing(ui::ListItemSpacing::Sparse)
                     .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                    .child(Label::new("Connect SSH Server"))
+                    .child(Label::new(l10n::text("Connect SSH Server")))
                     .on_click(cx.listener(|this, _, window, cx| {
                         let state = CreateRemoteServer::new(window, cx);
                         this.mode = Mode::CreateRemoteServer(state);
@@ -2665,7 +2669,7 @@ impl RemoteServerProjects {
                     .inset(true)
                     .spacing(ui::ListItemSpacing::Sparse)
                     .start_slot(Icon::new(IconName::Plus).color(Color::Muted))
-                    .child(Label::new("Connect Dev Container"))
+                    .child(Label::new(l10n::text("Connect Dev Container")))
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.init_dev_container_mode(window, cx);
                     })),
@@ -2749,7 +2753,7 @@ impl RemoteServerProjects {
                                 .border_t_1()
                                 .border_color(cx.theme().colors().border_variant)
                                 .child(
-                                    Label::new("No remote servers registered yet.")
+                                    Label::new(l10n::text("No remote servers registered yet."))
                                         .color(Color::Muted),
                                 )
                                 .into_any_element(),

@@ -20,9 +20,9 @@ use futures::{StreamExt, stream::FuturesUnordered};
 use gpui::{
     Action, Anchor, AnyElement, App, AsyncWindowContext, ClickEvent, ClipboardItem, Context, Div,
     DragMoveEvent, Entity, EntityId, EventEmitter, ExternalPaths, FocusHandle, FocusOutEvent,
-    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptLevel, Render,
-    ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle, Window, actions,
-    anchored, deferred, prelude::*,
+    Focusable, KeyContext, MouseButton, NavigationDirection, Pixels, Point, PromptButton,
+    PromptLevel, Render, ScrollHandle, Subscription, Task, TaskExt, WeakEntity, WeakFocusHandle,
+    Window, actions, anchored, deferred, prelude::*,
 };
 use itertools::Itertools;
 use language::{Capability, DiagnosticSeverity};
@@ -1994,9 +1994,13 @@ impl Pane {
                     let detail = Self::file_names_for_prompt(&mut dirty_items.iter(), cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        "Do you want to save changes to the following files?",
+                        l10n::text("Do you want to save changes to the following files?"),
                         Some(&detail),
-                        &["Save all", "Discard all", "Cancel"],
+                        &[
+                            PromptButton::new(l10n::text("Save all")),
+                            PromptButton::new(l10n::text("Discard all")),
+                            PromptButton::cancel(l10n::text("Cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2036,9 +2040,13 @@ impl Pane {
                                 );
                                 window.prompt(
                                     PromptLevel::Warning,
-                                    &format!("Unable to save file: {}", &err),
+                                    &l10n::text("Unable to save file: {error}")
+                                        .replace("{error}", &err.to_string()),
                                     Some(&detail),
-                                    &["Close Without Saving", "Cancel"],
+                                    &[
+                                        PromptButton::new(l10n::text("Close Without Saving")),
+                                        PromptButton::cancel(l10n::text("Cancel")),
+                                    ],
                                     cx,
                                 )
                             })?;
@@ -2306,9 +2314,13 @@ impl Pane {
                     pane.activate_item(item_ix, true, true, window, cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        DELETED_MESSAGE,
+                        l10n::text(DELETED_MESSAGE),
                         None,
-                        &["Save", "Close", "Cancel"],
+                        &[
+                            PromptButton::new(l10n::text("Save")),
+                            PromptButton::new(l10n::text("Close")),
+                            PromptButton::cancel(l10n::text("Cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2341,9 +2353,13 @@ impl Pane {
                     pane.activate_item(item_ix, true, true, window, cx);
                     window.prompt(
                         PromptLevel::Warning,
-                        CONFLICT_MESSAGE,
+                        l10n::text(CONFLICT_MESSAGE),
                         None,
-                        &["Overwrite", "Discard", "Cancel"],
+                        &[
+                            PromptButton::new(l10n::text("Overwrite")),
+                            PromptButton::new(l10n::text("Discard")),
+                            PromptButton::cancel(l10n::text("Cancel")),
+                        ],
                         cx,
                     )
                 })?;
@@ -2386,7 +2402,11 @@ impl Pane {
                                 PromptLevel::Warning,
                                 &prompt,
                                 None,
-                                &["Save", "Don't Save", "Cancel"],
+                                &[
+                                    PromptButton::new(l10n::text("Save")),
+                                    PromptButton::new(l10n::text("Don't Save")),
+                                    PromptButton::cancel(l10n::text("Cancel")),
+                                ],
                                 cx,
                             ))
                         } else {
@@ -2985,7 +3005,7 @@ impl Pane {
                 let end_slot_tooltip_text: &'static str;
                 let end_slot = if is_pinned {
                     end_slot_action = &TogglePinTab;
-                    end_slot_tooltip_text = "Unpin Tab";
+                    end_slot_tooltip_text = l10n::text("Unpin Tab");
                     IconButton::new("unpin tab", IconName::Pin)
                         .shape(IconButtonShape::Square)
                         .icon_color(Color::Muted)
@@ -2999,7 +3019,7 @@ impl Pane {
                         save_intent: None,
                         close_pinned: false,
                     };
-                    end_slot_tooltip_text = "Close Tab";
+                    end_slot_tooltip_text = l10n::text("Close Tab");
                     match show_close_button {
                         ShowCloseButton::Always => IconButton::new("close tab", IconName::Close),
                         ShowCloseButton::Hover => {
@@ -3054,7 +3074,7 @@ impl Pane {
                             } else {
                                 this.tooltip(move |_, cx| {
                                     let text = text.clone();
-                                    Tooltip::with_meta(text, None, "Read-Only File", cx)
+                                    Tooltip::with_meta(text, None, l10n::text("Read-Only File"), cx)
                                 })
                             }
                         }
@@ -3121,7 +3141,7 @@ impl Pane {
                     if let Some(pane) = pane.upgrade() {
                         menu = menu
                             .entry(
-                                "Close",
+                                l10n::text("Close"),
                                 Some(Box::new(close_active_item_action)),
                                 window.handler_for(&pane, move |pane, window, cx| {
                                     pane.close_item_by_id(item_id, SaveIntent::Close, window, cx)
@@ -3129,7 +3149,7 @@ impl Pane {
                                 }),
                             )
                             .item(ContextMenuItem::Entry(
-                                ContextMenuEntry::new("Close Others")
+                                ContextMenuEntry::new(l10n::text("Close Others"))
                                     .action(Box::new(close_inactive_items_action.clone()))
                                     .disabled(total_items == 1)
                                     .handler(window.handler_for(&pane, move |pane, window, cx| {
@@ -3145,7 +3165,7 @@ impl Pane {
                             // We make this optional, instead of using disabled as to not overwhelm the context menu unnecessarily
                             .extend(has_multibuffer_items.then(|| {
                                 ContextMenuItem::Entry(
-                                    ContextMenuEntry::new("Close Multibuffers")
+                                    ContextMenuEntry::new(l10n::text("Close Multibuffers"))
                                         .action(Box::new(close_multibuffers_action.clone()))
                                         .handler(window.handler_for(
                                             &pane,
@@ -3162,7 +3182,7 @@ impl Pane {
                             }))
                             .separator()
                             .item(ContextMenuItem::Entry(
-                                ContextMenuEntry::new("Close Left")
+                                ContextMenuEntry::new(l10n::text("Close Left"))
                                     .action(Box::new(close_items_to_the_left_action.clone()))
                                     .disabled(!has_items_to_left)
                                     .handler(window.handler_for(&pane, move |pane, window, cx| {
@@ -3176,7 +3196,7 @@ impl Pane {
                                     })),
                             ))
                             .item(ContextMenuItem::Entry(
-                                ContextMenuEntry::new("Close Right")
+                                ContextMenuEntry::new(l10n::text("Close Right"))
                                     .action(Box::new(close_items_to_the_right_action.clone()))
                                     .disabled(!has_items_to_right)
                                     .handler(window.handler_for(&pane, move |pane, window, cx| {
@@ -3191,7 +3211,7 @@ impl Pane {
                             ))
                             .separator()
                             .item(ContextMenuItem::Entry(
-                                ContextMenuEntry::new("Close Clean")
+                                ContextMenuEntry::new(l10n::text("Close Clean"))
                                     .action(Box::new(close_clean_items_action.clone()))
                                     .disabled(!has_clean_items)
                                     .handler(window.handler_for(&pane, move |pane, window, cx| {
@@ -3204,7 +3224,7 @@ impl Pane {
                                     })),
                             ))
                             .entry(
-                                "Close All",
+                                l10n::text("Close All"),
                                 Some(Box::new(close_all_items_action.clone())),
                                 window.handler_for(&pane, move |pane, window, cx| {
                                     pane.close_all_items(&close_all_items_action, window, cx)
@@ -3216,7 +3236,7 @@ impl Pane {
                             menu.separator().map(|this| {
                                 if is_pinned {
                                     this.entry(
-                                        "Unpin Tab",
+                                        l10n::text("Unpin Tab"),
                                         Some(TogglePinTab.boxed_clone()),
                                         window.handler_for(&pane, move |pane, window, cx| {
                                             pane.unpin_tab_at(ix, window, cx);
@@ -3224,7 +3244,7 @@ impl Pane {
                                     )
                                 } else {
                                     this.entry(
-                                        "Pin Tab",
+                                        l10n::text("Pin Tab"),
                                         Some(TogglePinTab.boxed_clone()),
                                         window.handler_for(&pane, move |pane, window, cx| {
                                             pane.pin_tab_at(ix, window, cx);
@@ -3236,9 +3256,9 @@ impl Pane {
 
                         if capability != Capability::ReadOnly {
                             let read_only_label = if capability.editable() {
-                                "Make File Read-Only"
+                                l10n::text("Make File Read-Only")
                             } else {
-                                "Make File Editable"
+                                l10n::text("Make File Editable")
                             };
                             menu = menu.separator().entry(
                                 read_only_label,
@@ -3297,7 +3317,7 @@ impl Pane {
                                 .separator()
                                 .when_some(entry_abs_path, |menu, abs_path| {
                                     menu.entry(
-                                        "Copy Path",
+                                        l10n::text("Copy Path"),
                                         Some(Box::new(zed_actions::workspace::CopyPath)),
                                         window.handler_for(&pane, move |_, _, cx| {
                                             cx.write_to_clipboard(ClipboardItem::new_string(
@@ -3308,7 +3328,7 @@ impl Pane {
                                 })
                                 .when_some(relative_path, |menu, relative_path| {
                                     menu.entry(
-                                        "Copy Relative Path",
+                                        l10n::text("Copy Relative Path"),
                                         Some(Box::new(zed_actions::workspace::CopyRelativePath)),
                                         window.handler_for(&pane, move |this, _, cx| {
                                             let Some(project) = this.project.upgrade() else {
@@ -3325,7 +3345,9 @@ impl Pane {
                                 .when(is_local, |menu| {
                                     menu.when_some(reveal_path, |menu, reveal_path| {
                                         menu.separator().entry(
-                                            ui::utils::reveal_in_file_manager_label(is_remote),
+                                            l10n::text(ui::utils::reveal_in_file_manager_label(
+                                                is_remote,
+                                            )),
                                             Some(Box::new(
                                                 zed_actions::editor::RevealInFileManager,
                                             )),
@@ -3344,7 +3366,7 @@ impl Pane {
                                 .map(pin_tab_entries)
                                 .when(visible_in_project_panel, |menu| {
                                     menu.entry(
-                                        "Reveal In Project Panel",
+                                        l10n::text("Reveal In Project Panel"),
                                         Some(Box::new(RevealInProjectPanel::default())),
                                         window.handler_for(&pane, move |pane, _, cx| {
                                             pane.project
@@ -3359,7 +3381,7 @@ impl Pane {
                                 })
                                 .when_some(parent_abs_path, |menu, parent_abs_path| {
                                     menu.entry(
-                                        "Open in Terminal",
+                                        l10n::text("Open in Terminal"),
                                         Some(Box::new(OpenInTerminal)),
                                         window.handler_for(&pane, move |_, window, cx| {
                                             window.dispatch_action(
@@ -4920,9 +4942,9 @@ fn dirty_message_for(buffer_path: Option<ProjectPath>, path_style: PathStyle) ->
             let path = p.path.display(path_style);
             if path.is_empty() { None } else { Some(path) }
         })
-        .unwrap_or("This buffer".into());
+        .unwrap_or(l10n::text("This buffer").into());
     let path = truncate_and_remove_front(&path, 80);
-    format!("{path} contains unsaved edits. Do you want to save it?")
+    l10n::text("{path} contains unsaved edits. Do you want to save it?").replace("{path}", &path)
 }
 
 pub fn tab_details(items: &[Box<dyn ItemHandle>], _window: &Window, cx: &App) -> Vec<usize> {

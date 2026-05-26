@@ -135,7 +135,7 @@ impl PickerDelegate for SidebarRecentProjectsDelegate {
     type ListItem = AnyElement;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search recent projects…".into()
+        l10n::text("Search recent projects…").into()
     }
 
     fn render_editor(

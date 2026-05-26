@@ -86,11 +86,17 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Search" => "搜尋",
         "Search Project" => "搜尋專案",
         "Search Symbols" => "搜尋符號",
+        "Search Inside" => "在此搜尋",
         "Replace" => "取代",
         "Search…" => "搜尋…",
         "Replace with…" => "取代為…",
         "Search all files…" => "搜尋所有檔案…",
         "Replace in project…" => "在專案中取代…",
+        "Search project files..." => "搜尋專案檔案...",
+        "Search recent projects…" => "搜尋最近專案…",
+        "Project Scan in Progress…" => "正在掃描專案…",
+        "Filter Options" => "篩選選項",
+        "Include Ignored Files" => "包含已忽略檔案",
         "Include: crates/**/*.toml" => "包含：crates/**/*.toml",
         "Exclude: vendor/*, *.lock" => "排除：vendor/*, *.lock",
         "Find in Results" => "在結果中尋找",
@@ -137,6 +143,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Open…" => "開啟…",
         "Open File" => "開啟檔案",
         "Open File..." => "開啟檔案...",
+        "Open Folder" => "開啟資料夾",
         "Open Folder..." => "開啟資料夾...",
         "Open Recent..." => "開啟最近使用...",
         "Open Remote..." => "開啟遠端...",
@@ -150,15 +157,32 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Open Default Key Bindings" => "開啟預設鍵盤快速鍵",
         "Open in Terminal" => "在終端機中開啟",
         "Open in Default App" => "在預設 App 中開啟",
+        "Open in New Window" => "在新視窗開啟",
+        "Open Project in New Window" => "在新視窗開啟專案",
+        "Reveal in Finder" => "在 Finder 中顯示",
+        "Reveal in File Explorer" => "在 File Explorer 中顯示",
+        "Reveal in File Manager" => "在檔案管理員中顯示",
+        "Reveal In Project Panel" => "在專案面板中顯示",
         "Close" => "關閉",
         "Close Editor" => "關閉編輯器",
         "Close Project" => "關閉專案",
         "Close Window" => "關閉視窗",
+        "Close Terminal" => "關閉終端機",
+        "Close Tab" => "關閉索引標籤",
+        "Close Others" => "關閉其他",
+        "Close Multibuffers" => "關閉 Multibuffer",
+        "Close Left" => "關閉左側",
+        "Close Right" => "關閉右側",
+        "Close Clean" => "關閉未變更項目",
+        "Close All" => "全部關閉",
+        "Hide Button" => "隱藏按鈕",
         "Save" => "儲存",
         "Save As…" => "另存新檔…",
         "Save All" => "全部儲存",
+        "Save all" => "全部儲存",
         "New" => "新增",
         "New File" => "新增檔案",
+        "New Folder" => "新增資料夾",
         "New Window" => "新增視窗",
         "Delete" => "刪除",
         "Remove" => "移除",
@@ -170,9 +194,21 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Redo" => "重做",
         "Retry" => "重試",
         "Dismiss" => "關閉",
+        "Restore" => "還原",
+        "Overwrite" => "覆蓋",
+        "Discard" => "捨棄",
+        "Discard all" => "全部捨棄",
+        "Don't Save" => "不要儲存",
+        "Close Without Saving" => "不儲存並關閉",
+        "Read-Only File" => "唯讀檔案",
+        "Pin Tab" => "釘選索引標籤",
+        "Unpin Tab" => "取消釘選索引標籤",
+        "Make File Read-Only" => "將檔案設為唯讀",
+        "Make File Editable" => "允許編輯檔案",
         "Yes" => "是",
         "No" => "否",
         "Don't ask me again" => "不要再詢問",
+        "Don't Show Again" => "不要再顯示",
         "Configure" => "設定",
         "Install" => "安裝",
         "Install CLI" => "安裝 CLI",
@@ -198,6 +234,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Apply" => "套用",
         "Ok" | "OK" => "確定",
         "Cancel" => "取消",
+        "Restart" => "重新啟動",
         "About Zed" => "關於 Zed",
         "Check for Updates" => "檢查更新",
         "Services" => "服務",
@@ -218,6 +255,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Split Down" => "向下分割",
         "Split Left" => "向左分割",
         "Split Right" => "向右分割",
+        "Split…" => "分割…",
         "Outline Panel" => "大綱面板",
         "Collab Panel" => "協作面板",
         "Terminal Panel" => "終端機面板",
@@ -321,6 +359,27 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Scroll To Top" => "捲動至頂端",
         "Sync with source thread" => "與來源對話串同步",
         "Share Thread" => "分享對話串",
+        "Start New Agent Thread" => "開始新的代理對話串",
+        "Focus Project" => "聚焦專案",
+        "Focus Last Project" => "聚焦上一個專案",
+        "Open Worktrees" => "開啟工作樹",
+        "Move Up" => "上移",
+        "Move Down" => "下移",
+        "Add Project" => "新增專案",
+        "Open Threads Sidebar" => "開啟對話串側邊欄",
+        "No threads match your search." => "沒有符合搜尋的對話串。",
+        "Show Thread History" => "顯示對話串歷程",
+        "Hide Thread History" => "隱藏對話串歷程",
+        "Looking for threads from external agents?" => "在找外部代理的對話串嗎？",
+        "Import threads from agents like Claude Agent, Codex, and more, whether started in Zed or another client." => {
+            "匯入 Claude Agent、Codex 等代理的對話串，無論是在 Zed 或其他用戶端開始。"
+        }
+        "Import Threads from External Agents" => "從外部代理匯入對話串",
+        "Threads found from other channels" => "找到其他頻道的對話串",
+        "Import threads from {channels} to continue where you left off." => {
+            "從 {channels} 匯入對話串，從上次離開的地方繼續。"
+        }
+        "Import Threads from Other Channels" => "從其他頻道匯入對話串",
         "Loading Added Context…" => "正在載入新增內容…",
         "Type to Send" => "輸入後傳送",
         "Send Message" => "傳送訊息",
@@ -503,12 +562,42 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Review .zed/settings.json for any extensions or commands configured by this project." => {
             "請檢查 .zed/settings.json 中此專案設定的任何延伸模組或命令。"
         }
-        "Project settings from being applied" => "套用專案設定",
-        "Language servers from running" => "執行語言伺服器",
-        "MCP Server integrations from installing" => "安裝 MCP Server 整合",
+        "Unrecognized Project" => "無法識別的專案",
+        "Unrecognized Projects" => "無法識別的專案",
+        "Untrusted projects are opened in Restricted Mode to protect your system." => {
+            "未信任的專案會以受限模式開啟，以保護你的系統。"
+        }
+        "Trust all single files" => "信任所有單一檔案",
+        "Trust all projects in the {folder} folder" => "信任 {folder} 資料夾中的所有專案",
+        "Trust all projects in the parent folders" => "信任父資料夾中的所有專案",
+        "Project settings from being applied" => "專案設定被套用",
+        "Language servers from running" => "語言伺服器執行",
+        "MCP Server integrations from installing" => "MCP Server 整合安裝",
         "Stay in Restricted Mode" => "保持受限模式",
         "Trust and Continue" => "信任並繼續",
         "Disconnected" => "已中斷連線",
+        "Your connection to the remote project has been lost." => "與遠端專案的連線已中斷。",
+        "Your connection to {server} has been lost due to the server {reason}." => {
+            "與 {server} 的連線已中斷，原因是伺服器{reason}。"
+        }
+        "Unsaved changes are stored locally." => "未儲存的變更已儲存在本機。",
+        "process exiting unexpectedly" => "程序非預期結束",
+        "not responding" => "沒有回應",
+        "Failed to connect over SSH" => "無法透過 SSH 連線",
+        "Failed to connect to WSL" => "無法連線至 WSL",
+        "Failed to connect to Dev Container" => "無法連線至 Dev Container",
+        "Failed to connect to mock server" => "無法連線至 mock server",
+        "Start Dev Container" => "啟動 Dev Container",
+        "Open devcontainer.json" => "開啟 devcontainer.json",
+        "View Server Options" => "檢視伺服器選項",
+        "Delete Remote Project" => "刪除遠端專案",
+        "Error Creating Dev Container:" => "建立 Dev Container 時發生錯誤：",
+        "Open Zed Log" => "開啟 Zed 日誌",
+        "Exit" => "離開",
+        "Enter the command you use to SSH into this server." => "輸入你用來 SSH 進此伺服器的命令。",
+        "Connect SSH Server" => "連線至 SSH 伺服器",
+        "Connect Dev Container" => "連線至 Dev Container",
+        "No remote servers registered yet." => "尚未註冊遠端伺服器。",
         "Create Branch" => "建立分支",
         "Stash" => "貯藏",
         "Branch & Stash" => "分支與貯藏",
@@ -552,7 +641,11 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Activate" => "啟用",
         "Remove Folder" => "移除資料夾",
         "Remove from Window" => "從視窗移除",
-        "Delete from Recent Projects" => "從最近專案中刪除",
+        "Delete from Recent Projects" => "從最近專案移除",
+        "Remove Folder from Project" => "從專案移除資料夾",
+        "Remove Project from Window" => "從視窗移除專案",
+        "As a multi-root folder" => "作為多根資料夾",
+        "Add Folder to this Project" => "將資料夾新增至此專案",
         "Get Started" => "開始使用",
         "Open Project" => "開啟專案",
         "Clone Repository" => "複製儲存庫",
@@ -596,6 +689,68 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Pro" => "Pro",
         "Commit" => "提交",
         "Version" => "版本",
+        "Channel Notes" => "頻道筆記",
+        "Create file: {path}" => "建立檔案：{path}",
+        "Discard changes to {file}?" => "要捨棄 {file} 的變更嗎？",
+        "Failed to restore {file}: {error}" => "無法還原 {file}：{error}",
+        "Failed to add to .gitignore: {error}" => "無法新增至 .gitignore：{error}",
+        "Do you want to trash {path}?" => "要將 {path} 丟到垃圾桶嗎？",
+        "Are you sure you want to permanently delete {path}?" => "確定要永久刪除 {path} 嗎？",
+        "It has unsaved changes, which will be lost." => "它有未儲存的變更，這些變更將會遺失。",
+        ".. 1 file not shown" => ".. 尚有 1 個檔案未顯示",
+        ".. {count} files not shown" => ".. 尚有 {count} 個檔案未顯示",
+        "1 of these has unsaved changes, which will be lost." => {
+            "其中 1 個項目有未儲存的變更，這些變更將會遺失。"
+        }
+        "{count} of these have unsaved changes, which will be lost." => {
+            "其中 {count} 個項目有未儲存的變更，這些變更將會遺失。"
+        }
+        "Do you want to trash the following {count} files?" => {
+            "要將以下 {count} 個檔案丟到垃圾桶嗎？"
+        }
+        "Are you sure you want to permanently delete the following {count} files?" => {
+            "確定要永久刪除以下 {count} 個檔案嗎？"
+        }
+        "This cannot be undone." => "此動作無法復原。",
+        "Downloading {current}/{total} files..." => "正在下載 {current}/{total} 個檔案...",
+        "Downloaded {total} files" => "已下載 {total} 個檔案",
+        "A file or folder with name {name} already exists in the destination folder. Do you want to replace it?" => {
+            "目的地資料夾中已有名為 {name} 的檔案或資料夾。要取代它嗎？"
+        }
+        "{count} entries" => "{count} 個項目",
+        "Do you want to save changes to the following files?" => "要儲存以下檔案的變更嗎？",
+        "Unable to save file: {error}" => "無法儲存檔案：{error}",
+        "This buffer" => "此緩衝區",
+        "This file has changed on disk since you started editing it. Do you want to overwrite it?" => {
+            "此檔案在你開始編輯後已於磁碟上變更。要覆蓋它嗎？"
+        }
+        "This file has been deleted on disk since you started editing it. Do you want to recreate it?" => {
+            "此檔案在你開始編輯後已從磁碟刪除。要重新建立它嗎？"
+        }
+        "{path} contains unsaved edits. Do you want to save it?" => {
+            "{path} 包含未儲存的編輯。要儲存嗎？"
+        }
+        "Project search buffer contains unsaved edits. Do you want to save it?" => {
+            "專案搜尋緩衝區包含未儲存的編輯。要儲存嗎？"
+        }
+        "{worktree} contains a Dev Container configuration file. Would you like to re-open it in a container?" => {
+            "{worktree} 包含 Dev Container 設定檔。要在容器中重新開啟嗎？"
+        }
+        "Yes, Open in Container" => "是，在容器中開啟",
+        "Please sign in to continue." => "請登入以繼續。",
+        "You are running an unsupported version of Zed. Please update to continue." => {
+            "你正在執行不支援的 Zed 版本。請更新以繼續。"
+        }
+        "No matching channel was found. Please check the link and try again." => {
+            "找不到相符的頻道。請檢查連結後再試一次。"
+        }
+        "This channel is private, and you do not have access. Please ask someone to add you and try again." => {
+            "此頻道是私人頻道，你沒有存取權。請其他人加入你後再試一次。"
+        }
+        "Please check your internet connection and try again." => "請檢查網際網路連線後再試一次。",
+        "Please try again." => "請再試一次。",
+        "Failed to join channel" => "無法加入頻道",
+        "Are you sure you want to restart?" => "確定要重新啟動嗎？",
         "Moving Zed to Applications" => "正在將 Zed 移至「應用程式」",
         "Zed will reopen when installation is complete." => "安裝完成後 Zed 將重新開啟。",
         "Installing Zed…" => "正在安裝 Zed…",
@@ -733,6 +888,78 @@ mod tests {
         assert_eq!(
             text_or_original("untranslated dynamic action").as_ref(),
             "untranslated dynamic action"
+        );
+    }
+
+    #[test]
+    fn milestone_six_core_workspace_static_terms_are_guarded() {
+        assert_eq!(text("Search Inside"), "在此搜尋");
+        assert_eq!(text("New Folder"), "新增資料夾");
+        assert_eq!(text("Reveal in Finder"), "在 Finder 中顯示");
+        assert_eq!(text("Reveal in File Explorer"), "在 File Explorer 中顯示");
+        assert_eq!(text("Reveal in File Manager"), "在檔案管理員中顯示");
+        assert_eq!(text("Search project files..."), "搜尋專案檔案...");
+        assert_eq!(text("Project Scan in Progress…"), "正在掃描專案…");
+        assert_eq!(text("Filter Options"), "篩選選項");
+        assert_eq!(text("Include Ignored Files"), "包含已忽略檔案");
+        assert_eq!(text("Channel Notes"), "頻道筆記");
+        assert_eq!(text("Search recent projects…"), "搜尋最近專案…");
+        assert_eq!(text("Start New Agent Thread"), "開始新的代理對話串");
+        assert_eq!(text("Open Project in New Window"), "在新視窗開啟專案");
+        assert_eq!(text("Focus Project"), "聚焦專案");
+        assert_eq!(text("Open Worktrees"), "開啟工作樹");
+        assert_eq!(text("Move Up"), "上移");
+        assert_eq!(text("Move Down"), "下移");
+        assert_eq!(text("Add Project"), "新增專案");
+        assert_eq!(
+            text("No threads match your search."),
+            "沒有符合搜尋的對話串。"
+        );
+        assert_eq!(text("Show Thread History"), "顯示對話串歷程");
+        assert_eq!(text("Hide Thread History"), "隱藏對話串歷程");
+        assert_eq!(text("Unrecognized Project"), "無法識別的專案");
+        assert_eq!(text("Hide Button"), "隱藏按鈕");
+        assert_eq!(text("Read-Only File"), "唯讀檔案");
+        assert_eq!(text("Pin Tab"), "釘選索引標籤");
+        assert_eq!(text("Unpin Tab"), "取消釘選索引標籤");
+        assert_eq!(text("Reveal In Project Panel"), "在專案面板中顯示");
+    }
+
+    #[test]
+    fn milestone_six_core_workspace_prompt_templates_are_guarded() {
+        assert_eq!(text("Create file: {path}"), "建立檔案：{path}");
+        assert_eq!(
+            text("Discard changes to {file}?"),
+            "要捨棄 {file} 的變更嗎？"
+        );
+        assert_eq!(
+            text("Are you sure you want to permanently delete {path}?"),
+            "確定要永久刪除 {path} 嗎？"
+        );
+        assert_eq!(
+            text("Do you want to trash the following {count} files?"),
+            "要將以下 {count} 個檔案丟到垃圾桶嗎？"
+        );
+        assert_eq!(text("This cannot be undone."), "此動作無法復原。");
+        assert_eq!(
+            text(
+                "A file or folder with name {name} already exists in the destination folder. Do you want to replace it?"
+            ),
+            "目的地資料夾中已有名為 {name} 的檔案或資料夾。要取代它嗎？"
+        );
+        assert_eq!(
+            text("Project search buffer contains unsaved edits. Do you want to save it?"),
+            "專案搜尋緩衝區包含未儲存的編輯。要儲存嗎？"
+        );
+        assert_eq!(
+            text(
+                "{worktree} contains a Dev Container configuration file. Would you like to re-open it in a container?"
+            ),
+            "{worktree} 包含 Dev Container 設定檔。要在容器中重新開啟嗎？"
+        );
+        assert_eq!(
+            text("Your connection to {server} has been lost due to the server {reason}."),
+            "與 {server} 的連線已中斷，原因是伺服器{reason}。"
         );
     }
 }

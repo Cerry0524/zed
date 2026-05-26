@@ -39,7 +39,7 @@ use std::{
 };
 use ui::{
     ButtonLike, CommonAnimationExt, ContextMenu, HighlightedLabel, Indicator, KeyBinding, ListItem,
-    ListItemSpacing, PopoverMenu, PopoverMenuHandle, TintColor, Tooltip, prelude::*,
+    ListItemSpacing, PopoverMenu, PopoverMenuHandle, TintColor, Tooltip, l10n, prelude::*,
 };
 use ui_input::ErasedEditor;
 use util::{
@@ -1243,11 +1243,12 @@ impl FileFinderDelegate {
                 } => (
                     channel_name.to_string(),
                     string_match.positions.clone(),
-                    "Channel Notes".to_string(),
+                    l10n::text("Channel Notes").to_string(),
                     vec![],
                 ),
                 Match::CreateNew(project_path) => (
-                    format!("Create file: {}", project_path.path.display(path_style)),
+                    l10n::text("Create file: {path}")
+                        .replace("{path}", &project_path.path.display(path_style).to_string()),
                     vec![],
                     String::from(""),
                     vec![],
@@ -1472,7 +1473,7 @@ impl PickerDelegate for FileFinderDelegate {
     type ListItem = ListItem;
 
     fn placeholder_text(&self, _window: &mut Window, _cx: &mut App) -> Arc<str> {
-        "Search project files...".into()
+        l10n::text("Search project files...").into()
     }
 
     fn match_count(&self) -> usize {
@@ -1847,7 +1848,7 @@ impl PickerDelegate for FileFinderDelegate {
                 this.child(
                     h_flex()
                         .id("project-scan-indicator")
-                        .tooltip(Tooltip::text("Project Scan in Progress…"))
+                        .tooltip(Tooltip::text(l10n::text("Project Scan in Progress…")))
                         .child(
                             Icon::new(IconName::LoadCircle)
                                 .color(Color::Accent)
@@ -1889,7 +1890,7 @@ impl PickerDelegate for FileFinderDelegate {
                                 let focus_handle = focus_handle.clone();
                                 move |_window, cx| {
                                     Tooltip::for_action_in(
-                                        "Filter Options",
+                                        l10n::text("Filter Options"),
                                         &ToggleFilterMenu,
                                         &focus_handle,
                                         cx,
@@ -1906,9 +1907,9 @@ impl PickerDelegate for FileFinderDelegate {
                                     let focus_handle = focus_handle.clone();
                                     move |menu, _, _| {
                                         menu.context(focus_handle.clone())
-                                            .header("Filter Options")
+                                            .header(l10n::text("Filter Options"))
                                             .toggleable_entry(
-                                                "Include Ignored Files",
+                                                l10n::text("Include Ignored Files"),
                                                 include_ignored.unwrap_or(false),
                                                 ui::IconPosition::End,
                                                 Some(ToggleIncludeIgnored.boxed_clone()),
@@ -1939,7 +1940,7 @@ impl PickerDelegate for FileFinderDelegate {
                                 })
                                 .trigger(
                                     ButtonLike::new("split-trigger")
-                                        .child(Label::new("Split…"))
+                                        .child(Label::new(l10n::text("Split…")))
                                         .selected_style(ButtonStyle::Tinted(TintColor::Accent))
                                         .child(
                                             KeyBinding::for_action_in(
@@ -1959,19 +1960,19 @@ impl PickerDelegate for FileFinderDelegate {
                                             move |menu, _, _| {
                                                 menu.context(focus_handle)
                                                     .action(
-                                                        "Split Left",
+                                                        l10n::text("Split Left"),
                                                         pane::SplitLeft::default().boxed_clone(),
                                                     )
                                                     .action(
-                                                        "Split Right",
+                                                        l10n::text("Split Right"),
                                                         pane::SplitRight::default().boxed_clone(),
                                                     )
                                                     .action(
-                                                        "Split Up",
+                                                        l10n::text("Split Up"),
                                                         pane::SplitUp::default().boxed_clone(),
                                                     )
                                                     .action(
-                                                        "Split Down",
+                                                        l10n::text("Split Down"),
                                                         pane::SplitDown::default().boxed_clone(),
                                                     )
                                             }
@@ -1980,7 +1981,7 @@ impl PickerDelegate for FileFinderDelegate {
                                 }),
                         )
                         .child(
-                            Button::new("open-selection", "Open")
+                            Button::new("open-selection", l10n::text("Open"))
                                 .key_binding(
                                     KeyBinding::for_action_in(&menu::Confirm, &focus_handle, cx)
                                         .map(|kb| kb.size(rems_from_px(12.))),

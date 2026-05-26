@@ -24,10 +24,10 @@ use gpui::{
     ClipboardItem, Context, CursorStyle, DismissEvent, Div, DragMoveEvent, Entity, EventEmitter,
     ExternalPaths, FocusHandle, Focusable, FontWeight, Hsla, InteractiveElement, KeyContext,
     ListHorizontalSizingBehavior, ListSizingBehavior, Modifiers, ModifiersChangedEvent,
-    MouseButton, MouseDownEvent, ParentElement, PathPromptOptions, Pixels, Point, PromptLevel,
-    Render, ScrollStrategy, Stateful, Styled, Subscription, Task, UniformListScrollHandle,
-    WeakEntity, Window, actions, anchored, deferred, div, hsla, linear_color_stop, linear_gradient,
-    point, px, size, transparent_white, uniform_list,
+    MouseButton, MouseDownEvent, ParentElement, PathPromptOptions, Pixels, Point, PromptButton,
+    PromptLevel, Render, ScrollStrategy, Stateful, Styled, Subscription, Task,
+    UniformListScrollHandle, WeakEntity, Window, actions, anchored, deferred, div, hsla,
+    linear_color_stop, linear_gradient, point, px, size, transparent_white, uniform_list,
 };
 use language::DiagnosticSeverity;
 use menu::{Confirm, SelectFirst, SelectLast, SelectNext, SelectPrevious};
@@ -1077,15 +1077,15 @@ impl ProjectPanel {
                 menu.context(self.focus_handle.clone()).map(|menu| {
                     if is_read_only {
                         menu.when(is_dir, |menu| {
-                            menu.action("Search Inside", Box::new(NewSearchInDirectory))
+                            menu.action(l10n::text("Search Inside"), Box::new(NewSearchInDirectory))
                         })
                     } else {
-                        menu.action("New File", Box::new(NewFile))
-                            .action("New Folder", Box::new(NewDirectory))
+                        menu.action(l10n::text("New File"), Box::new(NewFile))
+                            .action(l10n::text("New Folder"), Box::new(NewDirectory))
                             .separator()
                             .when(is_local, |menu| {
                                 menu.action(
-                                    ui::utils::reveal_in_file_manager_label(is_remote),
+                                    l10n::text(ui::utils::reveal_in_file_manager_label(is_remote)),
                                     Box::new(RevealInFileManager),
                                 )
                             })
@@ -2232,8 +2232,17 @@ impl ProjectPanel {
             let file_name = entry.path.file_name()?.to_string();
 
             let answer = if !action.skip_prompt {
-                let prompt = format!("Discard changes to {}?", file_name);
-                Some(window.prompt(PromptLevel::Info, &prompt, None, &["Restore", "Cancel"], cx))
+                let prompt = l10n::text("Discard changes to {file}?").replace("{file}", &file_name);
+                Some(window.prompt(
+                    PromptLevel::Info,
+                    &prompt,
+                    None,
+                    &[
+                        PromptButton::new(l10n::text("Restore")),
+                        PromptButton::cancel(l10n::text("Cancel")),
+                    ],
+                    cx,
+                ))
             } else {
                 None
             };
@@ -2254,7 +2263,9 @@ impl ProjectPanel {
                 if let Err(e) = task.await {
                     panel
                         .update(cx, |panel, cx| {
-                            let message = format!("Failed to restore {}: {}", file_name, e);
+                            let message = l10n::text("Failed to restore {file}: {error}")
+                                .replace("{file}", &file_name)
+                                .replace("{error}", &e.to_string());
                             let toast = StatusToast::new(message, cx, |this, _| {
                                 this.icon(
                                     Icon::new(IconName::XCircle)
@@ -2326,7 +2337,8 @@ impl ProjectPanel {
                 if let Err(e) = receiver.await? {
                     if let Some(workspace) = workspace.upgrade() {
                         cx.update(|cx| {
-                            let message = format!("Failed to add to .gitignore: {}", e);
+                            let message = l10n::text("Failed to add to .gitignore: {error}")
+                                .replace("{error}", &e.to_string());
                             let toast = StatusToast::new(message, cx, |this, _| {
                                 this.icon(Icon::new(IconName::XCircle).color(Color::Error))
                                     .dismiss_button(true)
@@ -2378,24 +2390,29 @@ impl ProjectPanel {
                 return None;
             }
             let answer = if !skip_prompt {
-                let operation = if trash { "Trash" } else { "Delete" };
-                let message_start = if trash {
-                    "Do you want to trash"
+                let operation = if trash {
+                    l10n::text("Trash")
                 } else {
-                    "Are you sure you want to permanently delete"
+                    l10n::text("Delete")
                 };
                 let prompt = match file_paths.first() {
                     Some((_, _, path)) if file_paths.len() == 1 => {
                         let unsaved_warning = if dirty_buffers > 0 {
-                            "\n\nIt has unsaved changes, which will be lost."
+                            format!(
+                                "\n\n{}",
+                                l10n::text("It has unsaved changes, which will be lost.")
+                            )
                         } else {
-                            ""
+                            String::new()
                         };
 
-                        format!(
-                            "{message_start} {}?{unsaved_warning}",
-                            MarkdownInlineCode(path)
-                        )
+                        let template = if trash {
+                            l10n::text("Do you want to trash {path}?")
+                        } else {
+                            l10n::text("Are you sure you want to permanently delete {path}?")
+                        };
+                        template.replace("{path}", &MarkdownInlineCode(path).to_string())
+                            + &unsaved_warning
                     }
                     _ => {
                         const CUTOFF_POINT: usize = 10;
@@ -2408,9 +2425,12 @@ impl ProjectPanel {
                                 .collect::<Vec<_>>();
                             paths.truncate(CUTOFF_POINT);
                             if truncated_path_counts == 1 {
-                                paths.push(".. 1 file not shown".into());
+                                paths.push(l10n::text(".. 1 file not shown").into());
                             } else {
-                                paths.push(format!(".. {} files not shown", truncated_path_counts));
+                                paths.push(
+                                    l10n::text(".. {count} files not shown")
+                                        .replace("{count}", &truncated_path_counts.to_string()),
+                                );
                             }
                             paths
                         } else {
@@ -2422,26 +2442,40 @@ impl ProjectPanel {
                         let unsaved_warning = if dirty_buffers == 0 {
                             String::new()
                         } else if dirty_buffers == 1 {
-                            "\n\n1 of these has unsaved changes, which will be lost.".to_string()
+                            format!(
+                                "\n\n{}",
+                                l10n::text("1 of these has unsaved changes, which will be lost.")
+                            )
                         } else {
                             format!(
-                                "\n\n{dirty_buffers} of these have unsaved changes, which will be lost."
+                                "\n\n{}",
+                                l10n::text(
+                                    "{count} of these have unsaved changes, which will be lost."
+                                )
+                                .replace("{count}", &dirty_buffers.to_string())
                             )
                         };
 
-                        format!(
-                            "{message_start} the following {} files?\n{}{unsaved_warning}",
-                            file_paths.len(),
-                            names.join("\n")
-                        )
+                        let template = if trash {
+                            l10n::text("Do you want to trash the following {count} files?")
+                        } else {
+                            l10n::text(
+                                "Are you sure you want to permanently delete the following {count} files?",
+                            )
+                        };
+                        let prompt = template.replace("{count}", &file_paths.len().to_string());
+                        format!("{prompt}\n{}{unsaved_warning}", names.join("\n"))
                     }
                 };
-                let detail = (!trash).then_some("This cannot be undone.");
+                let detail = (!trash).then_some(l10n::text("This cannot be undone."));
                 Some(window.prompt(
                     PromptLevel::Info,
                     &prompt,
                     detail,
-                    &[operation, "Cancel"],
+                    &[
+                        PromptButton::new(operation),
+                        PromptButton::cancel(l10n::text("Cancel")),
+                    ],
                     cx,
                 ))
             } else {
@@ -3343,7 +3377,7 @@ impl ProjectPanel {
             files: false,
             directories: true,
             multiple: false,
-            prompt: Some("Download".into()),
+            prompt: Some(l10n::text("Download").into()),
         });
 
         let fs = self.fs.clone();
@@ -3358,7 +3392,9 @@ impl ProjectPanel {
                             workspace.show_toast(
                                 workspace::Toast::new(
                                     notification_id.clone(),
-                                    format!("Downloading 0/{} files...", total_files),
+                                    l10n::text("Downloading {current}/{total} files...")
+                                        .replace("{current}", "0")
+                                        .replace("{total}", &total_files.to_string()),
                                 ),
                                 cx,
                             );
@@ -3374,11 +3410,9 @@ impl ProjectPanel {
                                 workspace.show_toast(
                                     workspace::Toast::new(
                                         notification_id.clone(),
-                                        format!(
-                                            "Downloading {}/{} files...",
-                                            index + 1,
-                                            total_files
-                                        ),
+                                        l10n::text("Downloading {current}/{total} files...")
+                                            .replace("{current}", &(index + 1).to_string())
+                                            .replace("{total}", &total_files.to_string()),
                                     ),
                                     cx,
                                 );
@@ -3411,7 +3445,8 @@ impl ProjectPanel {
                             workspace.show_toast(
                                 workspace::Toast::new(
                                     notification_id.clone(),
-                                    format!("Downloaded {} files", total_files),
+                                    l10n::text("Downloaded {total} files")
+                                        .replace("{total}", &total_files.to_string()),
                                 ),
                                 cx,
                             );
@@ -4370,21 +4405,20 @@ impl ProjectPanel {
         cx.spawn_in(window, async move |this, cx| {
             async move {
                 for (filename, original_path) in &paths_to_replace {
-                    let prompt_message = format!(
-                        concat!(
-                            "A file or folder with name {} ",
-                            "already exists in the destination folder. ",
-                            "Do you want to replace it?"
-                        ),
-                        filename
-                    );
+                    let prompt_message = l10n::text(
+                        "A file or folder with name {name} already exists in the destination folder. Do you want to replace it?",
+                    )
+                    .replace("{name}", filename);
                     let answer = cx
                         .update(|window, cx| {
                             window.prompt(
                                 PromptLevel::Info,
                                 &prompt_message,
                                 None,
-                                &["Replace", "Cancel"],
+                                &[
+                                    PromptButton::new(l10n::text("Replace")),
+                                    PromptButton::cancel(l10n::text("Cancel")),
+                                ],
                                 cx,
                             )
                         })?
@@ -7225,7 +7259,10 @@ impl Render for DraggedProjectEntryView {
                     .bg(cx.theme().colors().background)
                     .map(|this| {
                         if self.selections.len() > 1 && self.selections.contains(&self.selection) {
-                            this.child(Label::new(format!("{} entries", self.selections.len())))
+                            this.child(Label::new(
+                                l10n::text("{count} entries")
+                                    .replace("{count}", &self.selections.len().to_string()),
+                            ))
                         } else {
                             this.child(if let Some(icon) = &self.icon {
                                 div().child(Icon::from_path(icon.clone()))

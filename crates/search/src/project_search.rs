@@ -21,9 +21,9 @@ use editor::{
 use futures::{StreamExt, stream::FuturesOrdered};
 use gpui::{
     Action, AnyElement, App, Axis, Context, Entity, EntityId, EventEmitter, FocusHandle, Focusable,
-    Global, Hsla, InteractiveElement, IntoElement, KeyContext, ParentElement, Point, Render,
-    SharedString, Styled, Subscription, Task, TaskExt, UpdateGlobal, WeakEntity, Window, actions,
-    div,
+    Global, Hsla, InteractiveElement, IntoElement, KeyContext, ParentElement, Point, PromptButton,
+    Render, SharedString, Styled, Subscription, Task, TaskExt, UpdateGlobal, WeakEntity, Window,
+    actions, div,
 };
 use itertools::Itertools;
 use language::{Buffer, Language};
@@ -1328,11 +1328,17 @@ impl ProjectSearchView {
             let should_prompt_to_save = !skip_save_on_close && !will_autosave && is_dirty;
 
             let should_search = if should_prompt_to_save {
-                let options = &["Save", "Don't Save", "Cancel"];
+                let options = &[
+                    PromptButton::new(l10n::text("Save")),
+                    PromptButton::new(l10n::text("Don't Save")),
+                    PromptButton::cancel(l10n::text("Cancel")),
+                ];
                 let result_channel = this.update_in(cx, |_, window, cx| {
                     window.prompt(
                         gpui::PromptLevel::Warning,
-                        "Project search buffer contains unsaved edits. Do you want to save it?",
+                        l10n::text(
+                            "Project search buffer contains unsaved edits. Do you want to save it?",
+                        ),
                         None,
                         options,
                         cx,

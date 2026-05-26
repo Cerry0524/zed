@@ -8,7 +8,7 @@ use askpass::EncryptedPassword;
 use editor::Editor;
 use extension_host::ExtensionStore;
 use futures::{FutureExt as _, channel::oneshot, select};
-use gpui::{AppContext, AsyncApp, PromptLevel, WindowHandle};
+use gpui::{AppContext, AsyncApp, PromptButton, PromptLevel, WindowHandle};
 
 use project::trusted_worktrees;
 use remote::{
@@ -17,6 +17,7 @@ use remote::{
 };
 pub use settings::SshConnection;
 use settings::{DevContainerConnection, ExtendingVec, RegisterSetting, Settings, WslConnection};
+use ui::l10n;
 use util::paths::PathWithPosition;
 use workspace::{
     AppState, MultiWorkspace, OpenOptions, SerializedWorkspaceLocation, Workspace,
@@ -314,7 +315,7 @@ pub async fn open_remote_project(
                     .update(cx, |_, window, cx| {
                         window.prompt(
                             PromptLevel::Critical,
-                            match connection_options {
+                            l10n::text(match connection_options {
                                 RemoteConnectionOptions::Ssh(_) => "Failed to connect over SSH",
                                 RemoteConnectionOptions::Wsl(_) => "Failed to connect to WSL",
                                 RemoteConnectionOptions::Docker(_) => {
@@ -324,9 +325,12 @@ pub async fn open_remote_project(
                                 RemoteConnectionOptions::Mock(_) => {
                                     "Failed to connect to mock server"
                                 }
-                            },
+                            }),
                             Some(&format!("{e:#}")),
-                            &["Retry", "Cancel"],
+                            &[
+                                PromptButton::new(l10n::text("Retry")),
+                                PromptButton::cancel(l10n::text("Cancel")),
+                            ],
                             cx,
                         )
                     })?
@@ -375,7 +379,7 @@ pub async fn open_remote_project(
                     .update(cx, |_, window, cx| {
                         window.prompt(
                             PromptLevel::Critical,
-                            match connection_options {
+                            l10n::text(match connection_options {
                                 RemoteConnectionOptions::Ssh(_) => "Failed to connect over SSH",
                                 RemoteConnectionOptions::Wsl(_) => "Failed to connect to WSL",
                                 RemoteConnectionOptions::Docker(_) => {
@@ -385,9 +389,12 @@ pub async fn open_remote_project(
                                 RemoteConnectionOptions::Mock(_) => {
                                     "Failed to connect to mock server"
                                 }
-                            },
+                            }),
                             Some(&format!("{e:#}")),
-                            &["Retry", "Cancel"],
+                            &[
+                                PromptButton::new(l10n::text("Retry")),
+                                PromptButton::cancel(l10n::text("Cancel")),
+                            ],
                             cx,
                         )
                     })?

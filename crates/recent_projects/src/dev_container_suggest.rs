@@ -3,8 +3,8 @@ use dev_container::find_configs_in_snapshot;
 use gpui::{SharedString, Window};
 use project::{Project, WorktreeId};
 use std::sync::LazyLock;
-use ui::Tooltip;
 use ui::prelude::*;
+use ui::{Tooltip, l10n};
 use util::ResultExt;
 use util::rel_path::RelPath;
 use workspace::Workspace;
@@ -114,10 +114,10 @@ pub fn suggest_on_worktree_updated(
 
         workspace.show_notification(notification_id, cx, |cx| {
             cx.new(move |cx| {
-                let message: SharedString = format!(
-                    "{worktree_name} contains a Dev Container configuration file. Would you like to re-open it in a container?"
-                )
-                .into();
+                let message: SharedString =
+                    l10n::text("{worktree} contains a Dev Container configuration file. Would you like to re-open it in a container?")
+                        .replace("{worktree}", &worktree_name)
+                        .into();
                 let tooltip_text: SharedString = project_path.clone().into();
                 MessageNotification::new_from_builder(cx, move |_window, _cx| {
                     div()
@@ -126,7 +126,7 @@ pub fn suggest_on_worktree_updated(
                         .tooltip(Tooltip::text(tooltip_text.clone()))
                         .into_any_element()
                 })
-                .primary_message("Yes, Open in Container")
+                .primary_message(l10n::text("Yes, Open in Container"))
                 .primary_icon(IconName::Check)
                 .primary_icon_color(Color::Success)
                 .primary_on_click({
@@ -134,7 +134,7 @@ pub fn suggest_on_worktree_updated(
                         window.dispatch_action(Box::new(zed_actions::OpenDevContainer), cx);
                     }
                 })
-                .secondary_message("Don't Show Again")
+                .secondary_message(l10n::text("Don't Show Again"))
                 .secondary_icon(IconName::Close)
                 .secondary_icon_color(Color::Error)
                 .secondary_on_click({
