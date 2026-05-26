@@ -48,7 +48,7 @@ use terminal_panel::TerminalPanel;
 use terminal_path_like_target::{hover_path_like_target, open_path_like_target};
 use terminal_scrollbar::TerminalScrollHandle;
 use ui::{
-    ContextMenu, Divider, ScrollAxes, Scrollbars, Tooltip, WithScrollbar,
+    ContextMenu, Divider, ScrollAxes, Scrollbars, Tooltip, WithScrollbar, l10n,
     prelude::*,
     scrollbars::{self, ScrollbarVisibility},
 };
@@ -502,30 +502,36 @@ impl TerminalView {
             .is_some_and(|terminal_panel| terminal_panel.read(cx).assistant_enabled());
         let context_menu = ContextMenu::build(window, cx, |menu, _, _| {
             menu.context(self.focus_handle.clone())
-                .action("New Terminal", Box::new(NewTerminal::default()))
+                .action(l10n::text("New Terminal"), Box::new(NewTerminal::default()))
                 .action(
-                    "New Center Terminal",
+                    l10n::text("New Center Terminal"),
                     Box::new(NewCenterTerminal::default()),
                 )
                 .separator()
-                .action("Copy", Box::new(Copy))
-                .action("Paste", Box::new(Paste))
-                .action("Paste Text", Box::new(PasteText))
-                .action("Select All", Box::new(SelectAll))
-                .action("Clear", Box::new(Clear))
+                .action(l10n::text("Copy"), Box::new(Copy))
+                .action(l10n::text("Paste"), Box::new(Paste))
+                .action(l10n::text("Paste Text"), Box::new(PasteText))
+                .action(l10n::text("Select All"), Box::new(SelectAll))
+                .action(l10n::text("Clear"), Box::new(Clear))
                 .when(
                     assistant_enabled && !matches!(self.mode, TerminalMode::Embedded { .. }),
                     |menu| {
                         menu.separator()
-                            .action("Inline Assist", Box::new(InlineAssist::default()))
+                            .action(
+                                l10n::text("Inline Assist"),
+                                Box::new(InlineAssist::default()),
+                            )
                             .when(has_selection, |menu| {
-                                menu.action("Add to Agent Thread", Box::new(AddSelectionToThread))
+                                menu.action(
+                                    l10n::text("Add to Agent Thread"),
+                                    Box::new(AddSelectionToThread),
+                                )
                             })
                     },
                 )
                 .separator()
                 .action(
-                    "Close Terminal Tab",
+                    l10n::text("Close Terminal Tab"),
                     Box::new(CloseActiveItem {
                         save_intent: None,
                         close_pinned: true,

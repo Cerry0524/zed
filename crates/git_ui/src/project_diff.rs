@@ -39,7 +39,7 @@ use std::any::{Any, TypeId};
 use std::sync::Arc;
 use theme::ActiveTheme;
 use ui::{
-    CommonAnimationExt as _, DiffStat, Divider, KeyBinding, PopoverMenu, Tooltip, prelude::*,
+    CommonAnimationExt as _, DiffStat, Divider, KeyBinding, PopoverMenu, Tooltip, l10n, prelude::*,
     vertical_divider,
 };
 use util::{ResultExt as _, rel_path::RelPath};
@@ -1501,9 +1501,9 @@ impl Render for ProjectDiffToolbar {
                     })
                     .when(!button_states.selection, |el| {
                         el.child(
-                            Button::new("stage", "Stage")
+                            Button::new("stage", l10n::text("Stage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Stage and go to next hunk",
+                                    l10n::text("Stage and go to next hunk"),
                                     &StageAndNext,
                                     &focus_handle,
                                 ))
@@ -1517,9 +1517,9 @@ impl Render for ProjectDiffToolbar {
                                 })),
                         )
                         .child(
-                            Button::new("unstage", "Unstage")
+                            Button::new("unstage", l10n::text("Unstage"))
                                 .tooltip(Tooltip::for_action_title_in(
-                                    "Unstage and go to next hunk",
+                                    l10n::text("Unstage and go to next hunk"),
                                     &UnstageAndNext,
                                     &focus_handle,
                                 ))
@@ -1542,7 +1542,7 @@ impl Render for ProjectDiffToolbar {
                         IconButton::new("up", IconName::ArrowUp)
                             .shape(ui::IconButtonShape::Square)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to previous hunk",
+                                l10n::text("Go to previous hunk"),
                                 &GoToPreviousHunk,
                                 &focus_handle,
                             ))
@@ -1555,7 +1555,7 @@ impl Render for ProjectDiffToolbar {
                         IconButton::new("down", IconName::ArrowDown)
                             .shape(ui::IconButtonShape::Square)
                             .tooltip(Tooltip::for_action_title_in(
-                                "Go to next hunk",
+                                l10n::text("Go to next hunk"),
                                 &GoToHunk,
                                 &focus_handle,
                             ))
@@ -1572,9 +1572,9 @@ impl Render for ProjectDiffToolbar {
                         button_states.unstage_all && !button_states.stage_all,
                         |el| {
                             el.child(
-                                Button::new("unstage-all", "Unstage All")
+                                Button::new("unstage-all", l10n::text("Unstage All"))
                                     .tooltip(Tooltip::for_action_title_in(
-                                        "Unstage all changes",
+                                        l10n::text("Unstage all changes"),
                                         &UnstageAll,
                                         &focus_handle,
                                     ))
@@ -1591,10 +1591,10 @@ impl Render for ProjectDiffToolbar {
                                 // todo make it so that changing to say "Unstaged"
                                 // doesn't change the position.
                                 div().child(
-                                    Button::new("stage-all", "Stage All")
+                                    Button::new("stage-all", l10n::text("Stage All"))
                                         .disabled(!button_states.stage_all)
                                         .tooltip(Tooltip::for_action_title_in(
-                                            "Stage all changes",
+                                            l10n::text("Stage all changes"),
                                             &StageAll,
                                             &focus_handle,
                                         ))
@@ -1606,9 +1606,9 @@ impl Render for ProjectDiffToolbar {
                         },
                     )
                     .child(
-                        Button::new("commit", "Commit")
+                        Button::new("commit", l10n::text("Commit"))
                             .tooltip(Tooltip::for_action_title_in(
-                                "Commit",
+                                l10n::text("Commit"),
                                 &Commit,
                                 &focus_handle,
                             ))

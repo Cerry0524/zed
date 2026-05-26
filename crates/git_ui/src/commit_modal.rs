@@ -8,7 +8,8 @@ use git::{Amend, Commit, GenerateCommitMessage, Signoff};
 use project::DisableAiSettings;
 use settings::Settings;
 use ui::{
-    ContextMenu, KeybindingHint, PopoverMenu, PopoverMenuHandle, SplitButton, Tooltip, prelude::*,
+    ContextMenu, KeybindingHint, PopoverMenu, PopoverMenuHandle, SplitButton, Tooltip, l10n,
+    prelude::*,
 };
 use zed_actions::{DecreaseBufferFontSize, IncreaseBufferFontSize, ResetBufferFontSize};
 
@@ -294,7 +295,7 @@ impl CommitModal {
                             })
                             .when(has_previous_commit, |this| {
                                 this.toggleable_entry(
-                                    "Amend",
+                                    l10n::text("Amend"),
                                     amend_enabled,
                                     IconPosition::Start,
                                     Some(Box::new(Amend)),
@@ -311,7 +312,7 @@ impl CommitModal {
                                 )
                             })
                             .toggleable_entry(
-                                "Signoff",
+                                l10n::text("Signoff"),
                                 signoff_enabled,
                                 IconPosition::Start,
                                 Some(Box::new(Signoff)),

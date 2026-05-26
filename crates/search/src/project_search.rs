@@ -43,7 +43,7 @@ use std::{
     sync::Arc,
 };
 use ui::{
-    CommonAnimationExt, IconButtonShape, KeyBinding, Toggleable, Tooltip, prelude::*,
+    CommonAnimationExt, IconButtonShape, KeyBinding, Toggleable, Tooltip, l10n, prelude::*,
     utils::SearchInputWidth,
 };
 use util::{ResultExt as _, paths::PathMatcher, rel_path::RelPath};
@@ -572,14 +572,16 @@ impl Render for ProjectSearchView {
 
             let heading_text = div()
                 .justify_center()
-                .child(Label::new(heading_text).size(LabelSize::Large));
+                .child(Label::new(l10n::text(heading_text)).size(LabelSize::Large));
 
             let page_content: Option<AnyElement> = match model.search_state {
                 SearchState::Idle => Some(self.landing_text_minor(cx).into_any_element()),
                 SearchState::Completed(SearchCompletion::NoResults) => Some(
-                    Label::new("No results found in this project for the provided query")
-                        .size(LabelSize::Small)
-                        .into_any_element(),
+                    Label::new(l10n::text(
+                        "No results found in this project for the provided query",
+                    ))
+                    .size(LabelSize::Small)
+                    .into_any_element(),
                 ),
                 _ => None,
             };
@@ -620,7 +622,7 @@ impl Item for ProjectSearchView {
             .is_empty()
             .not()
             .then(|| query_text.into())
-            .or_else(|| Some("Project Search".into()))
+            .or_else(|| Some(l10n::text("Project Search").into()))
     }
 
     fn act_as_type<'a>(
@@ -664,7 +666,7 @@ impl Item for ProjectSearchView {
 
         last_query
             .filter(|query| !query.is_empty())
-            .unwrap_or_else(|| "Project Search".into())
+            .unwrap_or_else(|| l10n::text("Project Search").into())
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {
@@ -982,7 +984,7 @@ impl ProjectSearchView {
 
         let query_editor = cx.new(|cx| {
             let mut editor = Editor::auto_height(1, 4, window, cx);
-            editor.set_placeholder_text("Search all files…", window, cx);
+            editor.set_placeholder_text(l10n::text("Search all files…"), window, cx);
             editor.set_use_autoclose(false);
             editor.set_use_selection_highlight(false);
             editor.set_text(query_text, window, cx);
@@ -1007,7 +1009,7 @@ impl ProjectSearchView {
         );
         let replacement_editor = cx.new(|cx| {
             let mut editor = Editor::auto_height(1, 4, window, cx);
-            editor.set_placeholder_text("Replace in project…", window, cx);
+            editor.set_placeholder_text(l10n::text("Replace in project…"), window, cx);
             if let Some(text) = replacement_text {
                 editor.set_text(text, window, cx);
             }
@@ -1037,7 +1039,7 @@ impl ProjectSearchView {
 
         let included_files_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Include: crates/**/*.toml", window, cx);
+            editor.set_placeholder_text(l10n::text("Include: crates/**/*.toml"), window, cx);
 
             editor
         });
@@ -1050,7 +1052,7 @@ impl ProjectSearchView {
 
         let excluded_files_editor = cx.new(|cx| {
             let mut editor = Editor::single_line(window, cx);
-            editor.set_placeholder_text("Exclude: vendor/*, *.lock", window, cx);
+            editor.set_placeholder_text(l10n::text("Exclude: vendor/*, *.lock"), window, cx);
 
             editor
         });
@@ -1730,12 +1732,12 @@ impl ProjectSearchView {
         v_flex()
             .gap_1()
             .child(
-                Label::new("Hit enter to search. For more options:")
+                Label::new(l10n::text("Hit enter to search. For more options:"))
                     .color(Color::Muted)
                     .mb_2(),
             )
             .child(
-                Button::new("filter-paths", "Include/exclude specific paths")
+                Button::new("filter-paths", l10n::text("Include/exclude specific paths"))
                     .start_icon(Icon::new(IconName::Filter).size(IconSize::Small))
                     .key_binding(KeyBinding::for_action_in(&ToggleFilters, &focus_handle, cx))
                     .on_click(|_event, window, cx| {
@@ -1743,7 +1745,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("find-replace", "Find and replace")
+                Button::new("find-replace", l10n::text("Find and replace"))
                     .start_icon(Icon::new(IconName::Replace).size(IconSize::Small))
                     .key_binding(KeyBinding::for_action_in(&ToggleReplace, &focus_handle, cx))
                     .on_click(|_event, window, cx| {
@@ -1751,7 +1753,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("regex", "Match with regex")
+                Button::new("regex", l10n::text("Match with regex"))
                     .start_icon(Icon::new(IconName::Regex).size(IconSize::Small))
                     .key_binding(KeyBinding::for_action_in(&ToggleRegex, &focus_handle, cx))
                     .on_click(|_event, window, cx| {
@@ -1759,7 +1761,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("match-case", "Match case")
+                Button::new("match-case", l10n::text("Match case"))
                     .start_icon(Icon::new(IconName::CaseSensitive).size(IconSize::Small))
                     .key_binding(KeyBinding::for_action_in(
                         &ToggleCaseSensitive,
@@ -1771,7 +1773,7 @@ impl ProjectSearchView {
                     }),
             )
             .child(
-                Button::new("match-whole-words", "Match whole words")
+                Button::new("match-whole-words", l10n::text("Match whole words"))
                     .start_icon(Icon::new(IconName::WholeWord).size(IconSize::Small))
                     .key_binding(KeyBinding::for_action_in(
                         &ToggleWholeWord,
@@ -2326,9 +2328,9 @@ impl Render for ProjectSearchBar {
                             }),
                     )
                     .when(limit_reached, |this| {
-                        this.tooltip(Tooltip::text(
+                        this.tooltip(Tooltip::text(l10n::text(
                             "Search Limits Reached\nTry narrowing your search",
-                        ))
+                        )))
                     }),
             );
 
@@ -2339,7 +2341,7 @@ impl Render for ProjectSearchBar {
                 IconButton::new("project-search-filter-button", IconName::Filter)
                     .shape(IconButtonShape::Square)
                     .tooltip(|_window, cx| {
-                        Tooltip::for_action("Toggle Filters", &ToggleFilters, cx)
+                        Tooltip::for_action(l10n::text("Toggle Filters"), &ToggleFilters, cx)
                     })
                     .on_click(cx.listener(|this, _, window, cx| {
                         this.toggle_filters(window, cx);
@@ -2354,7 +2356,7 @@ impl Render for ProjectSearchBar {
                         let focus_handle = focus_handle.clone();
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "Toggle Filters",
+                                l10n::text("Toggle Filters"),
                                 &ToggleFilters,
                                 &focus_handle,
                                 cx,
@@ -2378,9 +2380,15 @@ impl Render for ProjectSearchBar {
         let is_collapsed = search.results_editor.read(cx).has_any_buffer_folded(cx);
 
         let (icon, tooltip_label) = if is_collapsed {
-            (IconName::ChevronUpDown, "Expand All Search Results")
+            (
+                IconName::ChevronUpDown,
+                l10n::text("Expand All Search Results"),
+            )
         } else {
-            (IconName::ChevronDownUp, "Collapse All Search Results")
+            (
+                IconName::ChevronDownUp,
+                l10n::text("Collapse All Search Results"),
+            )
         };
 
         let expand_button = IconButton::new("project-search-collapse-expand", icon)
@@ -2471,7 +2479,7 @@ impl Render for ProjectSearchBar {
                     IconButton::new("project-search-opened-only", IconName::FolderSearch)
                         .shape(IconButtonShape::Square)
                         .toggle_state(self.is_opened_only_enabled(cx))
-                        .tooltip(Tooltip::text("Only Search Open Files"))
+                        .tooltip(Tooltip::text(l10n::text("Only Search Open Files")))
                         .on_click(cx.listener(|this, _, window, cx| {
                             this.toggle_opened_only(window, cx);
                         })),

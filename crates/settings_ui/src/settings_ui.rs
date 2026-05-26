@@ -1002,7 +1002,7 @@ impl SettingsPageItem {
                         .child(
                             Button::new(
                                 ("sub-page".into(), sub_page_link.title.clone()),
-                                "Configure",
+                                l10n::text("Configure"),
                             )
                             .tab_index(0_isize)
                             .end_icon(
@@ -1186,7 +1186,7 @@ fn render_settings_item(
                     h_flex()
                         .w_full()
                         .gap_1()
-                        .child(Label::new(SharedString::new_static(setting_item.title)))
+                        .child(Label::new(l10n::text(setting_item.title)))
                         .when_some(
                             if sub_field {
                                 None
@@ -1200,7 +1200,7 @@ fn render_settings_item(
                                     IconButton::new("reset-to-default-btn", IconName::Undo)
                                         .icon_color(Color::Muted)
                                         .icon_size(IconSize::Small)
-                                        .tooltip(Tooltip::text("Reset to Default"))
+                                        .tooltip(Tooltip::text(l10n::text("Reset to Default")))
                                         .on_click({
                                             move |_, window, cx| {
                                                 reset_to_default(window, cx);
@@ -1277,7 +1277,7 @@ fn render_settings_item_link(
                 .icon_color(link_icon_color)
                 .icon_size(IconSize::Small)
                 .shape(IconButtonShape::Square)
-                .tooltip(Tooltip::text("Copy Link"))
+                .tooltip(Tooltip::text(l10n::text("Copy Link")))
                 .when_some(json_path, |this, path| {
                     this.on_click(cx.listener(move |this, _, _, cx| {
                         let link = format!("zed://settings/{}", path);
@@ -2796,7 +2796,7 @@ impl SettingsWindow {
                                     .map(|(entry_index, entry)| {
                                         TreeViewItem::new(
                                             ("settings-ui-navbar-entry", entry_index),
-                                            entry.title,
+                                            l10n::text(entry.title),
                                         )
                                         .track_focus(&entry.focus_handle)
                                         .root_item(entry.is_root)
@@ -3040,7 +3040,9 @@ impl SettingsWindow {
         h_flex().min_w_0().gap_1().overflow_x_hidden().children(
             itertools::intersperse(
                 std::iter::once(scope_name)
-                    .chain(std::iter::once(self.current_page().title.into()))
+                    .chain(std::iter::once(
+                        l10n::text(self.current_page().title).into(),
+                    ))
                     .chain(
                         self.sub_page_stack
                             .iter()
@@ -3066,11 +3068,15 @@ impl SettingsWindow {
             .items_center()
             .justify_center()
             .gap_1()
-            .child(Label::new("No Results"))
+            .child(Label::new(l10n::text("No Results")))
             .child(
-                Label::new(format!("No settings match \"{}\"", search_query))
-                    .size(LabelSize::Small)
-                    .color(Color::Muted),
+                Label::new(format!(
+                    "{} \"{}\"",
+                    l10n::text("No settings match"),
+                    search_query
+                ))
+                .size(LabelSize::Small)
+                .color(Color::Muted),
             )
     }
 
@@ -3110,7 +3116,10 @@ impl SettingsWindow {
                             .when(this.sub_page_stack.is_empty(), |this| {
                                 this.when_some(root_nav_label, |this, title| {
                                     this.child(
-                                        Label::new(title).size(LabelSize::Large).mt_2().mb_3(),
+                                        Label::new(l10n::text(title))
+                                            .size(LabelSize::Large)
+                                            .mt_2()
+                                            .mb_3(),
                                     )
                                 })
                             })
@@ -3227,7 +3236,12 @@ impl SettingsWindow {
             page_content
                 .when(self.sub_page_stack.is_empty(), |this| {
                     this.when_some(root_nav_label, |this, title| {
-                        this.child(Label::new(title).size(LabelSize::Large).mt_2().mb_3())
+                        this.child(
+                            Label::new(l10n::text(title))
+                                .size(LabelSize::Large)
+                                .mt_2()
+                                .mb_3(),
+                        )
                     })
                 })
                 .children(items.clone().into_iter().enumerate().map(

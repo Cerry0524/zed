@@ -77,7 +77,7 @@ use time::OffsetDateTime;
 use ui::{
     ButtonLike, Checkbox, ContextMenu, Divider, ElevationIndex, IndentGuideColors, KeyBinding,
     PopoverMenu, ProjectEmptyState, RenderedIndentGuide, ScrollAxes, Scrollbars, SplitButton, Tab,
-    TintColor, Tooltip, WithScrollbar, prelude::*,
+    TintColor, Tooltip, WithScrollbar, l10n, prelude::*,
 };
 use util::paths::PathStyle;
 use util::{ResultExt, TryFutureExt, markdown::MarkdownInlineCode, maybe, rel_path::RelPath};
@@ -193,12 +193,12 @@ fn git_panel_context_menu(
             .context(focus_handle)
             .action_disabled_when(
                 !state.has_unstaged_changes,
-                "Stage All",
+                l10n::text("Stage All"),
                 StageAll.boxed_clone(),
             )
             .action_disabled_when(
                 !state.has_staged_changes,
-                "Unstage All",
+                l10n::text("Unstage All"),
                 UnstageAll.boxed_clone(),
             )
             .separator()
@@ -2379,7 +2379,7 @@ impl GitPanel {
                 .collect::<Vec<_>>();
 
             if changed_files.is_empty() && !options.amend {
-                error_spawn("No changes to commit", window, cx);
+                error_spawn(l10n::text("No changes to commit"), window, cx);
                 return;
             }
 
@@ -4267,14 +4267,16 @@ impl GitPanel {
                             .icon_color(Color::Error)
                             .icon_size(IconSize::Small)
                             .style(ButtonStyle::Tinted(TintColor::Error))
-                            .tooltip(Tooltip::text("Cancel Commit Message Generation"))
+                            .tooltip(Tooltip::text(l10n::text(
+                                "Cancel Commit Message Generation",
+                            )))
                             .on_click(cx.listener(|this, _event, _window, cx| {
                                 this.generate_commit_message_task.take();
                                 cx.notify();
                             })),
                     )
                     .child(
-                        Label::new("Generating Commit…")
+                        Label::new(l10n::text("Generating Commit…"))
                             .size(LabelSize::Small)
                             .color(Color::Muted),
                     )
@@ -4300,12 +4302,15 @@ impl GitPanel {
                 })
                 .tooltip(move |_window, cx| {
                     if !can_commit {
-                        Tooltip::simple("No Changes to Commit", cx)
+                        Tooltip::simple(l10n::text("No Changes to Commit"), cx)
                     } else if has_commit_model_configuration_error {
-                        Tooltip::simple("Configure an LLM provider to generate commit messages", cx)
+                        Tooltip::simple(
+                            l10n::text("Configure an LLM provider to generate commit messages"),
+                            cx,
+                        )
                     } else {
                         Tooltip::for_action_in(
-                            "Generate Commit Message",
+                            l10n::text("Generate Commit Message"),
                             &git::GenerateCommitMessage,
                             &editor_focus_handle,
                             cx,
@@ -4398,7 +4403,7 @@ impl GitPanel {
                             })
                             .when(has_previous_commit, |this| {
                                 this.toggleable_entry(
-                                    "Amend",
+                                    l10n::text("Amend"),
                                     amend,
                                     IconPosition::Start,
                                     Some(Box::new(Amend)),
@@ -4415,7 +4420,7 @@ impl GitPanel {
                                 )
                             })
                             .toggleable_entry(
-                                "Signoff",
+                                l10n::text("Signoff"),
                                 signoff,
                                 IconPosition::Start,
                                 Some(Box::new(Signoff)),
@@ -4526,7 +4531,7 @@ impl GitPanel {
                 .flex_none()
                 .justify_between()
                 .child(
-                    Button::new("changes", "View Diff")
+                    Button::new("changes", l10n::text("View Diff"))
                         .label_size(LabelSize::Small)
                         .color(Color::Muted)
                         .start_icon(
@@ -4535,7 +4540,7 @@ impl GitPanel {
                                 .color(Color::Muted),
                         )
                         .tooltip(Tooltip::for_action_title_in(
-                            "View Diff",
+                            l10n::text("View Diff"),
                             &Diff,
                             &self.focus_handle,
                         ))
@@ -4550,7 +4555,7 @@ impl GitPanel {
                         .gap_1()
                         .child(self.render_ellipsis_menu("overflow_menu"))
                         .child(
-                            Button::new("stage_unstage_all", text)
+                            Button::new("stage_unstage_all", l10n::text(text))
                                 .label_size(LabelSize::Small)
                                 .layer(ElevationIndex::ModalSurface)
                                 .style(ButtonStyle::Filled)
@@ -4746,7 +4751,7 @@ impl GitPanel {
                                     .tooltip({
                                         move |_window, cx| {
                                             Tooltip::for_action_in(
-                                                "Open Commit Modal",
+                                                l10n::text("Open Commit Modal"),
                                                 &git::ExpandCommitEditor,
                                                 &editor_focus_handle,
                                                 cx,
@@ -4775,7 +4780,7 @@ impl GitPanel {
                                     .tooltip({
                                         move |_window, cx| {
                                             Tooltip::for_action_in(
-                                                label,
+                                                l10n::text(label),
                                                 &git::ToggleFillCommitEditor,
                                                 &focus_handle,
                                                 cx,
@@ -4824,7 +4829,7 @@ impl GitPanel {
                 .layer(ElevationIndex::ModalSurface)
                 .size(ButtonSize::Compact)
                 .child(
-                    Label::new(title)
+                    Label::new(l10n::text(title))
                         .size(LabelSize::Small)
                         .color(label_color)
                         .mr_0p5(),
@@ -4854,7 +4859,7 @@ impl GitPanel {
                     move |_window, cx| {
                         if can_commit {
                             Tooltip::with_meta_in(
-                                tooltip,
+                                l10n::text(tooltip),
                                 Some(&git::Commit),
                                 format!(
                                     "git commit{}{}",
@@ -4865,7 +4870,7 @@ impl GitPanel {
                                 cx,
                             )
                         } else {
-                            Tooltip::simple(tooltip, cx)
+                            Tooltip::simple(l10n::text(tooltip), cx)
                         }
                     }
                 }),
@@ -5497,10 +5502,10 @@ impl GitPanel {
         v_flex()
             .gap_1()
             .items_center()
-            .child(Label::new("No changes to commit").color(Color::Muted))
+            .child(Label::new(l10n::text("No changes to commit")).color(Color::Muted))
             .when(show_branch_diff, |this| {
                 this.child(
-                    Button::new("view_branch_diff", "View Branch Diff")
+                    Button::new("view_branch_diff", l10n::text("View Branch Diff"))
                         .label_size(LabelSize::Small)
                         .style(ButtonStyle::Outlined)
                         .on_click(move |_, _, cx| {
@@ -6207,9 +6212,8 @@ impl GitPanel {
                                     StageStatus::Staged => "Unstage",
                                     StageStatus::Unstaged | StageStatus::PartiallyStaged => "Stage",
                                 };
-                                let tooltip_name = action.to_string();
 
-                                Tooltip::for_action(tooltip_name, &ToggleStaged, cx)
+                                Tooltip::for_action(l10n::text(action), &ToggleStaged, cx)
                             }),
                     ),
             )

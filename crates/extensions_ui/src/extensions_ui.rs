@@ -26,7 +26,7 @@ use theme_settings::ThemeSettings;
 use ui::{
     Banner, Chip, ContextMenu, Divider, PopoverMenu, ScrollableHandle, Switch, ToggleButtonGroup,
     ToggleButtonGroupSize, ToggleButtonGroupStyle, ToggleButtonSimple, Tooltip, WithScrollbar,
-    prelude::*,
+    l10n, prelude::*,
 };
 use vim_mode_setting::VimModeSetting;
 use workspace::{
@@ -347,7 +347,7 @@ impl ExtensionsPage {
 
             let query_editor = cx.new(|cx| {
                 let mut input = Editor::single_line(window, cx);
-                input.set_placeholder_text("Search extensions...", window, cx);
+                input.set_placeholder_text(l10n::text("Search extensions..."), window, cx);
                 if let Some(id) = focus_extension_id {
                     input.set_text(format!("id:{id}"), window, cx);
                 }
@@ -650,7 +650,7 @@ impl ExtensionsPage {
                             .child(
                                 Button::new(
                                     SharedString::from(format!("rebuild-{}", extension.id)),
-                                    "Rebuild",
+                                    l10n::text("Rebuild"),
                                 )
                                 .color(Color::Accent)
                                 .disabled(matches!(status, ExtensionStatus::Upgrading))
@@ -664,7 +664,13 @@ impl ExtensionsPage {
                                 }),
                             )
                             .child(
-                                Button::new(extension_button_id(&extension.id, ExtensionOperation::Remove), "Uninstall")
+                                Button::new(
+                                    extension_button_id(
+                                        &extension.id,
+                                        ExtensionOperation::Remove,
+                                    ),
+                                    l10n::text("Uninstall"),
+                                )
                                     .color(Color::Accent)
                                     .disabled(matches!(status, ExtensionStatus::Removing))
                                     .on_click({
@@ -680,7 +686,7 @@ impl ExtensionsPage {
                                 this.child(
                                     Button::new(
                                         SharedString::from(format!("configure-{}", extension.id)),
-                                        "Configure",
+                                        l10n::text("Configure"),
                                     )
                                     .color(Color::Accent)
                                     .disabled(matches!(status, ExtensionStatus::Installing))
@@ -1017,7 +1023,7 @@ impl ExtensionsPage {
             return ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Install),
-                    "Install",
+                    l10n::text("Install"),
                 ),
                 configure: None,
                 upgrade: None,
@@ -1033,7 +1039,7 @@ impl ExtensionsPage {
             ExtensionStatus::NotInstalled => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Install),
-                    "Install",
+                    l10n::text("Install"),
                 )
                 .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                 .start_icon(
@@ -1056,7 +1062,7 @@ impl ExtensionsPage {
             ExtensionStatus::Installing => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Install),
-                    "Install",
+                    l10n::text("Install"),
                 )
                 .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                 .start_icon(
@@ -1071,21 +1077,21 @@ impl ExtensionsPage {
             ExtensionStatus::Upgrading => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Remove),
-                    "Uninstall",
+                    l10n::text("Uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        l10n::text("Configure"),
                     )
                     .disabled(true)
                 }),
                 upgrade: Some(
                     Button::new(
                         extension_button_id(&extension.id, ExtensionOperation::Upgrade),
-                        "Upgrade",
+                        l10n::text("Upgrade"),
                     )
                     .disabled(true),
                 ),
@@ -1093,7 +1099,7 @@ impl ExtensionsPage {
             ExtensionStatus::Installed(installed_version) => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Remove),
-                    "Uninstall",
+                    l10n::text("Uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .on_click({
@@ -1110,7 +1116,7 @@ impl ExtensionsPage {
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        l10n::text("Configure"),
                     )
                     .style(ButtonStyle::OutlinedGhost)
                     .on_click({
@@ -1136,7 +1142,10 @@ impl ExtensionsPage {
                     None
                 } else {
                     Some(
-                        Button::new(extension_button_id(&extension.id, ExtensionOperation::Upgrade), "Upgrade")
+                        Button::new(
+                            extension_button_id(&extension.id, ExtensionOperation::Upgrade),
+                            l10n::text("Upgrade"),
+                        )
                           .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                             .when(!is_compatible, |upgrade_button| {
                                 upgrade_button.disabled(true).tooltip({
@@ -1174,14 +1183,14 @@ impl ExtensionsPage {
             ExtensionStatus::Removing => ExtensionCardButtons {
                 install_or_uninstall: Button::new(
                     extension_button_id(&extension.id, ExtensionOperation::Remove),
-                    "Uninstall",
+                    l10n::text("Uninstall"),
                 )
                 .style(ButtonStyle::OutlinedGhost)
                 .disabled(true),
                 configure: is_configurable.then(|| {
                     Button::new(
                         SharedString::from(format!("configure-{}", extension.id)),
-                        "Configure",
+                        l10n::text("Configure"),
                     )
                     .disabled(true)
                 }),
@@ -1445,7 +1454,7 @@ impl ExtensionsPage {
         vim: bool,
         cx: &mut Context<Self>,
     ) -> impl IntoElement {
-        let docs_url_button = Button::new("open_docs", "View Documentation")
+        let docs_url_button = Button::new("open_docs", l10n::text("View Documentation"))
             .end_icon(Icon::new(IconName::ArrowUpRight).size(IconSize::Small))
             .on_click({
                 move |_event, _window, cx| {
@@ -1476,7 +1485,7 @@ impl ExtensionsPage {
                                         h_flex()
                                             .pl_1()
                                             .gap_1()
-                                            .child(Label::new("Enable Vim mode"))
+                                            .child(Label::new(l10n::text("Enable Vim mode")))
                                             .child(
                                                 Switch::new(
                                                     "enable-vim",
@@ -1650,14 +1659,19 @@ impl Render for ExtensionsPage {
                             .w_full()
                             .gap_1p5()
                             .justify_between()
-                            .child(Headline::new("Extensions").size(HeadlineSize::Large))
                             .child(
-                                Button::new("install-dev-extension", "Install Dev Extension")
-                                    .style(ButtonStyle::Outlined)
-                                    .size(ButtonSize::Medium)
-                                    .on_click(|_event, window, cx| {
-                                        window.dispatch_action(Box::new(InstallDevExtension), cx)
-                                    }),
+                                Headline::new(l10n::text("Extensions")).size(HeadlineSize::Large),
+                            )
+                            .child(
+                                Button::new(
+                                    "install-dev-extension",
+                                    l10n::text("Install Dev Extension"),
+                                )
+                                .style(ButtonStyle::Outlined)
+                                .size(ButtonSize::Medium)
+                                .on_click(|_event, window, cx| {
+                                    window.dispatch_action(Box::new(InstallDevExtension), cx)
+                                }),
                             ),
                     )
                     .child(
@@ -1672,7 +1686,7 @@ impl Render for ExtensionsPage {
                                         "filter-buttons",
                                         [
                                             ToggleButtonSimple::new(
-                                                "All",
+                                                l10n::text("All"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = ExtensionFilter::All;
                                                     this.filter_extension_entries(cx);
@@ -1680,7 +1694,7 @@ impl Render for ExtensionsPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Installed",
+                                                l10n::text("Installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = ExtensionFilter::Installed;
                                                     this.filter_extension_entries(cx);
@@ -1688,7 +1702,7 @@ impl Render for ExtensionsPage {
                                                 }),
                                             ),
                                             ToggleButtonSimple::new(
-                                                "Not Installed",
+                                                l10n::text("Not Installed"),
                                                 cx.listener(|this, _event, _, cx| {
                                                     this.filter = ExtensionFilter::NotInstalled;
                                                     this.filter_extension_entries(cx);
@@ -1721,7 +1735,7 @@ impl Render for ExtensionsPage {
                     .border_color(cx.theme().colors().border_variant)
                     .overflow_x_scroll()
                     .child(
-                        Button::new("filter-all-categories", "All")
+                        Button::new("filter-all-categories", l10n::text("All"))
                             .when(self.provides_filter.is_none(), |button| {
                                 button.style(ButtonStyle::Filled)
                             })
@@ -1795,7 +1809,7 @@ impl Item for ExtensionsPage {
     type Event = ItemEvent;
 
     fn tab_content_text(&self, _detail: usize, _cx: &App) -> SharedString {
-        "Extensions".into()
+        l10n::text("Extensions").into()
     }
 
     fn telemetry_event_text(&self) -> Option<&'static str> {

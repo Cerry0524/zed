@@ -38,7 +38,7 @@ use zed_actions::{
 };
 
 use ui::{
-    BASE_REM_SIZE_IN_PX, IconButtonShape, PlatformStyle, TextSize, Tooltip, prelude::*,
+    BASE_REM_SIZE_IN_PX, IconButtonShape, PlatformStyle, TextSize, Tooltip, l10n, prelude::*,
     render_modifiers, utils::SearchInputWidth,
 };
 use util::{ResultExt, paths::PathMatcher};
@@ -134,7 +134,7 @@ impl Render for BufferSearchBar {
                             IconButton::new("diff-unified", IconName::DiffUnified)
                                 .icon_size(IconSize::Small)
                                 .toggle_state(diff_view_style == DiffViewStyle::Unified)
-                                .tooltip(Tooltip::text("Unified"))
+                                .tooltip(Tooltip::text(l10n::text("Unified")))
                                 .on_click({
                                     let splittable_editor = splittable_editor.downgrade();
                                     move |_, window, cx| {
@@ -166,10 +166,15 @@ impl Render for BufferSearchBar {
                                 .icon_size(IconSize::Small)
                                 .tooltip(Tooltip::element(move |_, cx| {
                                     let message = if is_split_set && !is_split_active {
-                                        format!("Split when wider than {} columns", min_columns)
-                                            .into()
+                                        format!(
+                                            "{} {} {}",
+                                            l10n::text("Split when wider than"),
+                                            min_columns,
+                                            l10n::text("columns")
+                                        )
+                                        .into()
                                     } else {
-                                        SharedString::from("Split")
+                                        SharedString::from(l10n::text("Split"))
                                     };
 
                                     v_flex()
@@ -186,7 +191,7 @@ impl Render for BufferSearchBar {
                                                     Some(TextSize::Small.rems(cx).into()),
                                                     false,
                                                 ))
-                                                .child("click to change min width"),
+                                                .child(l10n::text("click to change min width")),
                                         )
                                         .into_any()
                                 }))
@@ -241,9 +246,9 @@ impl Render for BufferSearchBar {
                 .map(|editor: Entity<Editor>| editor.read(cx).has_any_buffer_folded(cx))
                 .unwrap_or_default();
             let (icon, tooltip_label) = if is_collapsed {
-                (IconName::ChevronUpDown, "Expand All Files")
+                (IconName::ChevronUpDown, l10n::text("Expand All Files"))
             } else {
-                (IconName::ChevronDownUp, "Collapse All Files")
+                (IconName::ChevronDownUp, l10n::text("Collapse All Files"))
             };
 
             let collapse_expand_icon_button = |id| {
@@ -299,12 +304,12 @@ impl Render for BufferSearchBar {
 
         self.query_editor.update(cx, |query_editor, cx| {
             if query_editor.placeholder_text(cx).is_none() {
-                query_editor.set_placeholder_text("Search…", window, cx);
+                query_editor.set_placeholder_text(l10n::text("Search…"), window, cx);
             }
         });
 
         self.replacement_editor.update(cx, |editor, cx| {
-            editor.set_placeholder_text("Replace with…", window, cx);
+            editor.set_placeholder_text(l10n::text("Replace with…"), window, cx);
         });
 
         let mut color_override = None;
@@ -416,7 +421,7 @@ impl Render for BufferSearchBar {
                         let focus_handle = focus_handle.clone();
                         move |_window, cx| {
                             Tooltip::for_action_in(
-                                "Toggle Search Selection",
+                                l10n::text("Toggle Search Selection"),
                                 &ToggleSelection,
                                 &focus_handle,
                                 cx,

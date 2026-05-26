@@ -5,6 +5,7 @@ use editor::SearchSettings;
 use gpui::{Action, App, ClickEvent, FocusHandle, IntoElement, actions};
 use project::search::SearchQuery;
 pub use project_search::ProjectSearchView;
+use ui::l10n;
 use ui::{ButtonStyle, IconButton, IconButtonShape};
 use ui::{Tooltip, prelude::*};
 use workspace::notifications::NotificationId;
@@ -134,6 +135,7 @@ impl SearchOption {
     ) -> impl IntoElement {
         let action = self.to_toggle_action();
         let label = self.label();
+        let localized_label = l10n::text(label);
         IconButton::new(
             (label, matches!(search_source, SearchSource::Buffer) as u32),
             self.icon(),
@@ -158,7 +160,9 @@ impl SearchOption {
         .style(ButtonStyle::Subtle)
         .shape(IconButtonShape::Square)
         .toggle_state(active.contains(self.as_options()))
-        .tooltip(move |_window, cx| Tooltip::for_action_in(label, action, &focus_handle, cx))
+        .tooltip(move |_window, cx| {
+            Tooltip::for_action_in(localized_label, action, &focus_handle, cx)
+        })
     }
 }
 
@@ -196,7 +200,7 @@ pub(crate) fn show_no_more_matches(window: &mut Window, cx: &mut App) {
         };
         workspace.update(cx, |workspace, cx| {
             workspace.show_toast(
-                Toast::new(notification_id.clone(), "No more matches").autohide(),
+                Toast::new(notification_id.clone(), l10n::text("No more matches")).autohide(),
                 cx,
             );
         })

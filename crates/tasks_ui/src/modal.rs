@@ -14,7 +14,7 @@ use project::{TaskSourceKind, task_store::TaskStore};
 use task::{DebugScenario, ResolvedTask, RevealTarget, TaskContext, TaskTemplate};
 use ui::{
     ActiveTheme, Clickable, FluentBuilder as _, IconButtonShape, IconWithIndicator, Indicator,
-    IntoElement, KeyBinding, ListItem, ListItemSpacing, RenderOnce, Toggleable, Tooltip, div,
+    IntoElement, KeyBinding, ListItem, ListItemSpacing, RenderOnce, Toggleable, Tooltip, div, l10n,
     prelude::*,
 };
 
@@ -55,9 +55,11 @@ impl TasksModalDelegate {
             reveal_target: Some(RevealTarget::Center),
         }) = &task_overrides
         {
-            Arc::from("Find a task, or run a command in the central pane")
+            Arc::from(l10n::text(
+                "Find a task, or run a command in the central pane",
+            ))
         } else {
-            Arc::from("Find a task, or run a command")
+            Arc::from(l10n::text("Find a task, or run a command"))
         };
         Self {
             task_store,
@@ -566,7 +568,9 @@ impl PickerDelegate for TasksModalDelegate {
                                         .checked_sub(1);
                                     picker.refresh(window, cx);
                                 }))
-                                .tooltip(|_, cx| Tooltip::simple("Delete from Recent Tasks", cx)),
+                                .tooltip(|_, cx| {
+                                    Tooltip::simple(l10n::text("Delete from Recent Tasks"), cx)
+                                }),
                         );
                         item.end_slot_on_hover(delete_button)
                     } else {
@@ -643,7 +647,10 @@ impl PickerDelegate for TasksModalDelegate {
             .last_scheduled_task(None)
             .is_some()
         {
-            Some(("Rerun Last Task", Rerun::default().boxed_clone()))
+            Some((
+                l10n::text("Rerun Last Task"),
+                Rerun::default().boxed_clone(),
+            ))
         } else {
             None
         };
@@ -677,9 +684,9 @@ impl PickerDelegate for TasksModalDelegate {
                         .boxed_clone();
                         this.child({
                             let spawn_oneshot_label = if current_modifiers.secondary() {
-                                "Spawn Oneshot Without History"
+                                l10n::text("Spawn Oneshot Without History")
                             } else {
-                                "Spawn Oneshot"
+                                l10n::text("Spawn Oneshot")
                             };
 
                             Button::new("spawn-onehshot", spawn_oneshot_label)
@@ -691,9 +698,9 @@ impl PickerDelegate for TasksModalDelegate {
                     } else if current_modifiers.secondary() {
                         this.child({
                             let label = if is_recent_selected {
-                                "Rerun Without History"
+                                l10n::text("Rerun Without History")
                             } else {
-                                "Spawn Without History"
+                                l10n::text("Spawn Without History")
                             };
                             Button::new("spawn", label)
                                 .key_binding(KeyBinding::for_action(&menu::SecondaryConfirm, cx))
@@ -703,8 +710,11 @@ impl PickerDelegate for TasksModalDelegate {
                         })
                     } else {
                         this.child({
-                            let run_entry_label =
-                                if is_recent_selected { "Rerun" } else { "Spawn" };
+                            let run_entry_label = if is_recent_selected {
+                                l10n::text("Rerun")
+                            } else {
+                                l10n::text("Spawn")
+                            };
 
                             Button::new("spawn", run_entry_label)
                                 .key_binding(KeyBinding::for_action(&menu::Confirm, cx))
