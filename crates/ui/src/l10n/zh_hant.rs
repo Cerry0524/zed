@@ -477,6 +477,10 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         }
         "Use native OS dialogs for confirmations." => "確認時使用作業系統原生對話框。",
         "Hide the values of variables in private files." => "隱藏私人檔案中的變數值。",
+        "Default Permission" => "預設權限",
+        "Default Action" => "預設動作",
+        "Thinking Effort" => "推理強度",
+        "Profile" => "代理設定檔",
         "Font family for editor text." => "編輯器文字的字型系列。",
         "Font size for editor text." => "編輯器文字的字型大小。",
         "Font weight for editor text (100-900)." => "編輯器文字的字重 (100-900)。",
@@ -506,6 +510,7 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Trust and Continue" => "信任並繼續",
         "Disconnected" => "已中斷連線",
         "Create Branch" => "建立分支",
+        "Stash" => "貯藏",
         "Branch & Stash" => "分支與貯藏",
         "Restart to update Zed" => "重新啟動以更新 Zed",
         "Open Application Menu" => "開啟應用程式選單",
@@ -712,5 +717,22 @@ mod tests {
             "編輯器文字的字型系列。"
         );
         assert_eq!(text("Font size for UI elements."), "UI 元素的字型大小。");
+    }
+
+    #[test]
+    fn milestone_four_glossary_terms_are_guarded() {
+        assert_eq!(text("Stash"), "貯藏");
+        assert_eq!(text("Default Permission"), "預設權限");
+        assert_eq!(text("Default Action"), "預設動作");
+        assert_eq!(text("Thinking Effort"), "推理強度");
+        assert_eq!(text("Profile"), "代理設定檔");
+        assert_eq!(
+            text_or_original("workspace: save all").as_ref(),
+            "工作區：全部儲存"
+        );
+        assert_eq!(
+            text_or_original("untranslated dynamic action").as_ref(),
+            "untranslated dynamic action"
+        );
     }
 }
