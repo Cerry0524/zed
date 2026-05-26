@@ -9,7 +9,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use ui::{
     ActiveTheme, Color, CommonAnimationExt, Icon, IconName, IconSize, IntoElement, Label,
-    LabelCommon, LabelSize, ParentElement, Styled, StyledExt, div, h_flex, v_flex,
+    LabelCommon, LabelSize, ParentElement, Styled, StyledExt, div, h_flex, l10n, v_flex,
 };
 use util::ResultExt;
 use util::command::new_command;
@@ -73,14 +73,16 @@ impl MoveToApplicationsRequest {
         let response = cx
             .prompt(
                 PromptLevel::Info,
-                "Move Zed to Applications?",
+                l10n::text("Move Zed to Applications?"),
                 Some(
-                    "Zed is running from a temporary location. Move it to Applications to finish installing it.",
+                    l10n::text(
+                        "Zed is running from a temporary location. Move it to Applications to finish installing it.",
+                    ),
                 ),
                 &[
-                    PromptButton::ok("Yes"),
-                    PromptButton::cancel("No"),
-                    PromptButton::new("Don't ask me again"),
+                    PromptButton::ok(l10n::text("Yes")),
+                    PromptButton::cancel(l10n::text("No")),
+                    PromptButton::new(l10n::text("Don't ask me again")),
                 ],
             )
             .await?;
@@ -178,7 +180,7 @@ impl Render for InstallingZedModal {
                     .py_3()
                     .border_b_1()
                     .border_color(theme.colors().border_variant)
-                    .child(Label::new("Installing Zed…")),
+                    .child(Label::new(l10n::text("Installing Zed…"))),
             )
             .child(
                 h_flex()
@@ -196,11 +198,13 @@ impl Render for InstallingZedModal {
                     .child(
                         v_flex()
                             .gap_1()
-                            .child(Label::new("Moving Zed to Applications"))
+                            .child(Label::new(l10n::text("Moving Zed to Applications")))
                             .child(
-                                Label::new("Zed will reopen when installation is complete.")
-                                    .size(LabelSize::Small)
-                                    .color(Color::Muted),
+                                Label::new(l10n::text(
+                                    "Zed will reopen when installation is complete.",
+                                ))
+                                .size(LabelSize::Small)
+                                .color(Color::Muted),
                             ),
                     ),
             )

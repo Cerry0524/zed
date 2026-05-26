@@ -9,7 +9,9 @@ use gpui::{App, Entity, ScrollHandle, TaskExt, prelude::*};
 use language::language_settings::AllLanguageSettings;
 
 use settings::Settings as _;
-use ui::{ButtonLink, ConfiguredApiCard, ContextMenu, DropdownMenu, DropdownStyle, prelude::*};
+use ui::{
+    ButtonLink, ConfiguredApiCard, ContextMenu, DropdownMenu, DropdownStyle, l10n, prelude::*,
+};
 use workspace::AppState;
 
 const OLLAMA_API_URL_PLACEHOLDER: &str = "http://localhost:11434";
@@ -141,7 +143,7 @@ fn render_provider_dropdown(window: &mut Window, cx: &mut App) -> AnyElement {
         .id("provider-selector")
         .min_w_0()
         .gap_1p5()
-        .child(SettingsSectionHeader::new("Active Provider").no_padding(true))
+        .child(SettingsSectionHeader::new(l10n::text("Active Provider")).no_padding(true))
         .child(
             h_flex()
                 .pt_2p5()

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use ai_onboarding::{AgentPanelOnboardingCard, PlanDefinitions};
 use client::zed_urls;
 use gpui::{AnyElement, App, IntoElement, RenderOnce, Window};
-use ui::{Divider, Tooltip, prelude::*};
+use ui::{Divider, Tooltip, l10n, prelude::*};
 
 #[derive(IntoElement, RegisterComponent)]
 pub struct EndTrialUpsell {
@@ -24,7 +24,7 @@ impl RenderOnce for EndTrialUpsell {
                 h_flex()
                     .gap_2()
                     .child(
-                        Label::new("Pro")
+                        Label::new(l10n::text("Pro"))
                             .size(LabelSize::Small)
                             .color(Color::Accent)
                             .buffer_font(cx),
@@ -33,7 +33,7 @@ impl RenderOnce for EndTrialUpsell {
             )
             .child(PlanDefinitions.pro_plan())
             .child(
-                Button::new("cta-button", "Upgrade to Zed Pro")
+                Button::new("cta-button", l10n::text("Upgrade to Zed Pro"))
                     .full_width()
                     .style(ButtonStyle::Tinted(ui::TintColor::Accent))
                     .on_click(move |_, _window, cx| {
@@ -49,13 +49,13 @@ impl RenderOnce for EndTrialUpsell {
                 h_flex()
                     .gap_2()
                     .child(
-                        Label::new("Free")
+                        Label::new(l10n::text("Free"))
                             .size(LabelSize::Small)
                             .color(Color::Muted)
                             .buffer_font(cx),
                     )
                     .child(
-                        Label::new("(Current Plan)")
+                        Label::new(format!("({})", l10n::text("Current Plan")))
                             .size(LabelSize::Small)
                             .color(Color::Custom(cx.theme().colors().text_muted.opacity(0.6)))
                             .buffer_font(cx),
@@ -77,7 +77,7 @@ impl RenderOnce for EndTrialUpsell {
                 h_flex().absolute().top_4().right_4().child(
                     IconButton::new("dismiss_onboarding", IconName::Close)
                         .icon_size(IconSize::Small)
-                        .tooltip(Tooltip::text("Dismiss"))
+                        .tooltip(Tooltip::text(l10n::text("Dismiss")))
                         .on_click({
                             let callback = self.dismiss_upsell.clone();
                             move |_, window, cx| {

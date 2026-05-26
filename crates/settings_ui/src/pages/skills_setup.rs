@@ -2,7 +2,7 @@ use agent_skills::{Skill, SkillIndex};
 use fs::RemoveOptions;
 use gpui::{Action as _, ScrollHandle, SharedString, prelude::*};
 
-use ui::{Divider, Tooltip, prelude::*};
+use ui::{Divider, Tooltip, l10n, prelude::*};
 use util::ResultExt as _;
 
 use crate::{SettingsUiFile, SettingsWindow};
@@ -53,8 +53,8 @@ pub(crate) fn render_skills_setup_page(
         .map(|this| {
             if skills.is_empty() {
                 let message = match &settings_window.current_file {
-                    SettingsUiFile::User => "No global skills installed.",
-                    SettingsUiFile::Project(_) => "No project skills found.",
+                    SettingsUiFile::User => l10n::text("No global skills installed."),
+                    SettingsUiFile::Project(_) => l10n::text("No project skills found."),
                     _ => "No skills available for this context.",
                 };
                 let original_window = settings_window.original_window;
@@ -64,7 +64,7 @@ pub(crate) fn render_skills_setup_page(
                         .gap_2()
                         .child(Label::new(message).color(Color::Muted))
                         .child(
-                            Button::new("open-skill-creator", "Create a Skill")
+                            Button::new("open-skill-creator", l10n::text("Create a Skill"))
                                 .tab_index(0_isize)
                                 .style(ButtonStyle::Outlined)
                                 .end_icon(
@@ -135,7 +135,7 @@ fn render_skill_row(skill: &Skill, cx: &mut Context<SettingsWindow>) -> AnyEleme
                     )
                     .tab_index(0_isize)
                     .icon_size(IconSize::Small)
-                    .tooltip(Tooltip::text("Delete Skill"))
+                    .tooltip(Tooltip::text(l10n::text("Delete Skill")))
                     .on_click(cx.listener(
                         move |settings_window, _event, _window, cx| {
                             let directory_path = directory_path.clone();
@@ -179,16 +179,20 @@ fn render_skill_row(skill: &Skill, cx: &mut Context<SettingsWindow>) -> AnyEleme
                     )),
                 )
                 .child(
-                    Button::new(SharedString::from(format!("open-{}", skill.name)), "Open")
-                        .tab_index(0_isize)
-                        .style(ButtonStyle::OutlinedGhost)
-                        .size(ButtonSize::Medium)
-                        .end_icon(
-                            Icon::new(IconName::ArrowUpRight)
-                                .size(IconSize::Small)
-                                .color(Color::Muted),
-                        )
-                        .on_click(cx.listener(move |settings_window, _event, window, cx| {
+                    Button::new(
+                        SharedString::from(format!("open-{}", skill.name)),
+                        l10n::text("Open"),
+                    )
+                    .tab_index(0_isize)
+                    .style(ButtonStyle::OutlinedGhost)
+                    .size(ButtonSize::Medium)
+                    .end_icon(
+                        Icon::new(IconName::ArrowUpRight)
+                            .size(IconSize::Small)
+                            .color(Color::Muted),
+                    )
+                    .on_click(cx.listener(
+                        move |settings_window, _event, window, cx| {
                             let skill_file_path = skill_file_path.clone();
                             let Some(original_window) = settings_window.original_window else {
                                 return;
@@ -209,7 +213,8 @@ fn render_skill_row(skill: &Skill, cx: &mut Context<SettingsWindow>) -> AnyEleme
                                 })
                                 .log_err();
                             window.remove_window();
-                        })),
+                        },
+                    )),
                 ),
         )
         .into_any_element()
