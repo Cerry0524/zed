@@ -261,3 +261,4 @@ rg -n 'Label::new\("|Button::new\([^\n]*"[A-Za-z]|Tooltip::text\("[A-Za-z]|Conte
 4. Milestone 8 聚焦 Agent/AI，並先決定 `Thinking Effort`、tool permission 相關術語。
 5. Milestone 9 用 settings metadata 方式補大量 description 詞條。
 6. Milestone 10 重新跑 visible-English scan，更新本文件為剩餘 allowlist。
+7. Milestone 11 後，日常回歸檢查使用 `script/check-zh-hant-ui-strings`；全 repo inventory 使用 `script/check-zh-hant-ui-strings --all`。

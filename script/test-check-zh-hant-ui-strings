@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+
+from importlib.machinery import SourceFileLoader
+from importlib.util import module_from_spec, spec_from_loader
+from pathlib import Path
+import textwrap
+import unittest
+
+
+SCRIPT_PATH = Path(__file__).with_name("check-zh-hant-ui-strings")
+
+
+def load_guardrail_module():
+    loader = SourceFileLoader("check_zh_hant_ui_strings", str(SCRIPT_PATH))
+    spec = spec_from_loader(loader.name, loader)
+    module = module_from_spec(spec)
+    loader.exec_module(module)
+    return module
+
+
+class ZhHantUiGuardrailTests(unittest.TestCase):
+    def test_scan_reports_visible_english_and_missing_l10n_entries(self):
+        guardrail = load_guardrail_module()
+        source = textwrap.dedent(
+            r'''
+            use ui::{Label, Button, IconButton, IconName, l10n};
+
+            fn render() {
+                Label::new("Visible English");
+                Button::new("run-action", "Run Task");
+                Button::new("localized-action", l10n::text("Known Translation"));
+                Button::new("missing-entry", l10n::text("Missing Translation"));
+                IconButton::new("element_id_only", IconName::Check);
+                editor.set_placeholder_text("zed://...", window, cx);
+            }
+            '''
+        )
+
+        findings = guardrail.scan_rust_text(
+            Path("crates/sample/src/sample.rs"),
+            source,
+            l10n_keys={"Known Translation"},
+            allowlist=guardrail.DEFAULT_ALLOWLIST,
+        )
+
+        self.assertEqual(
+            [(finding.kind, finding.text) for finding in findings],
+            [
+                ("visible-english", "Visible English"),
+                ("visible-english", "Run Task"),
+                ("missing-l10n-entry", "Missing Translation"),
+            ],
+        )
+
+    def test_markdown_allowlist_rules_suppress_matching_findings(self):
+        guardrail = load_guardrail_module()
+        rules = guardrail.parse_allowlist(
+            textwrap.dedent(
+                r'''
+                # Test allowlist
+                | path | pattern | reason |
+                | --- | --- | --- |
+                | `crates/sample/.*\.rs` | `Run Task` | dynamic external content |
+                '''
+            )
+        )
+
+        source = 'Button::new("run-action", "Run Task");\n'
+        findings = guardrail.scan_rust_text(
+            Path("crates/sample/src/sample.rs"),
+            source,
+            l10n_keys=set(),
+            allowlist=rules,
+        )
+
+        self.assertEqual(findings, [])
+
+
+if __name__ == "__main__":
+    unittest.main()

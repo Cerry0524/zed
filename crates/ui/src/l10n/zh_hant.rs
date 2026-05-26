@@ -2874,6 +2874,8 @@ fn zh_hant_text(english: &str) -> Option<&'static str> {
         "Confirm Selections" => "確認選取項目",
         "Create Dev Container" => "建立 Dev Container",
         "Search for Dev Container Templates" => "搜尋 Dev Container 範本",
+        "Template Option: " => "範本選項：",
+        "Overwrite Existing Configuration?" => "要覆蓋現有設定嗎？",
         "Querying template registry..." => "正在查詢範本登錄檔...",
         "Querying features..." => "正在查詢功能...",
         "Download" => "下載",

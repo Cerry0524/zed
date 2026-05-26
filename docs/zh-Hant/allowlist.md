@@ -2,6 +2,27 @@
 
 本文件記錄 M10 全域掃描後刻意保留英文或不納入 UI 翻譯的類型。後續 M11 可以把這些分類轉成檢查腳本的 allowlist。
 
+## 腳本可讀 Allowlist
+
+`script/check-zh-hant-ui-strings` 會讀取下列表格。每列必須有三欄：
+
+- `path`：Rust 檔案路徑的 regular expression。
+- `pattern`：可見文字內容的 regular expression。
+- `reason`：必須對應下方分類，說明為什麼不翻。
+
+| path | pattern | reason |
+| --- | --- | --- |
+| `crates/.*/tests?/.*` | `.*` | telemetry/log/test |
+| `crates/.*/fixtures/.*` | `.*` | telemetry/log/test |
+| `crates/.*/snapshots/.*` | `.*` | telemetry/log/test |
+| `crates/.*/test_data/.*` | `.*` | telemetry/log/test |
+| `crates/zed/src/zed/open_url_modal\.rs` | `^zed://\.\.\.$` | brand/protocol |
+| `crates/zed/src/visual_test_runner\.rs` | `.*` | visual fixture/sample |
+| `crates/ui/src/components/.*` | `.*` | visual fixture/sample |
+| `crates/workspace/src/theme_preview\.rs` | `.*` | visual fixture/sample |
+
+不要為了讓掃描通過而把真實使用者會看到的靜態 UI 文案加入 allowlist；那類字串應改成 `l10n::text(...)` 並補 `crates/ui/src/l10n/zh_hant.rs` 詞條。
+
 ## 品牌與協定
 
 - `Zed`

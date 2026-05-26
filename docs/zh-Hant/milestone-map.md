@@ -248,6 +248,14 @@
 - allowlist 可維護，避免未來掃描噪音太大。
 - commit：`test: add Traditional Chinese localization guardrails`
 
+### M11 執行摘要
+
+- 新增 advisory guardrail：`script/check-zh-hant-ui-strings`。
+- 新增 guardrail 測試：`python3 script/test-check-zh-hant-ui-strings`。
+- 預設掃描已繁中化與 M10 盤點過的 UI surface；`--all` 可用於全 repo inventory。
+- `docs/zh-Hant/allowlist.md` 含腳本可讀的 allowlist 表格。
+- `docs/zh-Hant/localization-checklist.md` 記錄 upstream merge 後的檢查流程。
+
 ## M12：最終驗證與 release notes
 
 ### 主要檔案

@@ -1,0 +1,239 @@
+#!/usr/bin/env python3
+
+from dataclasses import dataclass
+from pathlib import Path
+import argparse
+import re
+import sys
+
+
+DEFAULT_ALLOWLIST = (
+    ("brand/protocol", re.compile(r".*"), re.compile(r"^(?:Zed|GitHub|Jupyter|SSH|WSL|MCP|ACP|LSP|REPL|RPC|WebRTC)$")),
+    ("protocol example", re.compile(r".*"), re.compile(r"^zed://\.\.\.$")),
+    ("ellipsis menu id", re.compile(r".*"), re.compile(r"^More$")),
+)
+
+DEFAULT_SCAN_PATHS = (
+    "crates/collab_ui",
+    "crates/onboarding",
+    "crates/language_tools",
+    "crates/dev_container",
+    "crates/toolchain_selector",
+    "crates/repl",
+    "crates/zed/src/zed/quick_action_bar.rs",
+    "crates/zed/src/zed/quick_action_bar/repl_menu.rs",
+    "crates/zed/src/zed/open_url_modal.rs",
+    "crates/zed/src/zed/migrate.rs",
+    "crates/zed/src/zed/telemetry_log.rs",
+)
+
+VISIBLE_STRING_PATTERNS = (
+    ("visible-english", re.compile(r'Label::new\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)')),
+    ("visible-english", re.compile(r'Headline::new\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)')),
+    (
+        "visible-english",
+        re.compile(
+            r'Button::new\(\s*"[^"]+"\s*,\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)'
+        ),
+    ),
+    ("visible-english", re.compile(r'Tooltip::text\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)')),
+    ("visible-english", re.compile(r'Tooltip::simple\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*,')),
+    (
+        "visible-english",
+        re.compile(r'ContextMenuEntry::new\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)'),
+    ),
+    ("visible-english", re.compile(r'\.(?:title|description|placeholder|label)\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*\)')),
+    (
+        "visible-english",
+        re.compile(
+            r'\b[a-zA-Z_][a-zA-Z0-9_]*\.set_placeholder_text\(\s*"((?:[^"\\]|\\.)*[A-Za-z](?:[^"\\]|\\.)*)"\s*,'
+        ),
+    ),
+)
+
+L10N_LITERAL = re.compile(r'(?:ui::)?l10n::text\(\s*"((?:[^"\\]|\\.)*)"\s*\)')
+STRING_LITERAL = re.compile(r'"((?:[^"\\]|\\.)*)"')
+
+SKIP_DIR_PARTS = {
+    ".git",
+    "target",
+    "node_modules",
+    "vendor",
+    "fixtures",
+    "snapshots",
+    "test_data",
+}
+
+
+@dataclass(frozen=True)
+class Finding:
+    kind: str
+    path: str
+    line: int
+    text: str
+    detail: str
+
+
+def repo_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def is_skipped_path(path: Path) -> bool:
+    parts = set(path.parts)
+    if parts & SKIP_DIR_PARTS:
+        return True
+    name = path.name
+    return name.endswith("_test.rs") or name.endswith("_tests.rs")
+
+
+def line_number(text: str, offset: int) -> int:
+    return text.count("\n", 0, offset) + 1
+
+
+def parse_allowlist(markdown: str):
+    rules = []
+    for raw_line in markdown.splitlines():
+        line = raw_line.strip()
+        if not line.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip("|").split("|")]
+        if len(cells) < 3:
+            continue
+        if cells[0].lower() in {"path", "---"} or set(cells[0]) <= {"-", ":"}:
+            continue
+        path_pattern = cells[0].strip("` ")
+        text_pattern = cells[1].strip("` ")
+        reason = cells[2].strip("` ")
+        if not path_pattern or not text_pattern:
+            continue
+        rules.append((reason, re.compile(path_pattern), re.compile(text_pattern)))
+    return tuple(rules)
+
+
+def load_allowlist(path: Path):
+    if not path.exists():
+        return DEFAULT_ALLOWLIST
+    return DEFAULT_ALLOWLIST + parse_allowlist(path.read_text())
+
+
+def is_allowed(path: Path, text: str, allowlist) -> bool:
+    path_text = path.as_posix()
+    return any(path_rule.search(path_text) and text_rule.search(text) for _, path_rule, text_rule in allowlist)
+
+
+def load_l10n_keys(path: Path) -> set[str]:
+    keys = set()
+    in_table = False
+    for line in path.read_text().splitlines():
+        if "Some(match english" in line:
+            in_table = True
+            continue
+        if in_table and line.strip().startswith("_ =>"):
+            break
+        if in_table and "=>" in line:
+            left = line.split("=>", 1)[0]
+            keys.update(STRING_LITERAL.findall(left))
+    return keys
+
+
+def scan_rust_text(path: Path, source: str, l10n_keys: set[str], allowlist) -> list[Finding]:
+    findings: list[Finding] = []
+
+    for kind, pattern in VISIBLE_STRING_PATTERNS:
+        for match in pattern.finditer(source):
+            text = match.group(1)
+            if is_allowed(path, text, allowlist):
+                continue
+            findings.append(
+                Finding(
+                    kind=kind,
+                    path=path.as_posix(),
+                    line=line_number(source, match.start(1)),
+                    text=text,
+                    detail="Hard-coded English in a likely visible UI string. Wrap with l10n::text(...) or add an allowlist entry.",
+                )
+            )
+
+    for match in L10N_LITERAL.finditer(source):
+        text = match.group(1)
+        if text in l10n_keys or is_allowed(path, text, allowlist):
+            continue
+        findings.append(
+            Finding(
+                kind="missing-l10n-entry",
+                path=path.as_posix(),
+                line=line_number(source, match.start(1)),
+                text=text,
+                detail="l10n::text(...) key is missing from crates/ui/src/l10n/zh_hant.rs.",
+            )
+        )
+
+    return sorted(findings, key=lambda finding: (finding.path, finding.line, finding.kind, finding.text))
+
+
+def scan_paths(root: Path, paths: list[Path], l10n_keys: set[str], allowlist) -> list[Finding]:
+    findings: list[Finding] = []
+    for path in paths:
+        full_path = path if path.is_absolute() else root / path
+        if full_path.is_dir():
+            candidates = full_path.rglob("*.rs")
+        else:
+            candidates = [full_path]
+        for candidate in candidates:
+            if not candidate.exists() or is_skipped_path(candidate):
+                continue
+            rel = candidate.relative_to(root)
+            findings.extend(scan_rust_text(rel, candidate.read_text(errors="ignore"), l10n_keys, allowlist))
+    return sorted(findings, key=lambda finding: (finding.path, finding.line, finding.kind, finding.text))
+
+
+def print_findings(findings: list[Finding]):
+    for finding in findings:
+        print(f"{finding.path}:{finding.line}: {finding.kind}: {finding.text}")
+        print(f"  {finding.detail}")
+
+
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Advisory guardrail for likely untranslated Traditional Chinese UI strings."
+    )
+    parser.add_argument(
+        "paths",
+        nargs="*",
+        help="Files or directories to scan. Defaults to already-localized zh-Hant UI surfaces.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Scan all crates. This is useful for inventory work and may report known backlog.",
+    )
+    parser.add_argument(
+        "--allowlist",
+        default="docs/zh-Hant/allowlist.md",
+        help="Markdown allowlist table with path/pattern/reason columns.",
+    )
+    parser.add_argument(
+        "--l10n",
+        default="crates/ui/src/l10n/zh_hant.rs",
+        help="Traditional Chinese translation table.",
+    )
+    args = parser.parse_args(argv)
+
+    root = repo_root()
+    allowlist = load_allowlist(root / args.allowlist)
+    l10n_keys = load_l10n_keys(root / args.l10n)
+    paths = ["crates"] if args.all else (args.paths or list(DEFAULT_SCAN_PATHS))
+    findings = scan_paths(root, [Path(path) for path in paths], l10n_keys, allowlist)
+
+    if findings:
+        print_findings(findings)
+        print(f"\n{len(findings)} suspicious zh-Hant UI string finding(s).")
+        print("Fix the string, wrap it in l10n::text(...), or add an allowlist row with a reason.")
+        return 1
+
+    print("No suspicious zh-Hant UI string findings.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
