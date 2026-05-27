@@ -136,6 +136,7 @@ Install guidance:
     technical testers who understand macOS security prompts.
   - Before upload, smoke test the DMG from a clean mount:
 
+      script/check-mac-release-readiness
       script/smoke-mac-release --dmg $dmg_path
       script/smoke-mac-release --dmg $dmg_path --launch-gui
 

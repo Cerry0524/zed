@@ -55,6 +55,9 @@ commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
   - app entitlements
   - DMG signature and checksum
   - ZIP integrity
+- `script/check-mac-release-readiness` 已新增為正式發佈 gate：
+  - toolchain、artifact、bundle metadata、signing、本地 package checks 已通過。
+  - public release trust gate 仍未通過，因為 stapler / Gatekeeper / notarization credentials 尚未完成。
 - DMG 外層也已用 Developer ID Application 簽章並含 timestamp。
 
 SHA-256：
@@ -96,6 +99,10 @@ script/smoke-mac-release --launch-gui
 
 以下驗證尚未通過或尚未執行完成：
 
+- `script/check-mac-release-readiness` 目前輸出：
+  - `Public release gate: NOT READY (3 failure(s), 1 warning(s)).`
+  - failures：DMG stapler validation、DMG Gatekeeper assessment、沒有完整 notarization credential mode。
+  - warning：`zed-zh-hant-notary` keychain profile 目前不可用。
 - `xcrun stapler validate Zed-aarch64.dmg` 未通過：
   - 最新重驗輸出包含 `The file “Zed-aarch64.dmg” couldn’t be opened.`
   - underlying error 為 `kLSDataUnavailableErr`
@@ -144,6 +151,7 @@ Keychain 檢查結果：
 
 ```sh
 script/verify-mac-release
+script/check-mac-release-readiness
 script/smoke-mac-release
 script/smoke-mac-release --launch-gui
 script/generate-mac-release-manifest --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d

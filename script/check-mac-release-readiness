@@ -1,0 +1,425 @@
+#!/usr/bin/env bash
+
+set -uo pipefail
+
+target_triple="aarch64-apple-darwin"
+target_dir="release"
+app_path=""
+dmg_path=""
+zip_path=""
+profile="${NOTARYTOOL_PROFILE:-zed-zh-hant-notary}"
+api_key_path="${APPLE_NOTARIZATION_KEY_PATH:-}"
+api_key="${APPLE_NOTARIZATION_KEY:-}"
+api_key_id="${APPLE_NOTARIZATION_KEY_ID:-}"
+api_issuer="${APPLE_NOTARIZATION_ISSUER_ID:-}"
+apple_id="${APPLE_ID:-${AC_USERNAME:-}}"
+apple_password="${AC_PASSWORD:-}"
+team_id="${APPLE_TEAM_ID:-${TEAM_ID:-}}"
+expected_identity="Developer ID Application: KO-JUI CHEN (3PM99X2THU)"
+expected_team_id="3PM99X2THU"
+strict_credentials=false
+
+failures=0
+warnings=0
+credential_modes=0
+
+print_help() {
+    cat <<'EOF'
+Usage: script/check-mac-release-readiness [options]
+
+Audit whether the local macOS release artifacts are ready for public
+distribution. The script reports toolchain, artifact, signing, notarization,
+Gatekeeper, and credential status, then exits non-zero when public release
+requirements are not met.
+
+Options:
+  -a, --app PATH             App bundle path.
+  -d, --dmg PATH             DMG path.
+  -z, --zip PATH             ZIP path.
+  -p, --profile NAME         notarytool keychain profile to check. Defaults to
+                             NOTARYTOOL_PROFILE or zed-zh-hant-notary.
+      --key PATH             App Store Connect API key .p8 path.
+      --key-id ID            App Store Connect API key id.
+      --issuer ID            App Store Connect issuer id.
+      --apple-id ID          Apple ID for app-specific password auth.
+      --password PASSWORD    App-specific password. Prefer AC_PASSWORD env.
+      --team-id ID           Apple Developer Team ID.
+      --strict-credentials   Treat an unusable requested keychain profile as a
+                             failure even if another auth mode is configured.
+      --target-triple TRIPLE Target triple. Defaults to aarch64-apple-darwin.
+      --target-dir DIR       Target directory. Defaults to release.
+  -h, --help                 Show this help.
+
+Supported environment variables:
+  NOTARYTOOL_PROFILE
+  APPLE_NOTARIZATION_KEY_PATH
+  APPLE_NOTARIZATION_KEY
+  APPLE_NOTARIZATION_KEY_ID
+  APPLE_NOTARIZATION_ISSUER_ID
+  APPLE_ID or AC_USERNAME
+  AC_PASSWORD
+  APPLE_TEAM_ID or TEAM_ID
+EOF
+}
+
+section() {
+    echo
+    echo "==> $*"
+}
+
+pass() {
+    echo "[ok] $*"
+}
+
+warn() {
+    echo "[warn] $*"
+    warnings=$((warnings + 1))
+}
+
+fail() {
+    echo "[fail] $*"
+    failures=$((failures + 1))
+}
+
+mask() {
+    if [[ -n "${1:-}" ]]; then
+        echo "<set>"
+    else
+        echo "<missing>"
+    fi
+}
+
+absolute_path() {
+    local path=$1
+    local dir
+    local base
+
+    dir=$(dirname "$path")
+    base=$(basename "$path")
+    if [[ -d "$path" ]]; then
+        (cd "$path" 2>/dev/null && pwd -P)
+    elif [[ -e "$path" ]]; then
+        (cd "$dir" 2>/dev/null && printf '%s/%s\n' "$(pwd -P)" "$base")
+    else
+        return 1
+    fi
+}
+
+command_output() {
+    "$@" 2>&1
+}
+
+first_line() {
+    sed -n '1p'
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -a|--app)
+            app_path="${2:-}"
+            shift 2
+            ;;
+        -d|--dmg)
+            dmg_path="${2:-}"
+            shift 2
+            ;;
+        -z|--zip)
+            zip_path="${2:-}"
+            shift 2
+            ;;
+        -p|--profile)
+            profile="${2:-}"
+            shift 2
+            ;;
+        --key)
+            api_key_path="${2:-}"
+            shift 2
+            ;;
+        --key-id)
+            api_key_id="${2:-}"
+            shift 2
+            ;;
+        --issuer)
+            api_issuer="${2:-}"
+            shift 2
+            ;;
+        --apple-id)
+            apple_id="${2:-}"
+            shift 2
+            ;;
+        --password)
+            apple_password="${2:-}"
+            shift 2
+            ;;
+        --team-id)
+            team_id="${2:-}"
+            shift 2
+            ;;
+        --strict-credentials)
+            strict_credentials=true
+            shift
+            ;;
+        --target-triple)
+            target_triple="${2:-}"
+            shift 2
+            ;;
+        --target-dir)
+            target_dir="${2:-}"
+            shift 2
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            echo "error: unknown option: $1" >&2
+            exit 2
+            ;;
+    esac
+done
+
+if [[ -z "$app_path" ]]; then
+    app_path="target/${target_triple}/${target_dir}/dmg/Zed Dev.app"
+fi
+
+if [[ -z "$dmg_path" ]]; then
+    dmg_path="target/${target_triple}/${target_dir}/Zed-aarch64.dmg"
+fi
+
+if [[ -z "$zip_path" ]]; then
+    zip_path="target/${target_triple}/${target_dir}/Zed-aarch64.zip"
+fi
+
+section "Toolchain"
+for tool in xcrun codesign spctl hdiutil unzip security shasum; do
+    if command -v "$tool" >/dev/null 2>&1; then
+        pass "$tool is available"
+    else
+        fail "$tool is missing"
+    fi
+done
+
+if command -v xcrun >/dev/null 2>&1; then
+    notarytool_version=$(xcrun notarytool --version 2>&1)
+    if [[ $? -eq 0 ]]; then
+        pass "notarytool is available: $notarytool_version"
+    else
+        fail "notarytool is not available: $(echo "$notarytool_version" | first_line)"
+    fi
+fi
+
+section "Artifacts"
+if [[ -d "$app_path" ]]; then
+    app_abs=$(absolute_path "$app_path")
+    pass "app bundle exists: $app_abs"
+else
+    app_abs="$app_path"
+    fail "app bundle is missing: $app_path"
+fi
+
+if [[ -f "$dmg_path" ]]; then
+    dmg_abs=$(absolute_path "$dmg_path")
+    dmg_size=$(ls -lh "$dmg_path" | awk '{print $5}')
+    pass "DMG exists: $dmg_abs ($dmg_size)"
+else
+    dmg_abs="$dmg_path"
+    fail "DMG is missing: $dmg_path"
+fi
+
+if [[ -f "$zip_path" ]]; then
+    zip_abs=$(absolute_path "$zip_path")
+    zip_size=$(ls -lh "$zip_path" | awk '{print $5}')
+    pass "ZIP exists: $zip_abs ($zip_size)"
+else
+    zip_abs="$zip_path"
+    fail "ZIP is missing: $zip_path"
+fi
+
+section "Bundle Metadata"
+if [[ -d "$app_path" && -f "$app_path/Contents/Info.plist" ]]; then
+    bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Contents/Info.plist" 2>/dev/null)
+    bundle_name=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$app_path/Contents/Info.plist" 2>/dev/null)
+    bundle_version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist" 2>/dev/null)
+    bundle_build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_path/Contents/Info.plist" 2>/dev/null)
+
+    [[ "$bundle_id" = "dev.zed.Zed-Dev" ]] && pass "bundle id: $bundle_id" || fail "unexpected bundle id: ${bundle_id:-<missing>}"
+    [[ "$bundle_name" = "Zed Dev" ]] && pass "bundle name: $bundle_name" || fail "unexpected bundle name: ${bundle_name:-<missing>}"
+    [[ -n "$bundle_version" ]] && pass "bundle version: $bundle_version" || fail "bundle version is missing"
+    [[ -n "$bundle_build" ]] && pass "bundle build: $bundle_build" || fail "bundle build is missing"
+else
+    fail "Info.plist is missing"
+fi
+
+section "Signing"
+identities=$(security find-identity -v -p codesigning 2>&1)
+if echo "$identities" | grep -q "$expected_identity"; then
+    pass "Developer ID identity is installed: $expected_identity"
+else
+    fail "Developer ID identity is not installed: $expected_identity"
+fi
+
+if [[ -d "$app_path" ]]; then
+    app_verify=$(command_output codesign --verify --deep --strict --verbose=4 "$app_path")
+    if [[ $? -eq 0 ]]; then
+        pass "app code signature verifies"
+    else
+        fail "app code signature verification failed: $(echo "$app_verify" | first_line)"
+    fi
+
+    app_signature=$(codesign -dv --verbose=4 "$app_path" 2>&1)
+    echo "$app_signature" | grep -q "Authority=$expected_identity" \
+        && pass "app is signed by expected Developer ID" \
+        || fail "app is not signed by expected Developer ID"
+    echo "$app_signature" | grep -q "TeamIdentifier=$expected_team_id" \
+        && pass "app Team ID is $expected_team_id" \
+        || fail "app Team ID is not $expected_team_id"
+    echo "$app_signature" | grep -q 'flags=.*runtime' \
+        && pass "app signature has hardened runtime" \
+        || fail "app signature is missing hardened runtime"
+    echo "$app_signature" | grep -q 'Timestamp=' \
+        && pass "app signature has timestamp" \
+        || fail "app signature is missing timestamp"
+fi
+
+if [[ -f "$dmg_path" ]]; then
+    dmg_verify=$(command_output codesign --verify --verbose=4 "$dmg_path")
+    if [[ $? -eq 0 ]]; then
+        pass "DMG code signature verifies"
+    else
+        fail "DMG code signature verification failed: $(echo "$dmg_verify" | first_line)"
+    fi
+
+    dmg_signature=$(codesign -dv --verbose=4 "$dmg_path" 2>&1)
+    echo "$dmg_signature" | grep -q "Authority=$expected_identity" \
+        && pass "DMG is signed by expected Developer ID" \
+        || fail "DMG is not signed by expected Developer ID"
+fi
+
+section "Local Package Checks"
+if [[ -f "$dmg_path" ]]; then
+    hdiutil_output=$(command_output hdiutil verify "$dmg_path")
+    if [[ $? -eq 0 ]]; then
+        pass "hdiutil verify passed for DMG"
+    else
+        fail "hdiutil verify failed for DMG: $(echo "$hdiutil_output" | first_line)"
+    fi
+fi
+
+if [[ -f "$zip_path" ]]; then
+    unzip_output=$(command_output unzip -t "$zip_path")
+    if [[ $? -eq 0 ]]; then
+        pass "ZIP integrity check passed"
+    else
+        fail "ZIP integrity check failed: $(echo "$unzip_output" | first_line)"
+    fi
+fi
+
+section "Public Release Trust Gate"
+if [[ -f "$dmg_path" ]]; then
+    stapler_output=$(command_output xcrun stapler validate "$dmg_abs")
+    if [[ $? -eq 0 ]]; then
+        pass "DMG has a valid stapled notarization ticket"
+    else
+        fail "DMG stapler validation failed: $(echo "$stapler_output" | first_line)"
+    fi
+
+    spctl_output=$(command_output spctl -a -vv --type open "$dmg_abs")
+    if [[ $? -eq 0 ]]; then
+        pass "DMG passes Gatekeeper assessment"
+    else
+        fail "DMG Gatekeeper assessment failed: $(echo "$spctl_output" | first_line)"
+    fi
+fi
+
+section "Notarization Credentials"
+if [[ -n "$profile" ]]; then
+    profile_output=$(command_output xcrun notarytool history --keychain-profile "$profile" --output-format json)
+    if [[ $? -eq 0 ]]; then
+        pass "notarytool keychain profile is usable: $profile"
+        credential_modes=$((credential_modes + 1))
+    else
+        message="notarytool keychain profile is not usable: $profile; $(echo "$profile_output" | first_line)"
+        if [[ "$strict_credentials" = true ]]; then
+            fail "$message"
+        else
+            warn "$message"
+        fi
+    fi
+fi
+
+api_key_complete=false
+if [[ -n "$api_key_path" || -n "$api_key" || -n "$api_key_id" || -n "$api_issuer" ]]; then
+    if [[ -n "$api_key_path" && ! -f "$api_key_path" ]]; then
+        fail "APPLE_NOTARIZATION_KEY_PATH / --key file does not exist: $api_key_path"
+    elif [[ -n "$api_key_id" && ( -n "$api_key_path" || -n "$api_key" ) ]]; then
+        api_key_complete=true
+        credential_modes=$((credential_modes + 1))
+        pass "App Store Connect API key auth fields are configured (issuer: $(mask "$api_issuer"))"
+    else
+        fail "incomplete App Store Connect API key auth; need key file or APPLE_NOTARIZATION_KEY plus APPLE_NOTARIZATION_KEY_ID"
+    fi
+else
+    echo "[info] App Store Connect API key auth is not configured"
+fi
+
+if [[ "$api_key_complete" = true && -z "$api_issuer" ]]; then
+    warn "APPLE_NOTARIZATION_ISSUER_ID is not set; this is valid for some individual keys, but team API keys usually need it"
+fi
+
+if [[ -n "$apple_id" || -n "$apple_password" || -n "$team_id" ]]; then
+    if [[ -n "$apple_id" && -n "$apple_password" && -n "$team_id" ]]; then
+        credential_modes=$((credential_modes + 1))
+        pass "Apple ID app-specific password auth fields are configured"
+    else
+        fail "incomplete Apple ID auth; need APPLE_ID or AC_USERNAME, AC_PASSWORD, and APPLE_TEAM_ID or TEAM_ID"
+        echo "       APPLE_ID/AC_USERNAME: $(mask "$apple_id")"
+        echo "       AC_PASSWORD: $(mask "$apple_password")"
+        echo "       APPLE_TEAM_ID/TEAM_ID: $(mask "$team_id")"
+    fi
+else
+    echo "[info] Apple ID app-specific password auth is not configured"
+fi
+
+if [[ "$credential_modes" -eq 0 ]]; then
+    fail "no complete notarization credential mode is available"
+fi
+
+section "Next Required Commands"
+if [[ "$credential_modes" -eq 0 ]]; then
+    cat <<EOF
+Create one notarization credential mode, for example:
+
+  script/store-mac-notary-credentials --profile zed-zh-hant-notary
+
+or provide App Store Connect API key fields:
+
+  script/store-mac-notary-credentials \\
+    --profile zed-zh-hant-notary \\
+    --key /path/to/AuthKey_XXXXXXXXXX.p8 \\
+    --key-id XXXXXXXXXX \\
+    --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+EOF
+fi
+
+cat <<EOF
+
+After credentials are available, run:
+
+  script/notarize-mac-release --artifact $dmg_path --profile $profile
+  script/verify-mac-release --require-notarization
+  script/smoke-mac-release --dmg $dmg_path --launch-gui
+  script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
+EOF
+
+section "Summary"
+if [[ "$failures" -eq 0 ]]; then
+    if [[ "$warnings" -gt 0 ]]; then
+        echo "Public release gate: PASS with $warnings warning(s)."
+    else
+        echo "Public release gate: PASS."
+    fi
+    exit 0
+fi
+
+echo "Public release gate: NOT READY ($failures failure(s), $warnings warning(s))."
+exit 1
