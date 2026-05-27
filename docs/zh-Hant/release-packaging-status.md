@@ -64,14 +64,33 @@ SHA-256：
 
 ## Smoke Test
 
-已從 DMG 掛載點執行乾淨 user-data smoke test：
+已新增可重跑的 DMG 乾淨環境 smoke test 腳本：
 
-- 掛載：`/private/tmp/zed-zh-hant-dmg`
-- user data：`/private/tmp/zed-zh-hant-release-smoke`
-- 測試專案：`/private/tmp/zed-zh-hant-smoke-project`
-- `cli --version` 輸出：`Zed 1.5.0 - /private/tmp/zed-zh-hant-dmg/Zed Dev.app`
+```sh
+script/smoke-mac-release
+script/smoke-mac-release --launch-gui
+```
+
+`script/smoke-mac-release` 會從 DMG 掛載點驗證：
+
+- `Zed Dev.app` 存在。
+- `Applications` symlink 指向 `/Applications`。
+- Bundle ID 為 `dev.zed.Zed-Dev`。
+- Bundle name 為 `Zed Dev`。
+- `codesign --verify --deep --strict --verbose=4` 通過。
+- `Contents/MacOS/cli --version` 輸出 `Zed 1.5.0`。
+
+`script/smoke-mac-release --launch-gui` 會額外使用乾淨 user-data 目錄啟動 app，確認 LaunchServices 可識別為 `Zed Dev`，並在測試結束後自動關閉 app 與卸載 DMG。
+
+2026-05-27 已用腳本從 DMG 掛載點執行乾淨 user-data smoke test：
+
+- 掛載：`/private/tmp/zed-zh-hant-smoke-12316-mount`
+- user data：`/private/tmp/zed-zh-hant-smoke-12316-user-data`
+- 測試專案：`/private/tmp/zed-zh-hant-smoke-12316-project`
+- `cli --version` 輸出：`Zed 1.5.0 – /private/tmp/zed-zh-hant-smoke-12316-mount/Zed Dev.app`
 - app 可由系統識別為：`Zed Dev`
-- 啟動後有建立乾淨 profile 的 `db`、`extensions`、`threads`、`external_agents` 等資料。
+- 啟動後有建立乾淨 profile 的 `db`、`extensions` 等資料。
+- DMG 在 smoke test 結束後成功卸載。
 
 ## 尚未完成
 
@@ -124,6 +143,8 @@ Keychain 檢查結果：
 
 ```sh
 script/verify-mac-release
+script/smoke-mac-release
+script/smoke-mac-release --launch-gui
 script/generate-mac-release-manifest --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 script/stage-mac-release-artifacts --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg

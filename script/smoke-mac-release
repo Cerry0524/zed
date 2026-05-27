@@ -1,0 +1,246 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+target_triple="aarch64-apple-darwin"
+target_dir="release"
+dmg_path=""
+mountpoint=""
+user_data_dir=""
+project_dir=""
+launch_gui=false
+keep=false
+
+print_help() {
+    cat <<'EOF'
+Usage: script/smoke-mac-release [options]
+
+Smoke test the packaged macOS DMG for the Zed Traditional Chinese fork.
+
+By default this mounts the DMG, verifies the app bundle inside the mounted
+image, checks the Applications symlink, verifies the app signature, and runs
+the packaged CLI against an isolated temporary directory. Pass --launch-gui to
+also open the app with a fresh user-data directory and then quit it.
+
+Options:
+  -d, --dmg PATH             DMG path.
+      --mountpoint PATH      Mount point. Defaults to /private/tmp/... .
+      --user-data PATH       Fresh user-data directory for GUI smoke test.
+      --project PATH         Temporary project directory for CLI/GUI smoke test.
+      --target-triple TRIPLE Target triple. Defaults to aarch64-apple-darwin.
+      --target-dir DIR       Target directory. Defaults to release.
+      --launch-gui           Launch the app through LaunchServices.
+      --keep                 Keep temporary directories after the test.
+  -h, --help                 Show this help.
+EOF
+}
+
+die() {
+    echo "error: $*" >&2
+    exit 2
+}
+
+log() {
+    echo "==> $*"
+}
+
+detach_dmg() {
+    for _ in {1..10}; do
+        if hdiutil detach "$mountpoint" >/dev/null 2>&1; then
+            mounted=false
+            return 0
+        fi
+        sleep 1
+    done
+
+    if hdiutil detach -force "$mountpoint" >/dev/null 2>&1; then
+        mounted=false
+        return 0
+    fi
+
+    return 1
+}
+
+wait_for_gui_exit() {
+    for _ in {1..20}; do
+        running=$(osascript -e 'application id "dev.zed.Zed-Dev" is running' 2>/dev/null || echo false)
+        if [[ "$running" != "true" ]]; then
+            return 0
+        fi
+        sleep 1
+    done
+
+    return 1
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -d|--dmg)
+            dmg_path="${2:-}"
+            shift 2
+            ;;
+        --mountpoint)
+            mountpoint="${2:-}"
+            shift 2
+            ;;
+        --user-data)
+            user_data_dir="${2:-}"
+            shift 2
+            ;;
+        --project)
+            project_dir="${2:-}"
+            shift 2
+            ;;
+        --target-triple)
+            target_triple="${2:-}"
+            shift 2
+            ;;
+        --target-dir)
+            target_dir="${2:-}"
+            shift 2
+            ;;
+        --launch-gui)
+            launch_gui=true
+            shift
+            ;;
+        --keep)
+            keep=true
+            shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            die "unknown option: $1"
+            ;;
+    esac
+done
+
+if [[ -z "$dmg_path" ]]; then
+    dmg_path="target/${target_triple}/${target_dir}/Zed-aarch64.dmg"
+fi
+
+run_id="zed-zh-hant-smoke-$$"
+if [[ -z "$mountpoint" ]]; then
+    mountpoint="/private/tmp/${run_id}-mount"
+fi
+if [[ -z "$user_data_dir" ]]; then
+    user_data_dir="/private/tmp/${run_id}-user-data"
+fi
+if [[ -z "$project_dir" ]]; then
+    project_dir="/private/tmp/${run_id}-project"
+fi
+
+[[ -f "$dmg_path" ]] || die "DMG does not exist: $dmg_path"
+
+mounted=false
+gui_started=false
+osascript_out="/private/tmp/${run_id}-osascript.out"
+
+cleanup() {
+    status=$?
+
+    if [[ "$gui_started" = true ]]; then
+        osascript -e 'tell application id "dev.zed.Zed-Dev" to quit' >/dev/null 2>&1 || true
+        wait_for_gui_exit >/dev/null 2>&1 || true
+    fi
+
+    if [[ "$mounted" = true ]]; then
+        if ! detach_dmg; then
+            echo "warning: failed to detach mounted DMG at $mountpoint" >&2
+        fi
+    fi
+
+    if [[ "$keep" != true ]]; then
+        if [[ "$mounted" != true ]]; then
+            rm -rf "$mountpoint"
+        fi
+        rm -rf "$user_data_dir" "$project_dir" "$osascript_out"
+    else
+        echo "Kept smoke test paths:"
+        echo "  mountpoint: $mountpoint"
+        echo "  user data:  $user_data_dir"
+        echo "  project:    $project_dir"
+    fi
+
+    exit "$status"
+}
+trap cleanup EXIT
+
+mkdir -p "$mountpoint" "$user_data_dir" "$project_dir"
+
+log "Mounting DMG"
+hdiutil attach -nobrowse -readonly -mountpoint "$mountpoint" "$dmg_path" >/dev/null
+mounted=true
+
+app_path="$mountpoint/Zed Dev.app"
+applications_link="$mountpoint/Applications"
+cli_path="$app_path/Contents/MacOS/cli"
+
+log "Checking mounted DMG contents"
+[[ -d "$app_path" ]] || die "mounted DMG is missing Zed Dev.app"
+[[ -L "$applications_link" ]] || die "mounted DMG is missing Applications symlink"
+[[ -x "$cli_path" ]] || die "mounted app is missing executable CLI: $cli_path"
+
+applications_target=$(readlink "$applications_link")
+echo "Applications symlink: $applications_target"
+[[ "$applications_target" = "/Applications" ]] || die "Applications symlink points to unexpected target: $applications_target"
+
+bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Contents/Info.plist")
+bundle_name=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$app_path/Contents/Info.plist")
+bundle_version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist")
+
+echo "Bundle ID: $bundle_id"
+echo "Bundle name: $bundle_name"
+echo "Version: $bundle_version"
+
+[[ "$bundle_id" = "dev.zed.Zed-Dev" ]] || die "unexpected bundle id: $bundle_id"
+[[ "$bundle_name" = "Zed Dev" ]] || die "unexpected bundle name: $bundle_name"
+
+log "Verifying mounted app signature"
+codesign --verify --deep --strict --verbose=4 "$app_path"
+
+log "Running packaged CLI"
+cli_output=$("$cli_path" --version)
+echo "$cli_output"
+echo "$cli_output" | grep -q 'Zed 1.5.0' || die "unexpected CLI version output: $cli_output"
+
+if [[ "$launch_gui" = true ]]; then
+    log "Launching GUI app with fresh user data"
+    open -n "$app_path" --args --user-data-dir "$user_data_dir" "$project_dir"
+    gui_started=true
+
+    for _ in {1..20}; do
+        if osascript -e 'tell application id "dev.zed.Zed-Dev" to get name' >"$osascript_out" 2>/dev/null; then
+            app_name=$(cat "$osascript_out")
+            echo "LaunchServices app name: $app_name"
+            [[ "$app_name" = "Zed Dev" ]] || die "unexpected app name from LaunchServices: $app_name"
+            break
+        fi
+        sleep 1
+    done
+
+    if [[ ! -s "$osascript_out" ]]; then
+        die "GUI app did not become reachable through AppleScript"
+    fi
+
+    found_profile_state=false
+    for entry in db extensions threads external_agents; do
+        if [[ -e "$user_data_dir/$entry" ]]; then
+            echo "Fresh user data contains: $entry"
+            found_profile_state=true
+        fi
+    done
+    [[ "$found_profile_state" = true ]] || die "GUI launch did not create expected user-data state under: $user_data_dir"
+
+    log "Quitting GUI app"
+    osascript -e 'tell application id "dev.zed.Zed-Dev" to quit'
+    wait_for_gui_exit || die "GUI app did not quit before detach"
+    gui_started=false
+fi
+
+log "Detaching DMG"
+detach_dmg || die "failed to detach mounted DMG: $mountpoint"
+
+log "macOS release smoke test completed"
