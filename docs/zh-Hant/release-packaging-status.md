@@ -113,6 +113,12 @@ Keychain 檢查結果：
 script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
 ```
 
+若尚未建立 `notarytool` keychain profile，可先使用：
+
+```sh
+script/store-mac-notary-credentials --profile zed-zh-hant-notary
+```
+
 腳本會執行：
 
 - `xcrun notarytool submit --wait`
@@ -124,16 +130,21 @@ script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-a
 1. 使用 App Store Connect API key：
    - 準備 `.p8` key。
    - 設定 key id 與 issuer id。
-   - 執行 `script/notarize-mac-release`。
+   - 建立 keychain profile。
+   - 執行 `script/notarize-mac-release --profile <profile>`。
 
    範例：
 
    ```sh
-   script/notarize-mac-release \
-     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+   script/store-mac-notary-credentials \
+     --profile zed-zh-hant-notary \
      --key /path/to/AuthKey_XXXXXXXXXX.p8 \
      --key-id XXXXXXXXXX \
      --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+
+   script/notarize-mac-release \
+     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+     --profile zed-zh-hant-notary
    ```
 
 2. 使用 notarytool keychain profile：
@@ -155,16 +166,21 @@ script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-a
 
 3. 使用 Apple ID app-specific password：
    - 準備 Apple ID、team/provider、app-specific password。
-   - 執行 `script/notarize-mac-release`。
+   - 建立 keychain profile。
+   - 執行 `script/notarize-mac-release --profile <profile>`。
 
    範例：
 
    ```sh
-   script/notarize-mac-release \
-     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+   script/store-mac-notary-credentials \
+     --profile zed-zh-hant-notary \
      --apple-id your-apple-id@example.com \
      --team-id 3PM99X2THU \
      --password xxxx-xxxx-xxxx-xxxx
+
+   script/notarize-mac-release \
+     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+     --profile zed-zh-hant-notary
    ```
 
 ## 分享建議
