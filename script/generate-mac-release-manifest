@@ -1,0 +1,274 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+target_triple="aarch64-apple-darwin"
+target_dir="release"
+app_path=""
+dmg_path=""
+zip_path=""
+artifact_commit="${ZED_ARTIFACT_COMMIT:-}"
+json_output=""
+text_output=""
+
+print_help() {
+    cat <<'EOF'
+Usage: script/generate-mac-release-manifest [options]
+
+Generate JSON and text manifests for local macOS release artifacts.
+
+Options:
+  -a, --app PATH              App bundle path.
+  -d, --dmg PATH              DMG path.
+  -z, --zip PATH              ZIP path.
+      --artifact-commit SHA   Commit represented by the packaged app binary.
+  -o, --output PATH           JSON output path.
+      --text-output PATH      Text summary output path.
+      --target-triple TRIPLE  Target triple. Defaults to aarch64-apple-darwin.
+      --target-dir DIR        Target directory. Defaults to release.
+  -h, --help                  Show this help.
+EOF
+}
+
+die() {
+    echo "error: $*" >&2
+    exit 2
+}
+
+json_escape() {
+    local value=$1
+    value=${value//\\/\\\\}
+    value=${value//\"/\\\"}
+    value=${value//$'\n'/\\n}
+    value=${value//$'\r'/\\r}
+    value=${value//$'\t'/\\t}
+    printf '%s' "$value"
+}
+
+file_size() {
+    stat -f '%z' "$1"
+}
+
+file_sha256() {
+    shasum -a 256 "$1" | awk '{print $1}'
+}
+
+first_matching_line() {
+    local pattern=$1
+    local content=$2
+    printf '%s\n' "$content" | grep -m 1 "$pattern" | sed "s/^${pattern}//"
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -a|--app)
+            app_path="${2:-}"
+            shift 2
+            ;;
+        -d|--dmg)
+            dmg_path="${2:-}"
+            shift 2
+            ;;
+        -z|--zip)
+            zip_path="${2:-}"
+            shift 2
+            ;;
+        --artifact-commit)
+            artifact_commit="${2:-}"
+            shift 2
+            ;;
+        -o|--output)
+            json_output="${2:-}"
+            shift 2
+            ;;
+        --text-output)
+            text_output="${2:-}"
+            shift 2
+            ;;
+        --target-triple)
+            target_triple="${2:-}"
+            shift 2
+            ;;
+        --target-dir)
+            target_dir="${2:-}"
+            shift 2
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            die "unknown option: $1"
+            ;;
+    esac
+done
+
+if [[ -z "$app_path" ]]; then
+    app_path="target/${target_triple}/${target_dir}/dmg/Zed Dev.app"
+fi
+
+if [[ -z "$dmg_path" ]]; then
+    dmg_path="target/${target_triple}/${target_dir}/Zed-aarch64.dmg"
+fi
+
+if [[ -z "$zip_path" ]]; then
+    zip_path="target/${target_triple}/${target_dir}/Zed-aarch64.zip"
+fi
+
+if [[ -z "$json_output" ]]; then
+    json_output="target/${target_triple}/${target_dir}/Zed-aarch64.release-manifest.json"
+fi
+
+if [[ -z "$text_output" ]]; then
+    text_output="target/${target_triple}/${target_dir}/Zed-aarch64.release-manifest.txt"
+fi
+
+[[ -d "$app_path" ]] || die "app bundle does not exist: $app_path"
+[[ -f "$dmg_path" ]] || die "DMG does not exist: $dmg_path"
+[[ -f "$zip_path" ]] || die "ZIP does not exist: $zip_path"
+
+if [[ -z "$artifact_commit" ]]; then
+    artifact_commit=$(git rev-parse HEAD)
+fi
+
+repo_commit=$(git rev-parse HEAD)
+created_at=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Contents/Info.plist")
+bundle_name=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$app_path/Contents/Info.plist")
+bundle_version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist")
+bundle_build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_path/Contents/Info.plist")
+
+app_signature=$(codesign -dv --verbose=4 "$app_path" 2>&1)
+dmg_signature=$(codesign -dv --verbose=4 "$dmg_path" 2>&1)
+
+app_authority=$(first_matching_line 'Authority=' "$app_signature")
+app_team_id=$(first_matching_line 'TeamIdentifier=' "$app_signature")
+app_timestamp=$(first_matching_line 'Timestamp=' "$app_signature")
+app_runtime=$(first_matching_line 'Runtime Version=' "$app_signature")
+app_cdhash=$(first_matching_line 'CDHash=' "$app_signature")
+dmg_authority=$(first_matching_line 'Authority=' "$dmg_signature")
+dmg_timestamp=$(first_matching_line 'Timestamp=' "$dmg_signature")
+dmg_cdhash=$(first_matching_line 'CDHash=' "$dmg_signature")
+
+app_verify_status="failed"
+if codesign --verify --deep --strict --verbose=4 "$app_path" >/dev/null 2>&1; then
+    app_verify_status="passed"
+fi
+
+dmg_verify_status="failed"
+if hdiutil verify "$dmg_path" >/dev/null 2>&1; then
+    dmg_verify_status="passed"
+fi
+
+zip_verify_status="failed"
+if unzip -t "$zip_path" >/dev/null 2>&1; then
+    zip_verify_status="passed"
+fi
+
+stapler_output=$(xcrun stapler validate "$dmg_path" 2>&1 || true)
+stapler_status="failed"
+if printf '%s\n' "$stapler_output" | grep -q 'The validate action worked'; then
+    stapler_status="passed"
+fi
+
+spctl_output=$(spctl -a -vv --type open "$dmg_path" 2>&1 || true)
+gatekeeper_status="failed"
+if printf '%s\n' "$spctl_output" | grep -q ': accepted'; then
+    gatekeeper_status="accepted"
+fi
+
+dmg_size=$(file_size "$dmg_path")
+zip_size=$(file_size "$zip_path")
+dmg_sha256=$(file_sha256 "$dmg_path")
+zip_sha256=$(file_sha256 "$zip_path")
+
+mkdir -p "$(dirname "$json_output")" "$(dirname "$text_output")"
+
+cat > "$json_output" <<EOF
+{
+  "created_at": "$(json_escape "$created_at")",
+  "repo_commit": "$(json_escape "$repo_commit")",
+  "artifact_commit": "$(json_escape "$artifact_commit")",
+  "target_triple": "$(json_escape "$target_triple")",
+  "target_dir": "$(json_escape "$target_dir")",
+  "app": {
+    "path": "$(json_escape "$app_path")",
+    "bundle_id": "$(json_escape "$bundle_id")",
+    "bundle_name": "$(json_escape "$bundle_name")",
+    "version": "$(json_escape "$bundle_version")",
+    "build": "$(json_escape "$bundle_build")",
+    "signature": {
+      "verify_status": "$(json_escape "$app_verify_status")",
+      "authority": "$(json_escape "$app_authority")",
+      "team_id": "$(json_escape "$app_team_id")",
+      "timestamp": "$(json_escape "$app_timestamp")",
+      "runtime_version": "$(json_escape "$app_runtime")",
+      "cdhash": "$(json_escape "$app_cdhash")"
+    }
+  },
+  "artifacts": {
+    "dmg": {
+      "path": "$(json_escape "$dmg_path")",
+      "size_bytes": $dmg_size,
+      "sha256": "$(json_escape "$dmg_sha256")",
+      "hdiutil_verify": "$(json_escape "$dmg_verify_status")",
+      "signature": {
+        "authority": "$(json_escape "$dmg_authority")",
+        "timestamp": "$(json_escape "$dmg_timestamp")",
+        "cdhash": "$(json_escape "$dmg_cdhash")"
+      },
+      "stapler_validate": "$(json_escape "$stapler_status")",
+      "gatekeeper": "$(json_escape "$gatekeeper_status")"
+    },
+    "zip": {
+      "path": "$(json_escape "$zip_path")",
+      "size_bytes": $zip_size,
+      "sha256": "$(json_escape "$zip_sha256")",
+      "unzip_test": "$(json_escape "$zip_verify_status")"
+    }
+  }
+}
+EOF
+
+cat > "$text_output" <<EOF
+Zed Traditional Chinese macOS Release Manifest
+
+Created at: $created_at
+Repo commit: $repo_commit
+Artifact commit: $artifact_commit
+Target: $target_triple/$target_dir
+
+App:
+  Path: $app_path
+  Bundle ID: $bundle_id
+  Name: $bundle_name
+  Version: $bundle_version
+  Build: $bundle_build
+  Code signature: $app_verify_status
+  Authority: $app_authority
+  Team ID: $app_team_id
+  Timestamp: $app_timestamp
+  Runtime version: $app_runtime
+  CDHash: $app_cdhash
+
+DMG:
+  Path: $dmg_path
+  Size bytes: $dmg_size
+  SHA-256: $dmg_sha256
+  hdiutil verify: $dmg_verify_status
+  Authority: $dmg_authority
+  Timestamp: $dmg_timestamp
+  CDHash: $dmg_cdhash
+  stapler validate: $stapler_status
+  Gatekeeper: $gatekeeper_status
+
+ZIP:
+  Path: $zip_path
+  Size bytes: $zip_size
+  SHA-256: $zip_sha256
+  unzip -t: $zip_verify_status
+EOF
+
+echo "Wrote JSON manifest: $json_output"
+echo "Wrote text manifest: $text_output"

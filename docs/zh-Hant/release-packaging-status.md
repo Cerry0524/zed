@@ -124,6 +124,7 @@ Keychain 檢查結果：
 
 ```sh
 script/verify-mac-release
+script/generate-mac-release-manifest --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
 ```
 
@@ -144,6 +145,19 @@ script/store-mac-notary-credentials --profile zed-zh-hant-notary
 - `xcrun stapler validate`
 - `hdiutil verify`
 - `spctl -a -vv --type open`
+
+`script/generate-mac-release-manifest` 會輸出：
+
+- `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.json`
+- `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.txt`
+
+目前 manifest 顯示：
+
+- app code signature：`passed`
+- DMG hdiutil verify：`passed`
+- ZIP unzip test：`passed`
+- stapler validate：`failed`
+- Gatekeeper：`failed`
 
 公證前可使用寬鬆模式重驗目前測試包：
 
