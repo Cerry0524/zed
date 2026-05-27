@@ -1,6 +1,7 @@
 # Zed 繁體中文 macOS 發佈包狀態
 
 日期：2026-05-26
+再驗證：2026-05-27
 分支：`zh-hant-ui-slice`
 commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
 
@@ -64,8 +65,11 @@ commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
 
 以下驗證尚未通過或尚未執行完成：
 
-- `xcrun stapler validate Zed-aarch64.dmg` 未通過。
-- `spctl -a -vv` 目前回報 `internal error in Code Signing subsystem`，沒有取得 Gatekeeper accepted 結果。
+- `xcrun stapler validate Zed-aarch64.dmg` 未通過：
+  - `Zed-aarch64.dmg does not have a ticket stapled to it.`
+- `spctl -a -vv --type open Zed-aarch64.dmg` 未通過：
+  - `rejected`
+  - `source=Insufficient Context`
 - 未執行 `xcrun notarytool submit`，因此沒有 Apple notarization ticket。
 - 未執行 `xcrun stapler staple`，因此 DMG 未 stapled。
 
@@ -94,9 +98,10 @@ Keychain 檢查結果：
 
 - `security find-generic-password -s com.apple.gke.notary.tool`：找不到項目。
 - `security find-generic-password -s notarytool`：找不到項目。
-- 常見 profile 名稱 `notarytool`、`notary`、`zed`、`zed-notary`、`developer-id`、`3PM99X2THU`、`Cerry`、`cerry`、`default`、`AC_PASSWORD` 均回報：
+- 常見 profile 名稱 `zed-zh-hant-notary`、`notarytool`、`notary`、`zed`、`zed-notary`、`developer-id`、`3PM99X2THU`、`Cerry`、`cerry`、`default`、`AC_PASSWORD` 均回報：
   - `No Keychain password item found for profile`
 - Local Items keychain 內可看到 1 筆 `com.apple.gke.notary` 類型項目，但 profile 名稱不是可安全讀取的明文字串；目前沒有可直接用於 `xcrun notarytool submit` 的已知 profile 名稱。
+- `Downloads`、`Documents`、`Desktop` 內未找到 `AuthKey_*.p8` 或其他 `.p8` 檔案。
 
 ## 下一步
 
