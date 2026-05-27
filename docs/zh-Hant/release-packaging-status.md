@@ -97,10 +97,11 @@ script/smoke-mac-release --launch-gui
 以下驗證尚未通過或尚未執行完成：
 
 - `xcrun stapler validate Zed-aarch64.dmg` 未通過：
-  - `Zed-aarch64.dmg does not have a ticket stapled to it.`
+  - 最新重驗輸出包含 `The file “Zed-aarch64.dmg” couldn’t be opened.`
+  - underlying error 為 `kLSDataUnavailableErr`
+  - 仍沒有 `notarytool submit`、`stapler staple` 成功紀錄，因此不能視為已有 stapled notarization ticket。
 - `spctl -a -vv --type open Zed-aarch64.dmg` 未通過：
-  - `rejected`
-  - `source=Insufficient Context`
+  - 最新重驗輸出為 `internal error in Code Signing subsystem`
 - `script/verify-mac-release --require-notarization` 會在 `stapler validate` 階段失敗，符合目前未公證狀態。
 - 未執行 `xcrun notarytool submit`，因此沒有 Apple notarization ticket。
 - 未執行 `xcrun stapler staple`，因此 DMG 未 stapled。

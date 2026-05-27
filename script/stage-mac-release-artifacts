@@ -134,6 +134,11 @@ Trust status:
 Install guidance:
   - If stapler validation and Gatekeeper are not passing, share only with
     technical testers who understand macOS security prompts.
+  - Before upload, smoke test the DMG from a clean mount:
+
+      script/smoke-mac-release --dmg $dmg_path
+      script/smoke-mac-release --dmg $dmg_path --launch-gui
+
   - For a public release, run notarization first:
 
       script/notarize-mac-release --artifact $dmg_path --profile zed-zh-hant-notary
