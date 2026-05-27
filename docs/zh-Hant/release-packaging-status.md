@@ -48,7 +48,19 @@ commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
   - `checksum ... is VALID`
 - `unzip -t Zed-aarch64.zip` 通過：
   - `No errors detected`
+- `script/verify-mac-release` 通過寬鬆模式：
+  - bundle structure
+  - app and nested executable signatures
+  - hardened runtime / timestamp / Team ID
+  - app entitlements
+  - DMG signature and checksum
+  - ZIP integrity
 - DMG 外層也已用 Developer ID Application 簽章並含 timestamp。
+
+SHA-256：
+
+- DMG：`d37a5106ee7ee73ba51a27636634186466c62a9306bf3cc48746426437825f94`
+- ZIP：`201c26a59786125d82ab436218206316930905b4c18463dc1077f4dde4725a05`
 
 ## Smoke Test
 
@@ -70,6 +82,7 @@ commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
 - `spctl -a -vv --type open Zed-aarch64.dmg` 未通過：
   - `rejected`
   - `source=Insufficient Context`
+- `script/verify-mac-release --require-notarization` 會在 `stapler validate` 階段失敗，符合目前未公證狀態。
 - 未執行 `xcrun notarytool submit`，因此沒有 Apple notarization ticket。
 - 未執行 `xcrun stapler staple`，因此 DMG 未 stapled。
 
@@ -110,6 +123,7 @@ Keychain 檢查結果：
 此 repo 目前提供收尾腳本：
 
 ```sh
+script/verify-mac-release
 script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
 ```
 
@@ -121,11 +135,27 @@ script/store-mac-notary-credentials --profile zed-zh-hant-notary
 
 腳本會執行：
 
+- `codesign --verify --deep --strict`
+- nested executable signature checks
+- hardened runtime / timestamp / Team ID checks
+- `unzip -t`
 - `xcrun notarytool submit --wait`
 - `xcrun stapler staple`
 - `xcrun stapler validate`
 - `hdiutil verify`
 - `spctl -a -vv --type open`
+
+公證前可使用寬鬆模式重驗目前測試包：
+
+```sh
+script/verify-mac-release
+```
+
+公證後應使用正式 gate：
+
+```sh
+script/verify-mac-release --require-notarization
+```
 
 1. 使用 App Store Connect API key：
    - 準備 `.p8` key。

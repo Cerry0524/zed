@@ -1,0 +1,189 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+target_triple="aarch64-apple-darwin"
+target_dir="release"
+app_path=""
+dmg_path=""
+zip_path=""
+require_notarization=false
+strict_gatekeeper=false
+
+print_help() {
+    cat <<'EOF'
+Usage: script/verify-mac-release [options]
+
+Verify local macOS release artifacts for the Zed Traditional Chinese fork.
+
+Options:
+  -a, --app PATH             App bundle path.
+  -d, --dmg PATH             DMG path.
+  -z, --zip PATH             ZIP path.
+      --target-triple TRIPLE Target triple. Defaults to aarch64-apple-darwin.
+      --target-dir DIR       Target directory. Defaults to release.
+      --require-notarization Require stapler and Gatekeeper checks to pass.
+      --strict-gatekeeper    Require Gatekeeper checks to pass without requiring
+                             stapled notarization.
+  -h, --help                 Show this help.
+EOF
+}
+
+die() {
+    echo "error: $*" >&2
+    exit 2
+}
+
+log() {
+    echo "==> $*"
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -a|--app)
+            app_path="${2:-}"
+            shift 2
+            ;;
+        -d|--dmg)
+            dmg_path="${2:-}"
+            shift 2
+            ;;
+        -z|--zip)
+            zip_path="${2:-}"
+            shift 2
+            ;;
+        --target-triple)
+            target_triple="${2:-}"
+            shift 2
+            ;;
+        --target-dir)
+            target_dir="${2:-}"
+            shift 2
+            ;;
+        --require-notarization)
+            require_notarization=true
+            strict_gatekeeper=true
+            shift
+            ;;
+        --strict-gatekeeper)
+            strict_gatekeeper=true
+            shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            die "unknown option: $1"
+            ;;
+    esac
+done
+
+if [[ -z "$app_path" ]]; then
+    app_path="target/${target_triple}/${target_dir}/dmg/Zed Dev.app"
+fi
+
+if [[ -z "$dmg_path" ]]; then
+    dmg_path="target/${target_triple}/${target_dir}/Zed-aarch64.dmg"
+fi
+
+if [[ -z "$zip_path" ]]; then
+    zip_path="target/${target_triple}/${target_dir}/Zed-aarch64.zip"
+fi
+
+[[ -d "$app_path" ]] || die "app bundle does not exist: $app_path"
+[[ -f "$dmg_path" ]] || die "DMG does not exist: $dmg_path"
+[[ -f "$zip_path" ]] || die "ZIP does not exist: $zip_path"
+
+required_app_files=(
+    "Contents/Info.plist"
+    "Contents/MacOS/zed"
+    "Contents/MacOS/cli"
+    "Contents/MacOS/git"
+    "Contents/Resources/Document.icns"
+    "Contents/Resources/Zed Dev.icns"
+    "Contents/Resources/zed.entitlements"
+    "Contents/_CodeSignature/CodeResources"
+)
+
+log "Checking bundle structure"
+for relative_path in "${required_app_files[@]}"; do
+    [[ -e "$app_path/$relative_path" ]] || die "missing app bundle file: $relative_path"
+done
+
+bundle_id=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app_path/Contents/Info.plist")
+bundle_name=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$app_path/Contents/Info.plist")
+bundle_version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_path/Contents/Info.plist")
+bundle_build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_path/Contents/Info.plist")
+
+echo "Bundle ID: $bundle_id"
+echo "Bundle name: $bundle_name"
+echo "Version: $bundle_version"
+echo "Build: $bundle_build"
+
+[[ "$bundle_id" = "dev.zed.Zed-Dev" ]] || die "unexpected bundle id: $bundle_id"
+[[ "$bundle_name" = "Zed Dev" ]] || die "unexpected bundle name: $bundle_name"
+
+log "Verifying app code signature"
+codesign --verify --deep --strict --verbose=4 "$app_path"
+
+signature_details=$(codesign -dv --verbose=4 "$app_path" 2>&1)
+echo "$signature_details" | grep -q 'Authority=Developer ID Application: KO-JUI CHEN (3PM99X2THU)' \
+    || die "app is not signed by expected Developer ID"
+echo "$signature_details" | grep -q 'TeamIdentifier=3PM99X2THU' \
+    || die "app is not signed with expected Team ID"
+echo "$signature_details" | grep -q 'flags=.*runtime' \
+    || die "app signature is missing hardened runtime"
+echo "$signature_details" | grep -q 'Timestamp=' \
+    || die "app signature is missing timestamp"
+
+for executable in "$app_path/Contents/MacOS/zed" "$app_path/Contents/MacOS/cli" "$app_path/Contents/MacOS/git"; do
+    log "Verifying nested executable: $executable"
+    codesign --verify --strict --verbose=4 "$executable"
+done
+
+log "Verifying app entitlements"
+entitlements=$(codesign -d --entitlements :- "$app_path" 2>/dev/null || true)
+echo "$entitlements" | grep -q 'com.apple.security.cs.allow-jit' \
+    || die "app entitlements are missing allow-jit"
+echo "$entitlements" | grep -q 'com.apple.security.cs.allow-unsigned-executable-memory' \
+    || die "app entitlements are missing allow-unsigned-executable-memory"
+
+log "Verifying DMG signature"
+codesign --verify --verbose=4 "$dmg_path"
+dmg_signature=$(codesign -dv --verbose=4 "$dmg_path" 2>&1)
+echo "$dmg_signature" | grep -q 'Authority=Developer ID Application: KO-JUI CHEN (3PM99X2THU)' \
+    || die "DMG is not signed by expected Developer ID"
+
+log "Verifying DMG checksum"
+hdiutil verify "$dmg_path"
+
+log "Testing ZIP integrity"
+unzip -t "$zip_path"
+
+log "Computing SHA-256 checksums"
+shasum -a 256 "$dmg_path" "$zip_path"
+
+log "Checking stapled notarization ticket"
+if xcrun stapler validate "$dmg_path"; then
+    echo "Stapler validation: passed"
+else
+    stapler_status=$?
+    if [[ "$require_notarization" = true ]]; then
+        exit "$stapler_status"
+    fi
+    echo "Stapler validation: not passed (allowed without --require-notarization)"
+fi
+
+log "Assessing DMG with Gatekeeper"
+if spctl -a -vv --type open "$dmg_path"; then
+    echo "Gatekeeper assessment: passed"
+else
+    spctl_status=$?
+    if [[ "$strict_gatekeeper" = true ]]; then
+        exit "$spctl_status"
+    fi
+    echo "Gatekeeper assessment: not passed (allowed without --strict-gatekeeper)"
+fi
+
+log "Release artifact verification completed"
