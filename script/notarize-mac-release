@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+artifact="target/aarch64-apple-darwin/release/Zed-aarch64.dmg"
+keychain_profile="${NOTARYTOOL_PROFILE:-}"
+api_key_path="${APPLE_NOTARIZATION_KEY_PATH:-}"
+api_key="${APPLE_NOTARIZATION_KEY:-}"
+api_key_id="${APPLE_NOTARIZATION_KEY_ID:-}"
+api_issuer="${APPLE_NOTARIZATION_ISSUER_ID:-}"
+apple_id="${APPLE_ID:-${AC_USERNAME:-}}"
+apple_password="${AC_PASSWORD:-}"
+team_id="${APPLE_TEAM_ID:-${TEAM_ID:-}}"
+dry_run=false
+
+print_help() {
+    cat <<'EOF'
+Usage: script/notarize-mac-release [options]
+
+Submit a signed macOS release artifact to Apple notarization, staple the
+ticket, and run final validation.
+
+Options:
+  -a, --artifact PATH       Artifact to notarize. Defaults to
+                            target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+  -p, --profile NAME        notarytool keychain profile name.
+  -k, --key PATH            App Store Connect API key .p8 path.
+  -d, --key-id ID           App Store Connect API key id.
+  -i, --issuer ID           App Store Connect issuer id.
+  -u, --apple-id ID         Apple ID for app-specific password auth.
+  -w, --password PASSWORD   App-specific password. Prefer AC_PASSWORD env.
+  -t, --team-id ID          Apple Developer Team ID for Apple ID auth.
+      --dry-run             Print the selected auth mode and validation steps.
+  -h, --help                Show this help.
+
+Supported environment variables:
+  NOTARYTOOL_PROFILE
+  APPLE_NOTARIZATION_KEY_PATH
+  APPLE_NOTARIZATION_KEY
+  APPLE_NOTARIZATION_KEY_ID
+  APPLE_NOTARIZATION_ISSUER_ID
+  APPLE_ID or AC_USERNAME
+  AC_PASSWORD
+  APPLE_TEAM_ID or TEAM_ID
+EOF
+}
+
+die() {
+    echo "error: $*" >&2
+    exit 2
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -a|--artifact)
+            artifact="${2:-}"
+            shift 2
+            ;;
+        -p|--profile)
+            keychain_profile="${2:-}"
+            shift 2
+            ;;
+        -k|--key)
+            api_key_path="${2:-}"
+            shift 2
+            ;;
+        -d|--key-id)
+            api_key_id="${2:-}"
+            shift 2
+            ;;
+        -i|--issuer)
+            api_issuer="${2:-}"
+            shift 2
+            ;;
+        -u|--apple-id)
+            apple_id="${2:-}"
+            shift 2
+            ;;
+        -w|--password)
+            apple_password="${2:-}"
+            shift 2
+            ;;
+        -t|--team-id)
+            team_id="${2:-}"
+            shift 2
+            ;;
+        --dry-run)
+            dry_run=true
+            shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            die "unknown option: $1"
+            ;;
+    esac
+done
+
+[[ -n "$artifact" ]] || die "artifact path is required"
+[[ -f "$artifact" ]] || die "artifact does not exist: $artifact"
+
+if ! command -v xcrun >/dev/null 2>&1; then
+    die "xcrun is required"
+fi
+
+auth_args=()
+auth_mode=""
+temp_key_file=""
+
+cleanup() {
+    if [[ -n "$temp_key_file" && -f "$temp_key_file" ]]; then
+        rm -f "$temp_key_file"
+    fi
+}
+trap cleanup EXIT
+
+if [[ -n "$keychain_profile" ]]; then
+    auth_mode="keychain profile"
+    auth_args=(--keychain-profile "$keychain_profile")
+elif [[ -n "$api_key_path" || -n "$api_key" || -n "$api_key_id" || -n "$api_issuer" ]]; then
+    [[ -n "$api_key_id" ]] || die "APPLE_NOTARIZATION_KEY_ID or --key-id is required for API key auth"
+    [[ -n "$api_key_path" || -n "$api_key" ]] || die "APPLE_NOTARIZATION_KEY_PATH, APPLE_NOTARIZATION_KEY, or --key is required for API key auth"
+
+    if [[ -n "$api_key_path" ]]; then
+        [[ -f "$api_key_path" ]] || die "API key file does not exist: $api_key_path"
+    else
+        temp_key_file=$(mktemp)
+        chmod 600 "$temp_key_file"
+        printf '%s\n' "$api_key" > "$temp_key_file"
+        api_key_path="$temp_key_file"
+    fi
+
+    auth_mode="App Store Connect API key"
+    auth_args=(--key "$api_key_path" --key-id "$api_key_id")
+    if [[ -n "$api_issuer" ]]; then
+        auth_args+=(--issuer "$api_issuer")
+    fi
+elif [[ -n "$apple_id" || -n "$apple_password" || -n "$team_id" ]]; then
+    [[ -n "$apple_id" ]] || die "APPLE_ID, AC_USERNAME, or --apple-id is required for Apple ID auth"
+    [[ -n "$apple_password" ]] || die "AC_PASSWORD or --password is required for Apple ID auth"
+    [[ -n "$team_id" ]] || die "APPLE_TEAM_ID, TEAM_ID, or --team-id is required for Apple ID auth"
+
+    auth_mode="Apple ID app-specific password"
+    auth_args=(--apple-id "$apple_id" --password "$apple_password" --team-id "$team_id")
+else
+    die "no notarization credentials found; set NOTARYTOOL_PROFILE, API key variables, or Apple ID app-specific password variables"
+fi
+
+echo "Artifact: $artifact"
+echo "Auth mode: $auth_mode"
+
+if [[ "$dry_run" = true ]]; then
+    echo "Dry run: not submitting to Apple notarization."
+    echo "Would run: xcrun notarytool submit <artifact> <auth> --wait"
+    echo "Would run: xcrun stapler staple <artifact>"
+    echo "Would run: xcrun stapler validate <artifact>"
+    case "$artifact" in
+        *.dmg)
+            echo "Would run: hdiutil verify <artifact>"
+            echo "Would run: spctl -a -vv --type open <artifact>"
+            ;;
+        *.zip)
+            echo "Would run: unzip -t <artifact>"
+            echo "Would run: spctl -a -vv --type open <artifact>"
+            ;;
+        *.app)
+            echo "Would run: codesign --verify --deep --strict --verbose=4 <artifact>"
+            echo "Would run: spctl -a -vv --type execute <artifact>"
+            ;;
+    esac
+    exit 0
+fi
+
+echo "Submitting to Apple notarization..."
+xcrun notarytool submit "$artifact" "${auth_args[@]}" --wait
+
+echo "Stapling notarization ticket..."
+xcrun stapler staple "$artifact"
+
+echo "Validating stapled ticket..."
+xcrun stapler validate "$artifact"
+
+case "$artifact" in
+    *.dmg)
+        echo "Verifying DMG checksum..."
+        hdiutil verify "$artifact"
+        echo "Assessing DMG with Gatekeeper..."
+        spctl -a -vv --type open "$artifact"
+        ;;
+    *.zip)
+        echo "Testing ZIP integrity..."
+        unzip -t "$artifact"
+        echo "Assessing ZIP with Gatekeeper..."
+        spctl -a -vv --type open "$artifact"
+        ;;
+    *.app)
+        echo "Verifying app signature..."
+        codesign --verify --deep --strict --verbose=4 "$artifact"
+        echo "Assessing app with Gatekeeper..."
+        spctl -a -vv --type execute "$artifact"
+        ;;
+    *)
+        echo "warning: no local integrity verifier configured for this extension"
+        ;;
+esac
+
+echo "Notarization, stapling, and validation completed."

@@ -107,31 +107,38 @@ Keychain 檢查結果：
 
 正式公開分享前，應補齊其中一種 notarization 路徑：
 
+此 repo 目前提供收尾腳本：
+
+```sh
+script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+```
+
+腳本會執行：
+
+- `xcrun notarytool submit --wait`
+- `xcrun stapler staple`
+- `xcrun stapler validate`
+- `hdiutil verify`
+- `spctl -a -vv --type open`
+
 1. 使用 App Store Connect API key：
    - 準備 `.p8` key。
    - 設定 key id 與 issuer id。
-   - 執行 `xcrun notarytool submit --wait`。
-   - 成功後執行 `xcrun stapler staple`。
-   - 重新跑 `stapler validate` 與 `spctl`。
+   - 執行 `script/notarize-mac-release`。
 
    範例：
 
    ```sh
-   xcrun notarytool submit target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+   script/notarize-mac-release \
+     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
      --key /path/to/AuthKey_XXXXXXXXXX.p8 \
      --key-id XXXXXXXXXX \
-     --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX \
-     --wait
-
-   xcrun stapler staple target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   xcrun stapler validate target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   spctl -a -vv --type open target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+     --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
    ```
 
 2. 使用 notarytool keychain profile：
    - 先用 `xcrun notarytool store-credentials` 建立 profile。
-   - 再用 `xcrun notarytool submit --keychain-profile <profile> --wait`。
-   - 成功後 stapled DMG。
+   - 再執行 `script/notarize-mac-release --profile <profile>`。
 
    範例：
 
@@ -141,32 +148,23 @@ Keychain 檢查結果：
      --team-id 3PM99X2THU \
      --password xxxx-xxxx-xxxx-xxxx
 
-   xcrun notarytool submit target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
-     --keychain-profile zed-zh-hant-notary \
-     --wait
-
-   xcrun stapler staple target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   xcrun stapler validate target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   spctl -a -vv --type open target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+   script/notarize-mac-release \
+     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+     --profile zed-zh-hant-notary
    ```
 
 3. 使用 Apple ID app-specific password：
    - 準備 Apple ID、team/provider、app-specific password。
-   - 執行 notarytool submit。
-   - 成功後 stapled DMG。
+   - 執行 `script/notarize-mac-release`。
 
    範例：
 
    ```sh
-   xcrun notarytool submit target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
+   script/notarize-mac-release \
+     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
      --apple-id your-apple-id@example.com \
      --team-id 3PM99X2THU \
-     --password xxxx-xxxx-xxxx-xxxx \
-     --wait
-
-   xcrun stapler staple target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   xcrun stapler validate target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-   spctl -a -vv --type open target/aarch64-apple-darwin/release/Zed-aarch64.dmg
+     --password xxxx-xxxx-xxxx-xxxx
    ```
 
 ## 分享建議
