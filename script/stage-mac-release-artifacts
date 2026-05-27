@@ -132,8 +132,10 @@ Trust status:
   Gatekeeper: $gatekeeper_status
 
 Install guidance:
-  - If stapler validation and Gatekeeper are not passing, share only with
-    technical testers who understand macOS security prompts.
+  - Current trust status: stapler=$notarization_status, gatekeeper=$gatekeeper_status.
+  - If stapler is passed and Gatekeeper is accepted, upload the staged files.
+  - If either trust check is not passing, share only with technical testers
+    and run notarization first.
   - Before upload, smoke test the DMG from a clean mount:
 
       script/check-mac-release-readiness

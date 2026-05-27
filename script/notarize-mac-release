@@ -187,7 +187,7 @@ case "$artifact" in
         echo "Verifying DMG checksum..."
         hdiutil verify "$artifact"
         echo "Assessing DMG with Gatekeeper..."
-        spctl -a -vv --type open "$artifact"
+        spctl -a -vv --type open --context context:primary-signature "$artifact"
         ;;
     *.zip)
         echo "Testing ZIP integrity..."

@@ -323,7 +323,7 @@ if [[ -f "$dmg_path" ]]; then
         fail "DMG stapler validation failed: $(echo "$stapler_output" | first_line)"
     fi
 
-    spctl_output=$(command_output spctl -a -vv --type open "$dmg_abs")
+    spctl_output=$(command_output spctl -a -vv --type open --context context:primary-signature "$dmg_abs")
     if [[ $? -eq 0 ]]; then
         pass "DMG passes Gatekeeper assessment"
     else
@@ -384,9 +384,20 @@ if [[ "$credential_modes" -eq 0 ]]; then
     fail "no complete notarization credential mode is available"
 fi
 
-section "Next Required Commands"
-if [[ "$credential_modes" -eq 0 ]]; then
+if [[ "$failures" -eq 0 ]]; then
+    section "Release Commands"
     cat <<EOF
+Current release artifacts pass the public release gate.
+
+Optional final checks before upload:
+
+  script/smoke-mac-release --dmg $dmg_path --launch-gui
+  script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
+EOF
+else
+    section "Next Required Commands"
+    if [[ "$credential_modes" -eq 0 ]]; then
+        cat <<EOF
 Create one notarization credential mode, for example:
 
   script/store-mac-notary-credentials --profile zed-zh-hant-notary
@@ -399,9 +410,9 @@ or provide App Store Connect API key fields:
     --key-id XXXXXXXXXX \\
     --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 EOF
-fi
+    fi
 
-cat <<EOF
+    cat <<EOF
 
 After credentials are available, run:
 
@@ -410,6 +421,7 @@ After credentials are available, run:
   script/smoke-mac-release --dmg $dmg_path --launch-gui
   script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 EOF
+fi
 
 section "Summary"
 if [[ "$failures" -eq 0 ]]; then

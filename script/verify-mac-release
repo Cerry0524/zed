@@ -176,7 +176,7 @@ else
 fi
 
 log "Assessing DMG with Gatekeeper"
-if spctl -a -vv --type open "$dmg_path"; then
+if spctl -a -vv --type open --context context:primary-signature "$dmg_path"; then
     echo "Gatekeeper assessment: passed"
 else
     spctl_status=$?

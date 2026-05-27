@@ -1,23 +1,25 @@
 # Zed 繁體中文 macOS 發佈包狀態
 
 日期：2026-05-26
-再驗證：2026-05-27
+正式發佈驗證：2026-05-27
 分支：`zh-hant-ui-slice`
-commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
+App artifact commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
 
 ## 結論
 
-目前已產生可安裝測試的 Apple Silicon DMG：
+Apple Silicon 版 Zed 繁體中文 DMG 已完成正式發佈驗證，可分享給一般 macOS Apple Silicon 使用者安裝。
+
+正式上傳目錄：
+
+`target/aarch64-apple-darwin/release/release-stage/`
+
+主要安裝檔：
 
 `target/aarch64-apple-darwin/release/Zed-aarch64.dmg`
 
-也已產生 ZIP 備援包：
+這個 DMG 內含 `Zed Dev.app`，已完成 Developer ID 簽章、Apple notarization、stapling、Gatekeeper assessment 與乾淨環境 smoke test。
 
-`target/aarch64-apple-darwin/release/Zed-aarch64.zip`
-
-這個 DMG 內含 `Zed Dev.app`，已用本機 Developer ID Application 憑證簽章，且補上 hardened runtime 與 timestamp。它可以用於本機或技術測試者的安裝驗證。
-
-但它還不是正式公開散佈等級的安裝檔，因為尚未完成 Apple notarization，也沒有 stapled notarization ticket。一般使用者從網路下載後，Gatekeeper 可能會阻擋或顯示安全警告。
+ZIP 仍有完整性驗證，可作為備援 artifact；公開給一般使用者時建議優先分享已 stapled notarization ticket 的 DMG。
 
 ## 目前產物
 
@@ -33,160 +35,52 @@ commit：`b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d`
 - 簽章憑證：`Developer ID Application: KO-JUI CHEN (3PM99X2THU)`
 - Team ID：`3PM99X2THU`
 
+SHA-256：
+
+- DMG：`ab35a5a3b96134605a8f13b4d1d70c2154564540c39d9e39f88f0bda5dc68cac`
+- ZIP：`201c26a59786125d82ab436218206316930905b4c18463dc1077f4dde4725a05`
+
+## Apple Notarization
+
+- notarytool profile：`zed-zh-hant-notary`
+- notarization submission ID：`8c50bcf9-8d5c-4e6a-950f-52bbf09cb72e`
+- Apple notarization status：`Accepted`
+- `xcrun stapler staple`：passed
+- `xcrun stapler validate`：passed
+- Gatekeeper：
+  - command：`spctl -a -vv --type open --context context:primary-signature target/aarch64-apple-darwin/release/Zed-aarch64.dmg`
+  - result：`accepted`
+  - source：`Notarized Developer ID`
+
 ## 已完成驗證
 
 - `script/bundle-mac aarch64-apple-darwin` 已成功產生 `.app` 與 `.dmg`。
-- `codesign --verify --deep --strict --verbose=4 Zed Dev.app` 通過：
-  - `valid on disk`
-  - `satisfies its Designated Requirement`
-- `codesign -dv --verbose=4 Zed Dev.app` 顯示：
-  - `Authority=Developer ID Application: KO-JUI CHEN (3PM99X2THU)`
-  - `TeamIdentifier=3PM99X2THU`
-  - `flags=0x10000(runtime)`
-  - `Timestamp=May 26, 2026`
-- `hdiutil verify Zed-aarch64.dmg` 通過：
-  - `checksum ... is VALID`
-- `unzip -t Zed-aarch64.zip` 通過：
-  - `No errors detected`
-- `script/verify-mac-release` 通過寬鬆模式：
-  - bundle structure
-  - app and nested executable signatures
-  - hardened runtime / timestamp / Team ID
-  - app entitlements
-  - DMG signature and checksum
-  - ZIP integrity
-- `script/check-mac-release-readiness` 已新增為正式發佈 gate：
-  - toolchain、artifact、bundle metadata、signing、本地 package checks 已通過。
-  - public release trust gate 仍未通過，因為 stapler / Gatekeeper / notarization credentials 尚未完成。
-- DMG 外層也已用 Developer ID Application 簽章並含 timestamp。
+- `codesign --verify --deep --strict --verbose=4 Zed Dev.app` 通過。
+- app 與 DMG 都由 `Developer ID Application: KO-JUI CHEN (3PM99X2THU)` 簽章。
+- app signature 包含 hardened runtime 與 timestamp。
+- `hdiutil verify Zed-aarch64.dmg` 通過。
+- `unzip -t Zed-aarch64.zip` 通過。
+- `script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg --profile zed-zh-hant-notary` 已完成 Apple notarization 與 stapling。
+- `script/verify-mac-release --require-notarization` 通過。
+- `script/check-mac-release-readiness` 通過：
+  - `Public release gate: PASS.`
+- `script/smoke-mac-release --launch-gui` 通過：
+  - 從 DMG 掛載點確認 `Zed Dev.app`。
+  - `Applications` symlink 指向 `/Applications`。
+  - `Contents/MacOS/cli --version` 輸出 `Zed 1.5.0`。
+  - LaunchServices 可識別 app 為 `Zed Dev`。
+  - 乾淨 user-data 有建立 `db`、`extensions`。
+  - 測試結束後 app 關閉且 DMG 成功卸載。
+- `script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d` 通過。
+- `shasum -a 256 -c SHA256SUMS.txt` 在 release-stage 目錄內通過。
 
-SHA-256：
+## Release Stage
 
-- DMG：`d37a5106ee7ee73ba51a27636634186466c62a9306bf3cc48746426437825f94`
-- ZIP：`201c26a59786125d82ab436218206316930905b4c18463dc1077f4dde4725a05`
+目錄：
 
-## Smoke Test
+`target/aarch64-apple-darwin/release/release-stage/`
 
-已新增可重跑的 DMG 乾淨環境 smoke test 腳本：
-
-```sh
-script/smoke-mac-release
-script/smoke-mac-release --launch-gui
-```
-
-`script/smoke-mac-release` 會從 DMG 掛載點驗證：
-
-- `Zed Dev.app` 存在。
-- `Applications` symlink 指向 `/Applications`。
-- Bundle ID 為 `dev.zed.Zed-Dev`。
-- Bundle name 為 `Zed Dev`。
-- `codesign --verify --deep --strict --verbose=4` 通過。
-- `Contents/MacOS/cli --version` 輸出 `Zed 1.5.0`。
-
-`script/smoke-mac-release --launch-gui` 會額外使用乾淨 user-data 目錄啟動 app，確認 LaunchServices 可識別為 `Zed Dev`，並在測試結束後自動關閉 app 與卸載 DMG。
-
-2026-05-27 已用腳本從 DMG 掛載點執行乾淨 user-data smoke test：
-
-- 掛載：`/private/tmp/zed-zh-hant-smoke-12316-mount`
-- user data：`/private/tmp/zed-zh-hant-smoke-12316-user-data`
-- 測試專案：`/private/tmp/zed-zh-hant-smoke-12316-project`
-- `cli --version` 輸出：`Zed 1.5.0 – /private/tmp/zed-zh-hant-smoke-12316-mount/Zed Dev.app`
-- app 可由系統識別為：`Zed Dev`
-- 啟動後有建立乾淨 profile 的 `db`、`extensions` 等資料。
-- DMG 在 smoke test 結束後成功卸載。
-
-## 尚未完成
-
-以下驗證尚未通過或尚未執行完成：
-
-- `script/check-mac-release-readiness` 目前輸出：
-  - `Public release gate: NOT READY (3 failure(s), 1 warning(s)).`
-  - failures：DMG stapler validation、DMG Gatekeeper assessment、沒有完整 notarization credential mode。
-  - warning：`zed-zh-hant-notary` keychain profile 目前不可用。
-- `xcrun stapler validate Zed-aarch64.dmg` 未通過：
-  - 最新重驗輸出包含 `The file “Zed-aarch64.dmg” couldn’t be opened.`
-  - underlying error 為 `kLSDataUnavailableErr`
-  - 仍沒有 `notarytool submit`、`stapler staple` 成功紀錄，因此不能視為已有 stapled notarization ticket。
-- `spctl -a -vv --type open Zed-aarch64.dmg` 未通過：
-  - 最新重驗輸出為 `internal error in Code Signing subsystem`
-- `script/verify-mac-release --require-notarization` 會在 `stapler validate` 階段失敗，符合目前未公證狀態。
-- 未執行 `xcrun notarytool submit`，因此沒有 Apple notarization ticket。
-- 未執行 `xcrun stapler staple`，因此 DMG 未 stapled。
-
-## 缺少的公證憑證
-
-目前 shell 環境沒有下列 Zed 官方腳本所需的變數：
-
-- `MACOS_CERTIFICATE`
-- `MACOS_CERTIFICATE_PASSWORD`
-- `APPLE_NOTARIZATION_KEY`
-- `APPLE_NOTARIZATION_KEY_ID`
-- `APPLE_NOTARIZATION_ISSUER_ID`
-
-也沒有偵測到可直接使用的 Apple ID / app-specific password 環境變數：
-
-- `APPLE_ID`
-- `AC_USERNAME`
-- `AC_PASSWORD`
-- `ASC_PROVIDER`
-
-本機有可用的公證工具：
-
-- `xcrun notarytool --version`：`1.1.2 (41)`
-
-Keychain 檢查結果：
-
-- `security find-generic-password -s com.apple.gke.notary.tool`：找不到項目。
-- `security find-generic-password -s notarytool`：找不到項目。
-- 常見 profile 名稱 `zed-zh-hant-notary`、`notarytool`、`notary`、`zed`、`zed-notary`、`developer-id`、`3PM99X2THU`、`Cerry`、`cerry`、`default`、`AC_PASSWORD` 均回報：
-  - `No Keychain password item found for profile`
-- Local Items keychain 內可看到 1 筆 `com.apple.gke.notary` 類型項目，但 profile 名稱不是可安全讀取的明文字串；目前沒有可直接用於 `xcrun notarytool submit` 的已知 profile 名稱。
-- `Downloads`、`Documents`、`Desktop` 內未找到 `AuthKey_*.p8` 或其他 `.p8` 檔案。
-
-## 下一步
-
-正式公開分享前，應補齊其中一種 notarization 路徑：
-
-此 repo 目前提供收尾腳本：
-
-```sh
-script/verify-mac-release
-script/check-mac-release-readiness
-script/smoke-mac-release
-script/smoke-mac-release --launch-gui
-script/generate-mac-release-manifest --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
-script/stage-mac-release-artifacts --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
-script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
-```
-
-若尚未建立 `notarytool` keychain profile，可先使用：
-
-```sh
-script/store-mac-notary-credentials --profile zed-zh-hant-notary
-```
-
-腳本會執行：
-
-- `codesign --verify --deep --strict`
-- nested executable signature checks
-- hardened runtime / timestamp / Team ID checks
-- `unzip -t`
-- `xcrun notarytool submit --wait`
-- `xcrun stapler staple`
-- `xcrun stapler validate`
-- `hdiutil verify`
-- `spctl -a -vv --type open`
-
-`script/generate-mac-release-manifest` 會輸出：
-
-- `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.json`
-- `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.txt`
-
-`script/stage-mac-release-artifacts` 會輸出可上傳目錄：
-
-- `target/aarch64-apple-darwin/release/release-stage/`
-
-目錄包含：
+內容：
 
 - `Zed-aarch64.dmg`
 - `Zed-aarch64.zip`
@@ -195,85 +89,35 @@ script/store-mac-notary-credentials --profile zed-zh-hant-notary
 - `SHA256SUMS.txt`
 - `README.txt`
 
-目前 manifest 顯示：
+manifest 目前顯示：
 
 - app code signature：`passed`
 - DMG hdiutil verify：`passed`
 - ZIP unzip test：`passed`
-- stapler validate：`failed`
-- Gatekeeper：`failed`
+- stapler validate：`passed`
+- Gatekeeper：`accepted`
 
-公證前可使用寬鬆模式重驗目前測試包：
+## 重跑命令
 
-```sh
-script/verify-mac-release
-```
-
-公證後應使用正式 gate：
+正式發佈前可重跑：
 
 ```sh
+script/check-mac-release-readiness
 script/verify-mac-release --require-notarization
+script/smoke-mac-release --launch-gui
 script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 ```
 
-1. 使用 App Store Connect API key：
-   - 準備 `.p8` key。
-   - 設定 key id 與 issuer id。
-   - 建立 keychain profile。
-   - 執行 `script/notarize-mac-release --profile <profile>`。
+上傳前可驗證 release-stage checksum：
 
-   範例：
+```sh
+cd target/aarch64-apple-darwin/release/release-stage
+shasum -a 256 -c SHA256SUMS.txt
+```
 
-   ```sh
-   script/store-mac-notary-credentials \
-     --profile zed-zh-hant-notary \
-     --key /path/to/AuthKey_XXXXXXXXXX.p8 \
-     --key-id XXXXXXXXXX \
-     --issuer XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+## 限制與後續
 
-   script/notarize-mac-release \
-     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
-     --profile zed-zh-hant-notary
-   ```
-
-2. 使用 notarytool keychain profile：
-   - 先用 `xcrun notarytool store-credentials` 建立 profile。
-   - 再執行 `script/notarize-mac-release --profile <profile>`。
-
-   範例：
-
-   ```sh
-   xcrun notarytool store-credentials zed-zh-hant-notary \
-     --apple-id your-apple-id@example.com \
-     --team-id 3PM99X2THU \
-     --password xxxx-xxxx-xxxx-xxxx
-
-   script/notarize-mac-release \
-     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
-     --profile zed-zh-hant-notary
-   ```
-
-3. 使用 Apple ID app-specific password：
-   - 準備 Apple ID、team/provider、app-specific password。
-   - 建立 keychain profile。
-   - 執行 `script/notarize-mac-release --profile <profile>`。
-
-   範例：
-
-   ```sh
-   script/store-mac-notary-credentials \
-     --profile zed-zh-hant-notary \
-     --apple-id your-apple-id@example.com \
-     --team-id 3PM99X2THU \
-     --password xxxx-xxxx-xxxx-xxxx
-
-   script/notarize-mac-release \
-     --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg \
-     --profile zed-zh-hant-notary
-   ```
-
-## 分享建議
-
-目前可以分享給熟悉 macOS 安全提示的技術測試者，並註明這是未公證測試包。
-
-若要分享給一般使用者，必須先完成 notarization 與 stapling，否則使用者可能會遇到 Gatekeeper 阻擋。
+- 目前正式包是 `aarch64-apple-darwin`，也就是 Apple Silicon 版。
+- 尚未產生 Intel `x86_64-apple-darwin` 或 Universal 版。
+- `zed-zh-hant-notary` profile 存在於本機 Keychain，不會提交到 repo。
+- 若要支援 Intel Mac，需要另行 build、sign、notarize、smoke test 對應 artifact。

@@ -172,7 +172,7 @@ if printf '%s\n' "$stapler_output" | grep -q 'The validate action worked'; then
     stapler_status="passed"
 fi
 
-spctl_output=$(spctl -a -vv --type open "$dmg_path" 2>&1 || true)
+spctl_output=$(spctl -a -vv --type open --context context:primary-signature "$dmg_path" 2>&1 || true)
 gatekeeper_status="failed"
 if printf '%s\n' "$spctl_output" | grep -q ': accepted'; then
     gatekeeper_status="accepted"
