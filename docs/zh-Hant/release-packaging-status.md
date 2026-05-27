@@ -125,6 +125,7 @@ Keychain 檢查結果：
 ```sh
 script/verify-mac-release
 script/generate-mac-release-manifest --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
+script/stage-mac-release-artifacts --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 script/notarize-mac-release --artifact target/aarch64-apple-darwin/release/Zed-aarch64.dmg
 ```
 
@@ -151,6 +152,19 @@ script/store-mac-notary-credentials --profile zed-zh-hant-notary
 - `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.json`
 - `target/aarch64-apple-darwin/release/Zed-aarch64.release-manifest.txt`
 
+`script/stage-mac-release-artifacts` 會輸出可上傳目錄：
+
+- `target/aarch64-apple-darwin/release/release-stage/`
+
+目錄包含：
+
+- `Zed-aarch64.dmg`
+- `Zed-aarch64.zip`
+- `Zed-aarch64.release-manifest.json`
+- `Zed-aarch64.release-manifest.txt`
+- `SHA256SUMS.txt`
+- `README.txt`
+
 目前 manifest 顯示：
 
 - app code signature：`passed`
@@ -169,6 +183,7 @@ script/verify-mac-release
 
 ```sh
 script/verify-mac-release --require-notarization
+script/stage-mac-release-artifacts --require-notarization --artifact-commit b9410f4a4cd8e1fdc5bd1a2cb2304a72068f693d
 ```
 
 1. 使用 App Store Connect API key：

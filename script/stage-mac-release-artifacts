@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+target_triple="aarch64-apple-darwin"
+target_dir="release"
+artifact_commit="${ZED_ARTIFACT_COMMIT:-}"
+stage_dir=""
+require_notarization=false
+
+print_help() {
+    cat <<'EOF'
+Usage: script/stage-mac-release-artifacts [options]
+
+Stage macOS release artifacts into one upload-ready directory.
+
+Options:
+      --artifact-commit SHA   Commit represented by the packaged app binary.
+      --stage-dir PATH        Output directory. Defaults to
+                              target/<triple>/<dir>/release-stage.
+      --target-triple TRIPLE  Target triple. Defaults to aarch64-apple-darwin.
+      --target-dir DIR        Target directory. Defaults to release.
+      --require-notarization  Require stapled notarization and Gatekeeper pass.
+  -h, --help                  Show this help.
+EOF
+}
+
+die() {
+    echo "error: $*" >&2
+    exit 2
+}
+
+copy_artifact() {
+    local source=$1
+    local destination=$2
+    [[ -f "$source" ]] || die "missing artifact: $source"
+    cp "$source" "$destination"
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --artifact-commit)
+            artifact_commit="${2:-}"
+            shift 2
+            ;;
+        --stage-dir)
+            stage_dir="${2:-}"
+            shift 2
+            ;;
+        --target-triple)
+            target_triple="${2:-}"
+            shift 2
+            ;;
+        --target-dir)
+            target_dir="${2:-}"
+            shift 2
+            ;;
+        --require-notarization)
+            require_notarization=true
+            shift
+            ;;
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        *)
+            die "unknown option: $1"
+            ;;
+    esac
+done
+
+if [[ -z "$artifact_commit" ]]; then
+    artifact_commit=$(git rev-parse HEAD)
+fi
+
+if [[ -z "$stage_dir" ]]; then
+    stage_dir="target/${target_triple}/${target_dir}/release-stage"
+fi
+
+dmg_path="target/${target_triple}/${target_dir}/Zed-aarch64.dmg"
+zip_path="target/${target_triple}/${target_dir}/Zed-aarch64.zip"
+manifest_json="target/${target_triple}/${target_dir}/Zed-aarch64.release-manifest.json"
+manifest_txt="target/${target_triple}/${target_dir}/Zed-aarch64.release-manifest.txt"
+
+if [[ "$require_notarization" = true ]]; then
+    script/verify-mac-release --target-triple "$target_triple" --target-dir "$target_dir" --require-notarization
+else
+    script/verify-mac-release --target-triple "$target_triple" --target-dir "$target_dir"
+fi
+
+script/generate-mac-release-manifest \
+    --target-triple "$target_triple" \
+    --target-dir "$target_dir" \
+    --artifact-commit "$artifact_commit"
+
+rm -rf "$stage_dir"
+mkdir -p "$stage_dir"
+
+copy_artifact "$dmg_path" "$stage_dir/$(basename "$dmg_path")"
+copy_artifact "$zip_path" "$stage_dir/$(basename "$zip_path")"
+copy_artifact "$manifest_json" "$stage_dir/$(basename "$manifest_json")"
+copy_artifact "$manifest_txt" "$stage_dir/$(basename "$manifest_txt")"
+
+(
+    cd "$stage_dir"
+    shasum -a 256 Zed-aarch64.dmg Zed-aarch64.zip Zed-aarch64.release-manifest.json Zed-aarch64.release-manifest.txt > SHA256SUMS.txt
+)
+
+notarization_status=$(jq -r '.artifacts.dmg.stapler_validate' "$manifest_json")
+gatekeeper_status=$(jq -r '.artifacts.dmg.gatekeeper' "$manifest_json")
+created_at=$(jq -r '.created_at' "$manifest_json")
+repo_commit=$(jq -r '.repo_commit' "$manifest_json")
+manifest_artifact_commit=$(jq -r '.artifact_commit' "$manifest_json")
+
+cat > "$stage_dir/README.txt" <<EOF
+Zed Traditional Chinese macOS Release Artifacts
+
+Created at: $created_at
+Repo commit: $repo_commit
+Artifact commit: $manifest_artifact_commit
+
+Files:
+  Zed-aarch64.dmg
+  Zed-aarch64.zip
+  Zed-aarch64.release-manifest.json
+  Zed-aarch64.release-manifest.txt
+  SHA256SUMS.txt
+
+Trust status:
+  App and DMG Developer ID signatures: see manifest
+  Stapler validation: $notarization_status
+  Gatekeeper: $gatekeeper_status
+
+Install guidance:
+  - If stapler validation and Gatekeeper are not passing, share only with
+    technical testers who understand macOS security prompts.
+  - For a public release, run notarization first:
+
+      script/notarize-mac-release --artifact $dmg_path --profile zed-zh-hant-notary
+      script/verify-mac-release --require-notarization
+      script/stage-mac-release-artifacts --require-notarization --artifact-commit $manifest_artifact_commit
+
+Checksum verification:
+  shasum -a 256 -c SHA256SUMS.txt
+EOF
+
+echo "Staged release artifacts in: $stage_dir"
+ls -lh "$stage_dir"
